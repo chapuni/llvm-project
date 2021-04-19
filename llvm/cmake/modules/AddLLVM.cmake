@@ -645,6 +645,12 @@ function(llvm_add_library name)
       ${llvm_libs}
       )
 
+  if(NOT ${name} STREQUAL LLVM_modules_stub)
+    target_link_libraries(${name} PRIVATE
+      LLVM_modules_stub
+      )
+  endif()
+
   if(LLVM_COMMON_DEPENDS)
     add_dependencies(${name} ${LLVM_COMMON_DEPENDS})
     # Add dependencies also to objlibs.

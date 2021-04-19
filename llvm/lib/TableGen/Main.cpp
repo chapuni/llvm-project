@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <system_error>
+#include <unistd.h>
 using namespace llvm;
 
 static cl::opt<std::string>
@@ -157,5 +158,8 @@ int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
 
   if (ErrorsPrinted > 0)
     return reportError(argv0, Twine(ErrorsPrinted) + " errors.\n");
+
+  //::sleep(3600);
+
   return 0;
 }

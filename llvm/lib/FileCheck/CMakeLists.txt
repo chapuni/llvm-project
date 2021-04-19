@@ -5,4 +5,4 @@ add_llvm_component_library(LLVMFileCheck
   "${LLVM_MAIN_INCLUDE_DIR}/llvm/FileCheck"
 )
 
-target_link_libraries(LLVMFileCheck LLVMSupport)
+target_link_libraries(LLVMFileCheck PUBLIC LLVMSupport)

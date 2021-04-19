@@ -54,6 +54,26 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type (default Debug)" FORCE)
 endif()
 
+###############################################################################
+
+cmake_policy(SET CMP0116 OLD)
+
+set(LLVM_MODULES_CACHE_PATH ${PROJECT_BINARY_DIR}/xxx/CMakeFiles/LLVM_all_modules.dir)
+set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP 1)
+string(CONCAT CM_AKE_EXPERIMENTAL_CXX_SCANDEP_SOURCE
+  "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> <FLAGS> <SOURCE>"
+  " -MT <DYNDEP_FILE> -MD -MG -MF <DEP_FILE>"
+  " ${flags_to_scan_deps} -fdep-file=<DYNDEP_FILE> -fdep-output=<OBJECT>"
+  )
+string(CONCAT CMAKE_EXPERIMENTAL_CXX_SCANDEP_SOURCE
+  "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> <FLAGS> <SOURCE>"
+  " -MT <OBJECT> -MD -MF <DEP_FILE>"
+  " -E -o /dev/null"
+  " && python3 ${CMAKE_SOURCE_DIR}/dep.py <DEP_FILE> ${LLVM_MODULES_CACHE_PATH} <DYNDEP_FILE>"
+  )
+
+###############################################################################
+
 # Side-by-side subprojects layout: automatically set the
 # LLVM_EXTERNAL_${project}_SOURCE_DIR using LLVM_ALL_PROJECTS
 # This allows an easy way of setting up a build directory for llvm and another
@@ -917,6 +937,12 @@ if( MINGW AND NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
   # build also uses -O2 for that reason:
   llvm_replace_compiler_option(CMAKE_CXX_FLAGS_RELEASE "-O3" "-O2")
 endif()
+
+###############################################################################
+
+add_subdirectory(xxx)
+
+###############################################################################
 
 # Put this before tblgen. Else we have a circular dependence.
 add_subdirectory(lib/Demangle)
