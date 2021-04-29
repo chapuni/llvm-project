@@ -44,5 +44,5 @@ add_lld_library(lldMachO2
 
   DEPENDS
   MachOOptionsTableGen
-  ${tablegen_deps}
+  intrinsics_gen
   )
