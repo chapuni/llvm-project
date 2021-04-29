@@ -604,7 +604,7 @@ function(llvm_add_library name)
   endif()
 
   if(ARG_STATIC)
-    set(libtype PUBLIC)
+    set(libtype INTERFACE)
   else()
     # We can use PRIVATE since SO knows its dependent libs.
     set(libtype PRIVATE)
