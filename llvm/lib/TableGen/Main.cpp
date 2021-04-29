@@ -26,6 +26,7 @@
 #include "llvm/TableGen/Record.h"
 #include <algorithm>
 #include <cstdio>
+#include <unistd.h>
 #include <system_error>
 using namespace llvm;
 
@@ -207,6 +208,8 @@ int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   
   Records.stopTimer();
   Records.stopPhaseTiming();
+
+  //::sleep(3600);
 
   if (ErrorsPrinted > 0)
     return reportError(argv0, Twine(ErrorsPrinted) + " errors.\n");
