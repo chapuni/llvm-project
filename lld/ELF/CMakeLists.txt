@@ -46,7 +46,6 @@ add_lld_library(lldELF
   ${LLVM_TARGETS_TO_BUILD}
   BinaryFormat
   BitWriter
-  Core
   DebugInfoDWARF
   Demangle
   LTO

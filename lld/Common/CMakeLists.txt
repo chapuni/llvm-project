@@ -47,10 +47,8 @@ add_lld_library(lldCommon
   Core
   DebugInfoDWARF
   Demangle
-  MC
   Option
   Support
-  Target
 
   LINK_LIBS
   ${LLD_SYSTEM_LIBS}
