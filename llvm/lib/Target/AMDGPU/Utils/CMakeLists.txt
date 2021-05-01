@@ -5,9 +5,9 @@ add_llvm_component_library(LLVMAMDGPUUtils
   AMDGPUPALMetadata.cpp
 
   LINK_COMPONENTS
+  BinaryFormat
   Core
   MC
-  BinaryFormat
   Support
 
   ADD_TO_COMPONENT

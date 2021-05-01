@@ -29,7 +29,7 @@ add_llvm_component_library(LLVMInstrumentation
   Analysis
   Core
   MC
+  ProfileData
   Support
   TransformUtils
-  ProfileData
   )

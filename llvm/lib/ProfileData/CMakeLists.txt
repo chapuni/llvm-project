@@ -16,8 +16,8 @@ add_llvm_component_library(LLVMProfileData
 
   LINK_COMPONENTS
   Core
-  Support
   Demangle
+  Support
   )
 
 add_subdirectory(Coverage)

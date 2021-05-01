@@ -61,6 +61,7 @@ add_llvm_component_library(LLVMipo
   Core
   FrontendOpenMP
   InstCombine
+  Instrumentation
   IRReader
   Linker
   Object
@@ -69,5 +70,4 @@ add_llvm_component_library(LLVMipo
   Support
   TransformUtils
   Vectorize
-  Instrumentation
   )

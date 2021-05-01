@@ -11,8 +11,8 @@ add_llvm_component_library(LLVMAVRDesc
   AVRTargetStreamer.cpp
 
   LINK_COMPONENTS
-  MC
   AVRInfo
+  MC
   Support
 
   ADD_TO_COMPONENT

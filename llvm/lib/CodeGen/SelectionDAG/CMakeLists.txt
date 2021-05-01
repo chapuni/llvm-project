@@ -30,8 +30,8 @@ add_llvm_component_library(LLVMSelectionDAG
 
   LINK_COMPONENTS
   Analysis
-  CodeGen
   Core
+  CodeGen
   MC
   Support
   Target

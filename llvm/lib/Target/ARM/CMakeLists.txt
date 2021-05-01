@@ -67,21 +67,21 @@ add_llvm_target(ARMCodeGen
   Thumb2SizeReduction.cpp
 
   LINK_COMPONENTS
+  Analysis
   ARMDesc
   ARMInfo
-  Analysis
+  ARMUtils
   AsmPrinter
+  CFGuard
   CodeGen
   Core
+  GlobalISel
   MC
   Scalar
   SelectionDAG
   Support
   Target
-  GlobalISel
-  ARMUtils
   TransformUtils
-  CFGuard
 
   ADD_TO_COMPONENT
   ARM

@@ -15,8 +15,8 @@ add_llvm_component_library(LLVMAArch64Desc
   LINK_COMPONENTS
   AArch64Info
   AArch64Utils
-  MC
   BinaryFormat
+  MC
   Support
 
   ADD_TO_COMPONENT

@@ -18,11 +18,11 @@ add_llvm_component_library(LLVMPasses
   HelloNew
   IPO
   InstCombine
+  Instrumentation
   ObjCARC
   Scalar
   Support
   Target
   TransformUtils
   Vectorize
-  Instrumentation
   )
