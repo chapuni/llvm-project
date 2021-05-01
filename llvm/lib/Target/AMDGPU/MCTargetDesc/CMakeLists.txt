@@ -15,7 +15,6 @@ add_llvm_component_library(LLVMAMDGPUDesc
   AMDGPUInfo
   AMDGPUUtils
   BinaryFormat
-  Core
   MC
   Support
 

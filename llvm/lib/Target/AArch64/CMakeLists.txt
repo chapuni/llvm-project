@@ -96,7 +96,6 @@ add_llvm_target(AArch64CodeGen
   SelectionDAG
   Support
   Target
-  TransformUtils
 
   ADD_TO_COMPONENT
   AArch64

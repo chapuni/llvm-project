@@ -15,14 +15,12 @@ add_llvm_component_library(LLVMLTO
   llvm_vcsrevision_h
 
   LINK_COMPONENTS
-  AggressiveInstCombine
   Analysis
   BinaryFormat
   BitReader
   BitWriter
   CodeGen
   Core
-  Extensions
   IPO
   InstCombine
   Linker
@@ -30,7 +28,6 @@ add_llvm_component_library(LLVMLTO
   ObjCARC
   Object
   Passes
-  Remarks
   Scalar
   Support
   Target

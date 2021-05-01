@@ -16,5 +16,4 @@ add_llvm_component_library(LLVMTextAPI
 
   LINK_COMPONENTS
   Support
-  BinaryFormat
 )
