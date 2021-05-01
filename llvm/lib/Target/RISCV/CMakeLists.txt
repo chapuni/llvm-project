@@ -40,6 +40,12 @@ add_llvm_target(RISCVCodeGen
   RISCVTargetTransformInfo.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  RISCV
+  )
+
+set(xxx
   Analysis
   AsmPrinter
   Core
@@ -51,9 +57,6 @@ add_llvm_target(RISCVCodeGen
   Support
   Target
   GlobalISel
-
-  ADD_TO_COMPONENT
-  RISCV
   )
 
 add_subdirectory(AsmParser)

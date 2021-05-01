@@ -1,5 +1,9 @@
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   Support
+  LLVMTestingSupport
   )
 
 add_llvm_unittest(ADTTests
@@ -79,7 +83,5 @@ add_llvm_unittest(ADTTests
   TypeTraitsTest.cpp
   WaymarkingTest.cpp
   )
-
-target_link_libraries(ADTTests PRIVATE LLVMTestingSupport)
 
 add_dependencies(ADTTests intrinsics_gen)

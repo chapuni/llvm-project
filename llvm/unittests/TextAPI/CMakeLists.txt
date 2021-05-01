@@ -1,5 +1,9 @@
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   TextAPI
+  LLVMTestingSupport
 )
 
 add_llvm_unittest(TextAPITests
@@ -8,5 +12,3 @@ add_llvm_unittest(TextAPITests
   TextStubV3Tests.cpp
   TextStubV4Tests.cpp
 )
-
-target_link_libraries(TextAPITests PRIVATE LLVMTestingSupport)

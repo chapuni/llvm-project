@@ -7,6 +7,9 @@ add_llvm_component_library(LLVMSymbolize
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/DebugInfo/Symbolize
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   DebugInfoDWARF
   DebugInfoPDB
   Object

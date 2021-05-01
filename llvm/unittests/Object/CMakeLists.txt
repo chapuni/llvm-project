@@ -1,7 +1,11 @@
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   BinaryFormat
   Object
   ObjectYAML
+  LLVMTestingSupport
   )
 
 add_llvm_unittest(ObjectTests
@@ -15,5 +19,3 @@ add_llvm_unittest(ObjectTests
   SymbolicFileTest.cpp
   XCOFFObjectFileTest.cpp
   )
-
-target_link_libraries(ObjectTests PRIVATE LLVMTestingSupport)

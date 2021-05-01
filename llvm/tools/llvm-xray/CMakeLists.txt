@@ -1,4 +1,7 @@
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   DebugInfoDWARF
   Object
   Support

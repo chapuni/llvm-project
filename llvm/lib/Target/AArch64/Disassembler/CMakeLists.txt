@@ -5,15 +5,18 @@ add_llvm_component_library(LLVMAArch64Disassembler
   AArch64ExternalSymbolizer.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  AArch64
+  )
+
+set(xxx
   AArch64Desc
   AArch64Info
   AArch64Utils
   MC
   MCDisassembler
   Support
-
-  ADD_TO_COMPONENT
-  AArch64
   )
 
 add_dependencies(LLVMAArch64Disassembler AArch64CommonTableGen)

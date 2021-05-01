@@ -1,4 +1,7 @@
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   ${LLVM_TARGETS_TO_BUILD}
   Analysis
   AsmParser
@@ -11,6 +14,7 @@ set(LLVM_LINK_COMPONENTS
   SelectionDAG
   Support
   Target
+  LLVMTestingSupport
   )
 
 add_llvm_unittest(CodeGenTests
@@ -33,5 +37,3 @@ add_llvm_unittest(CodeGenTests
   )
 
 add_subdirectory(GlobalISel)
-
-target_link_libraries(CodeGenTests PRIVATE LLVMTestingSupport)

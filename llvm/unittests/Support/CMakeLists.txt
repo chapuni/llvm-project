@@ -1,5 +1,6 @@
 set(LLVM_LINK_COMPONENTS
   Support
+  LLVMTestingSupport
   )
 
 add_llvm_unittest(SupportTests
@@ -98,8 +99,6 @@ add_llvm_unittest(SupportTests
   xxhashTest.cpp
   )
 
-target_link_libraries(SupportTests PRIVATE LLVMTestingSupport)
-
 # Disable all warning for AlignOfTest.cpp,
 # as it does things intentionally, and there is no reliable way of
 # disabling all warnings for all the compilers by using pragmas.
@@ -120,7 +119,7 @@ if(MSVC)
 endif()
 
 # ManagedStatic.cpp uses <pthread>.
-target_link_libraries(SupportTests PRIVATE LLVMTestingSupport ${LLVM_PTHREAD_LIB})
+target_link_libraries(SupportTests PRIVATE LLVMTestingSupport ${LLVM_PTHREAD_LIB}) #???
 
 if(NOT LLVM_INTEGRATED_CRT_ALLOC)
   # The test doesn't pass when using a custom allocator, PR47881.

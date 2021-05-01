@@ -27,6 +27,12 @@ add_llvm_target(VECodeGen
   VETargetMachine.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  VE
+  )
+
+set(xxx
   Analysis
   AsmPrinter
   CodeGen
@@ -37,9 +43,6 @@ add_llvm_target(VECodeGen
   VEInfo
   Support
   Target
-
-  ADD_TO_COMPONENT
-  VE
   )
 
 add_subdirectory(AsmParser)

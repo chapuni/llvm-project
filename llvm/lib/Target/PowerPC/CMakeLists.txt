@@ -59,6 +59,12 @@ add_llvm_target(PowerPCCodeGen
   GISel/PPCLegalizerInfo.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  PowerPC
+  )
+
+set(xxx
   Analysis
   AsmPrinter
   BinaryFormat
@@ -73,9 +79,6 @@ add_llvm_target(PowerPCCodeGen
   Target
   TransformUtils
   GlobalISel
-
-  ADD_TO_COMPONENT
-  PowerPC
   )
 
 add_subdirectory(AsmParser)

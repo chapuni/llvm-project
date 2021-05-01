@@ -15,6 +15,9 @@ add_llvm_component_library(LLVMInterpreter
   intrinsics_gen
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   CodeGen
   Core
   ExecutionEngine

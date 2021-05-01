@@ -35,6 +35,12 @@ add_llvm_target(BPFCodeGen
   BTFDebug.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  BPF
+  )
+
+set(xxx
   AsmPrinter
   BPFDesc
   BPFInfo
@@ -46,9 +52,6 @@ add_llvm_target(BPFCodeGen
   SelectionDAG
   Support
   Target
-
-  ADD_TO_COMPONENT
-  BPF
   )
 
 add_subdirectory(AsmParser)

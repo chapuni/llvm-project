@@ -10,6 +10,9 @@ add_llvm_component_library(LLVMAggressiveInstCombine
   intrinsics_gen
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   Analysis
   Core
   Support

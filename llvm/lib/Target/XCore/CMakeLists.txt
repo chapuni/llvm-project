@@ -29,6 +29,12 @@ add_llvm_target(XCoreCodeGen
   XCoreFrameToArgsOffsetElim.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  XCore
+  )
+
+set(xxx
   Analysis
   AsmPrinter
   CodeGen
@@ -40,9 +46,6 @@ add_llvm_target(XCoreCodeGen
   TransformUtils
   XCoreDesc
   XCoreInfo
-
-  ADD_TO_COMPONENT
-  XCore
   )
 
 add_subdirectory(Disassembler)

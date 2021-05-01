@@ -11,6 +11,9 @@ add_llvm_component_library(LLVMPasses
   intrinsics_gen
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   AggressiveInstCombine
   Analysis
   Core

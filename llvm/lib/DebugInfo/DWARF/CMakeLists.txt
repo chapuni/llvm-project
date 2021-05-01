@@ -33,6 +33,9 @@ add_llvm_component_library(LLVMDebugInfoDWARF
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/DebugInfo
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   BinaryFormat
   MC
   Object

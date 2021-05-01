@@ -1,5 +1,8 @@
 
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   Core
   ExecutionEngine
   Object
@@ -10,6 +13,7 @@ set(LLVM_LINK_COMPONENTS
   RuntimeDyld
   Support
   native
+  LLVMTestingSupport
   )
 
 add_llvm_unittest(OrcJITTests
@@ -25,7 +29,3 @@ add_llvm_unittest(OrcJITTests
   SymbolStringPoolTest.cpp
   ThreadSafeModuleTest.cpp
   )
-
-target_link_libraries(OrcJITTests PRIVATE
-                        LLVMTestingSupport
-                        ${ORC_JIT_TEST_LIBS})

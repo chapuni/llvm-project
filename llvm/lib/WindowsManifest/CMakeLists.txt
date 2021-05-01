@@ -15,8 +15,9 @@ add_llvm_component_library(LLVMWindowsManifest
   ${imported_libs}
 
   LINK_COMPONENTS
-  Support
   )
+
+# Support
 
 # This block is only needed for llvm-config. When we deprecate llvm-config and
 # move to using CMake export, this block can be removed.

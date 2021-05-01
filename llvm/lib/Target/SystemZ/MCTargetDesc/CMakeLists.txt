@@ -7,10 +7,13 @@ add_llvm_component_library(LLVMSystemZDesc
   SystemZMCTargetDesc.cpp
 
   LINK_COMPONENTS
-  MC
-  Support
-  SystemZInfo
 
   ADD_TO_COMPONENT
   SystemZ
+  )
+
+set(xxx
+  MC
+  Support
+  SystemZInfo
   )

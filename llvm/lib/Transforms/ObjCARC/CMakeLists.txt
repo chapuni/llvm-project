@@ -19,6 +19,9 @@ add_llvm_component_library(LLVMObjCARCOpts
   ObjCARC
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   Analysis
   Core
   Support

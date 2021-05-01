@@ -8,11 +8,14 @@ add_llvm_component_library(LLVMLanaiDesc
   LanaiMCTargetDesc.cpp
 
   LINK_COMPONENTS
-  LanaiInfo
-  MC
-  MCDisassembler
-  Support
 
   ADD_TO_COMPONENT
   Lanai
 )
+
+set(xxx
+  LanaiInfo
+  MC
+  MCDisassembler
+  Support
+  )

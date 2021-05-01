@@ -8,10 +8,13 @@ add_llvm_component_library(LLVMWebAssemblyDesc
   WebAssemblyWasmObjectWriter.cpp
 
   LINK_COMPONENTS
-  MC
-  Support
-  WebAssemblyInfo
 
   ADD_TO_COMPONENT
   WebAssembly
 )
+
+set(xxx
+  MC
+  Support
+  WebAssemblyInfo
+  )

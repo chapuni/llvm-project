@@ -228,6 +228,9 @@ add_llvm_component_library(LLVMSupport
   ${system_libs} ${imported_libs} ${delayload_flags}
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   Demangle
   )
 

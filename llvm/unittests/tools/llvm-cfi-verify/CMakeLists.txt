@@ -1,4 +1,7 @@
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   AllTargetsAsmParsers
   AllTargetsDescs
   AllTargetsDisassemblers
@@ -8,10 +11,10 @@ set(LLVM_LINK_COMPONENTS
   Object
   Support
   Symbolize
+  LLVMCFIVerify
   )
 
 add_llvm_unittest(CFIVerifyTests
   FileAnalysis.cpp
   GraphBuilder.cpp
   )
-target_link_libraries(CFIVerifyTests PRIVATE LLVMCFIVerify)

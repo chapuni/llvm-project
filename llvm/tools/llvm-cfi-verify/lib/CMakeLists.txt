@@ -11,6 +11,9 @@ if (LLVM_LINK_LLVM_DYLIB)
   set(libs LLVM)
 else()
   llvm_map_components_to_libnames(libs
+    )
+
+  set(xxx
     DebugInfoDWARF
     MC
     MCParser

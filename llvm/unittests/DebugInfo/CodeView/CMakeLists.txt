@@ -1,5 +1,9 @@
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   DebugInfoCodeView
+  LLVMTestingSupport
   )
 
 add_llvm_unittest(DebugInfoCodeViewTests
@@ -7,5 +11,3 @@ add_llvm_unittest(DebugInfoCodeViewTests
   TypeHashingTest.cpp
   TypeIndexDiscoveryTest.cpp
   )
-
-target_link_libraries(DebugInfoCodeViewTests PRIVATE LLVMTestingSupport)

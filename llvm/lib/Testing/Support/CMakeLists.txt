@@ -9,7 +9,9 @@ add_llvm_library(LLVMTestingSupport
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Testing/Support
 
   LINK_COMPONENTS
-  Support
   )
 
-target_link_libraries(LLVMTestingSupport PRIVATE gtest)
+set(xxx
+  Support
+  gtest
+  )

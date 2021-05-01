@@ -40,6 +40,12 @@ add_llvm_target(SystemZCodeGen
   SystemZTDC.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  SystemZ
+  )
+
+set(xxx
   Analysis
   AsmPrinter
   CodeGen
@@ -51,9 +57,6 @@ add_llvm_target(SystemZCodeGen
   SystemZDesc
   SystemZInfo
   Target
-
-  ADD_TO_COMPONENT
-  SystemZ
   )
 
 add_subdirectory(AsmParser)

@@ -1,5 +1,8 @@
 
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   AllTargetsDescs
   AllTargetsDisassemblers
   AllTargetsInfos

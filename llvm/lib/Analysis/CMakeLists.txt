@@ -139,6 +139,9 @@ add_llvm_component_library(LLVMAnalysis
   ${MLLinkDeps}
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   BinaryFormat
   Core
   Object

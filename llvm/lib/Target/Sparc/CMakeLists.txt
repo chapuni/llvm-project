@@ -30,6 +30,12 @@ add_llvm_target(SparcCodeGen
   SparcTargetObjectFile.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  Sparc
+  )
+
+set(xxx
   AsmPrinter
   CodeGen
   Core
@@ -39,9 +45,6 @@ add_llvm_target(SparcCodeGen
   SparcInfo
   Support
   Target
-
-  ADD_TO_COMPONENT
-  Sparc
   )
 
 add_subdirectory(AsmParser)

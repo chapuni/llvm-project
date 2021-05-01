@@ -69,7 +69,13 @@ add_llvm_target(HexagonCodeGen
   RDFDeadCode.cpp
 
   LINK_COMPONENTS
-   Analysis
+
+  ADD_TO_COMPONENT
+  Hexagon
+)
+
+set(xxx
+  Analysis
   AsmPrinter
   CodeGen
   Core
@@ -83,10 +89,7 @@ add_llvm_target(HexagonCodeGen
   Support
   Target
   TransformUtils
-
-  ADD_TO_COMPONENT
-  Hexagon
-)
+  )
 
 add_subdirectory(AsmParser)
 add_subdirectory(Disassembler)

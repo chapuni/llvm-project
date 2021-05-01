@@ -20,6 +20,9 @@ add_llvm_component_library(LLVMVectorize
   intrinsics_gen
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   Analysis
   Core
   Support

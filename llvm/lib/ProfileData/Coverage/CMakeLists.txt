@@ -10,6 +10,9 @@ add_llvm_component_library(LLVMCoverage
   intrinsics_gen
 
   LINK_COMPONENTS
+  )
+
+set(xxx
   Core
   Object
   ProfileData

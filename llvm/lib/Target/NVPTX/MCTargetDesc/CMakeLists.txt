@@ -5,10 +5,13 @@ add_llvm_component_library(LLVMNVPTXDesc
   NVPTXTargetStreamer.cpp
 
   LINK_COMPONENTS
-  MC
-  NVPTXInfo
-  Support
 
   ADD_TO_COMPONENT
   NVPTX
+  )
+
+set(xxx
+  MC
+  NVPTXInfo
+  Support
   )

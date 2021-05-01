@@ -4,14 +4,17 @@ add_llvm_component_library(LLVMLanaiAsmParser
   LanaiAsmParser.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  Lanai
+  )
+
+set(xxx
   MC
   MCParser
   Support
   LanaiDesc
   LanaiInfo
-
-  ADD_TO_COMPONENT
-  Lanai
   )
 
 add_dependencies( LLVMLanaiAsmParser LanaiCommonTableGen )

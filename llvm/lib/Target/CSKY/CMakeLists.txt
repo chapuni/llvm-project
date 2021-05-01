@@ -12,14 +12,17 @@ add_llvm_target(CSKYCodeGen
   CSKYTargetMachine.cpp
 
   LINK_COMPONENTS
+
+  ADD_TO_COMPONENT
+  CSKY
+  )
+
+set(xxx
   Core
   CodeGen
   CSKYInfo
   Support
   Target
-
-  ADD_TO_COMPONENT
-  CSKY
   )
 
 add_subdirectory(TargetInfo)

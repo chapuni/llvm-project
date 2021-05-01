@@ -1,9 +1,13 @@
 set(LLVM_LINK_COMPONENTS
+  )
+
+set(xxx
   Analysis
   AsmParser
   Core
   Support
   TransformUtils
+  LLVMTestingSupport
   )
 
 if (DEFINED LLVM_HAVE_TF_API)
@@ -50,5 +54,3 @@ add_llvm_unittest_with_input_files(AnalysisTests
   VectorUtilsTest.cpp
   ${EXTRA_TESTS}
   )
-
- target_link_libraries(AnalysisTests PRIVATE LLVMTestingSupport)

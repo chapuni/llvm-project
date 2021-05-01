@@ -9,10 +9,13 @@ add_llvm_component_library(LLVMVEDesc
   VETargetStreamer.cpp
 
   LINK_COMPONENTS
-  MC
-  VEInfo
-  Support
 
   ADD_TO_COMPONENT
   VE
+  )
+
+set(xxx
+  MC
+  VEInfo
+  Support
   )
