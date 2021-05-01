@@ -1,5 +1,4 @@
 set(LLVM_LINK_COMPONENTS
-  Core
   Support
   )
 
@@ -8,16 +7,8 @@ add_clang_tool(clang-scan-deps
   )
 
 set(CLANG_SCAN_DEPS_LIB_DEPS
-  clangAST
   clangBasic
-  clangCodeGen
   clangDependencyScanning
-  clangDriver
-  clangFrontend
-  clangFrontendTool
-  clangLex
-  clangParse
-  clangSerialization
   clangTooling
   )
 
