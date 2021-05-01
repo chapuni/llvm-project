@@ -2987,8 +2987,6 @@ std::string CompilerInvocation::getModuleHash() const {
   // CityHash, but this will do for now.
   hash_code code = hash_value(getClangFullRepositoryVersion());
 
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
-
   // Also include the serialization version, in case LLVM_APPEND_VC_REV is off
   // and getClangFullRepositoryVersion() doesn't include git revision.
   code = hash_combine(code, serialization::VERSION_MAJOR,
@@ -3016,14 +3014,10 @@ std::string CompilerInvocation::getModuleHash() const {
   for (const auto &FeatureAsWritten : TargetOpts->FeaturesAsWritten)
     code = hash_combine(code, FeatureAsWritten);
 
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
-
   // Extend the signature with preprocessor options.
   const PreprocessorOptions &ppOpts = getPreprocessorOpts();
   const HeaderSearchOptions &hsOpts = getHeaderSearchOpts();
   code = hash_combine(code, ppOpts.UsePredefines, ppOpts.DetailedRecord);
-
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
 
   for (const auto &I : getPreprocessorOpts().Macros) {
     // If we're supposed to ignore this macro for the purposes of modules,
@@ -3037,9 +3031,7 @@ std::string CompilerInvocation::getModuleHash() const {
     }
 
     code = hash_combine(code, I.first, I.second);
-    fprintf(stderr, "%s:%d %s(%d)\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__, I.first.c_str(), I.second);
   }
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
 
   // Extend the signature with the sysroot and other header search options.
   code = hash_combine(code, hsOpts.Sysroot,
@@ -3050,10 +3042,7 @@ std::string CompilerInvocation::getModuleHash() const {
                       hsOpts.UseStandardCXXIncludes,
                       hsOpts.UseLibcxx,
                       hsOpts.ModulesValidateDiagnosticOptions);
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
   code = hash_combine(code, hsOpts.ResourceDir);
-
-  fprintf(stderr, "%s:%d<%s>\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__, hsOpts.ResourceDir.c_str());
 
   if (hsOpts.ModulesStrictContextHash) {
     hash_code SHPC = hash_combine_range(hsOpts.SystemHeaderPrefixes.begin(),
@@ -3062,36 +3051,25 @@ std::string CompilerInvocation::getModuleHash() const {
                                        hsOpts.UserEntries.end());
     code = hash_combine(code, hsOpts.SystemHeaderPrefixes.size(), SHPC,
                         hsOpts.UserEntries.size(), UEC);
-    fprintf(stderr, "%s:%d sys=%zu user=%zu\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__, hsOpts.SystemHeaderPrefixes.size(), hsOpts.UserEntries.size());
-#if 1
-    for (const auto& x : hsOpts.UserEntries) {
-      fprintf(stderr, "\t<%s>\n", x.Path.c_str());
-    }
-#endif
 
     const DiagnosticOptions &diagOpts = getDiagnosticOpts();
     #define DIAGOPT(Name, Bits, Default) \
-      code = hash_combine(code, diagOpts.Name);fprintf(stderr, "%s:%d %d:%d:%s\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__, diagOpts.Name, Bits, #Name);
+      code = hash_combine(code, diagOpts.Name);
     #define ENUM_DIAGOPT(Name, Type, Bits, Default) \
-      code = hash_combine(code, diagOpts.get##Name());fprintf(stderr, "%s:%d %d:%d:%s\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__, diagOpts.get##Name(), Bits, #Name);
+      code = hash_combine(code, diagOpts.get##Name());
     #include "clang/Basic/DiagnosticOptions.def"
-    fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
     #undef DIAGOPT
     #undef ENUM_DIAGOPT
   }
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
 
   // Extend the signature with the user build path.
   code = hash_combine(code, hsOpts.ModuleUserBuildPath);
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
 
   // Extend the signature with the module file extensions.
   const FrontendOptions &frontendOpts = getFrontendOpts();
   for (const auto &ext : frontendOpts.ModuleFileExtensions) {
     code = ext->hashExtension(code);
   }
-
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
 
   // When compiling with -gmodules, also hash -fdebug-prefix-map as it
   // affects the debug info in the PCM.
@@ -3105,8 +3083,6 @@ std::string CompilerInvocation::getModuleHash() const {
   SanHash.clear(getPPTransparentSanitizers());
   if (!SanHash.empty())
     code = hash_combine(code, SanHash.Mask);
-
-  fprintf(stderr, "%s:%d\n", llvm::APInt(64, code).toString(36, false).c_str(), __LINE__);
 
   return llvm::APInt(64, code).toString(36, /*Signed=*/false);
 }
