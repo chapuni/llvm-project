@@ -33,11 +33,11 @@ add_llvm_target(AVRCodeGen
 
   LINK_COMPONENTS
   AsmPrinter
+  AVRDesc
+  AVRInfo
   CodeGen
   Core
   MC
-  AVRDesc
-  AVRInfo
   SelectionDAG
   Support
   Target

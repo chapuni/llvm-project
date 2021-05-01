@@ -67,9 +67,9 @@ add_llvm_component_library(LLVMMC
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/MC
 
   LINK_COMPONENTS
-  Support
   BinaryFormat
   DebugInfoCodeView
+  Support
   )
 
 add_subdirectory(MCParser)
