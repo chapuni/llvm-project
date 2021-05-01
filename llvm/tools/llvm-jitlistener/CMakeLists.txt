@@ -4,9 +4,6 @@ link_directories( ${LLVM_INTEL_JITEVENTS_LIBDIR} )
 include_directories( ${LLVM_INTEL_JITEVENTS_INCDIR} )
 
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   asmparser
   bitreader
   DebugInfoDWARF

@@ -12,9 +12,6 @@ add_llvm_component_library(LLVMBitReader
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   BitstreamReader
   Core
   Support

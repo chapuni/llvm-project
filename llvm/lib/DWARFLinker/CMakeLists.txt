@@ -11,9 +11,6 @@ add_llvm_component_library(LLVMDWARFLinker
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   BinaryFormat
   DebugInfoDWARF
   AsmPrinter

@@ -8,9 +8,6 @@ add_llvm_component_library(LLVMIRReader
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   AsmParser
   BitReader
   Core

@@ -1,7 +1,4 @@
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   DebugInfoCodeView
   DebugInfoDWARF
   Demangle

@@ -8,9 +8,6 @@ add_llvm_component_library(LLVMCFGuard
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Core
   Support
   )

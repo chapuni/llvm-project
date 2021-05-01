@@ -28,12 +28,6 @@ add_llvm_target(ARCCodeGen
   ARCTargetMachine.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  ARC
-)
-
-set(xxx
   Analysis
   AsmPrinter
   CodeGen
@@ -45,7 +39,10 @@ set(xxx
   TransformUtils
   ARCDesc
   ARCInfo
-  )
+
+  ADD_TO_COMPONENT
+  ARC
+)
 
 add_subdirectory(Disassembler)
 add_subdirectory(MCTargetDesc)

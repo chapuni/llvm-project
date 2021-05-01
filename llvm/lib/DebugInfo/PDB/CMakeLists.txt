@@ -143,9 +143,6 @@ add_llvm_component_library(LLVMDebugInfoPDB
   ${LIBPDB_ADDITIONAL_HEADER_DIRS}
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   BinaryFormat
   DebugInfoCodeView
   DebugInfoMSF

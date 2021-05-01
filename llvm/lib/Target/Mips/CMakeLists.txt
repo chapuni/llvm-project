@@ -61,12 +61,6 @@ add_llvm_target(MipsCodeGen
   MicroMipsSizeReduction.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  Mips
-  )
-
-set(xxx
   Analysis
   AsmPrinter
   CodeGen
@@ -78,6 +72,9 @@ set(xxx
   Support
   Target
   GlobalISel
+
+  ADD_TO_COMPONENT
+  Mips
   )
 
 add_subdirectory(AsmParser)

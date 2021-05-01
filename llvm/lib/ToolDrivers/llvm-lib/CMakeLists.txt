@@ -17,9 +17,6 @@ add_llvm_component_library(LLVMLibDriver
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   BinaryFormat
   BitReader
   Object

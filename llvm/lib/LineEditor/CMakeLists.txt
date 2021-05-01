@@ -12,8 +12,5 @@ add_llvm_component_library(LLVMLineEditor
   ${link_libs}
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Support
   )

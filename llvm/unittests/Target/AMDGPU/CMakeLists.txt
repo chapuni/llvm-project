@@ -4,9 +4,6 @@ include_directories(
   )
 
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   AMDGPUCodeGen
   AMDGPUDesc
   AMDGPUInfo

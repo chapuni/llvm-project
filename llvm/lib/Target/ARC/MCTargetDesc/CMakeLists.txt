@@ -4,13 +4,10 @@ add_llvm_component_library(LLVMARCDesc
   ARCMCAsmInfo.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  ARC
-  )
-
-set(xxx
   MC
   Support
   ARCInfo
+
+  ADD_TO_COMPONENT
+  ARC
   )

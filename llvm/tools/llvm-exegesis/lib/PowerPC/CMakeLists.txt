@@ -10,9 +10,6 @@ add_library(LLVMExegesisPowerPC
 
 llvm_update_compile_flags(LLVMExegesisPowerPC)
 llvm_map_components_to_libnames(libs
-  )
-
-set(xxx
   PowerPC
   Exegesis
   )

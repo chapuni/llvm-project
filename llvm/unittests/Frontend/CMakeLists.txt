@@ -1,7 +1,4 @@
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   Analysis
   Core
   FrontendOpenMP
@@ -9,7 +6,6 @@ set(xxx
   Support
   Passes
   TransformUtils
-  LLVMTestingSupport
   )
 
 add_llvm_unittest(LLVMFrontendTests
@@ -22,3 +18,5 @@ add_llvm_unittest(LLVMFrontendTests
   acc_gen
   omp_gen
   )
+
+target_link_libraries(LLVMFrontendTests PRIVATE LLVMTestingSupport)

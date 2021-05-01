@@ -11,14 +11,11 @@ add_llvm_component_library(LLVMPowerPCDesc
   PPCELFStreamer.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  PowerPC
-  )
-
-set(xxx
   MC
   PowerPCInfo
   Support
   BinaryFormat
+
+  ADD_TO_COMPONENT
+  PowerPC
   )

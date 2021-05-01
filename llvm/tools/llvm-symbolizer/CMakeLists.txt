@@ -8,9 +8,6 @@ tablegen(LLVM Opts.inc -gen-opt-parser-defs)
 add_public_tablegen_target(SymbolizerOptsTableGen)
 
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   DebugInfoDWARF
   DebugInfoPDB
   Demangle

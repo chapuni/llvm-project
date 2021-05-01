@@ -32,12 +32,6 @@ add_llvm_target(AVRCodeGen
   intrinsics_gen
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  AVR
-)
-
-set(xxx
   AsmPrinter
   AVRDesc
   AVRInfo
@@ -47,7 +41,10 @@ set(xxx
   SelectionDAG
   Support
   Target
-  )
+
+  ADD_TO_COMPONENT
+  AVR
+)
 
 add_subdirectory(AsmParser)
 add_subdirectory(Disassembler)

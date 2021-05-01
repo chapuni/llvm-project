@@ -32,9 +32,6 @@ add_llvm_component_library(LLVMOrcJIT
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Core
   ExecutionEngine
   JITLink
@@ -47,11 +44,15 @@ set(xxx
   Support
   Target
   TransformUtils
+  )
+
+add_subdirectory(Shared)
+add_subdirectory(TargetProcess)
+
+target_link_libraries(LLVMOrcJIT
+  PRIVATE
   LLVMAnalysis
   LLVMBitReader
   LLVMBitWriter
   LLVMPasses
   )
-
-add_subdirectory(Shared)
-add_subdirectory(TargetProcess)

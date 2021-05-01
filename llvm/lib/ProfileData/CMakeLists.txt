@@ -15,9 +15,6 @@ add_llvm_component_library(LLVMProfileData
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Core
   Demangle
   Support

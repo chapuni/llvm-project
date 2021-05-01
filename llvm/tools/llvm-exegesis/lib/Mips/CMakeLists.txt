@@ -10,9 +10,6 @@ add_library(LLVMExegesisMips
 
 llvm_update_compile_flags(LLVMExegesisMips)
 llvm_map_components_to_libnames(libs
-  )
-
-set(xxx
   Mips
   Exegesis
   )

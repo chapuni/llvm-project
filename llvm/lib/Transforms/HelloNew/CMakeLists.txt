@@ -5,9 +5,6 @@ add_llvm_component_library(LLVMHelloNew
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Core
   Support
   )

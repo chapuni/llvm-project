@@ -5,14 +5,11 @@ add_llvm_component_library(LLVMAVRInfo
   AVRTargetInfo.cpp
 
   LINK_COMPONENTS
+  Support
 
   ADD_TO_COMPONENT
   AVR
 )
-
-set(xxx
-  Support
-  )
 
 add_dependencies(LLVMAVRInfo AVRCommonTableGen)
 

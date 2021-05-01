@@ -10,9 +10,6 @@ add_library(LLVMExegesisAArch64
 
 llvm_update_compile_flags(LLVMExegesisAArch64)
 llvm_map_components_to_libnames(libs
-  )
-
-set(xxx
   AArch64
   Exegesis
   )

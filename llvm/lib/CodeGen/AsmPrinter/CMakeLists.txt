@@ -31,9 +31,6 @@ add_llvm_component_library(LLVMAsmPrinter
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Analysis
   BinaryFormat
   CodeGen

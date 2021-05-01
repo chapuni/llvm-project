@@ -4,17 +4,14 @@ add_llvm_component_library(LLVMHexagonAsmParser
   HexagonAsmParser.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  Hexagon
-  )
-
-set(xxx
   MC
   MCParser
   Support
   HexagonDesc
   HexagonInfo
+
+  ADD_TO_COMPONENT
+  Hexagon
   )
 
 add_dependencies( LLVMHexagonAsmParser HexagonCommonTableGen )

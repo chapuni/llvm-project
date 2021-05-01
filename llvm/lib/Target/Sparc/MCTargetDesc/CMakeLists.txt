@@ -9,13 +9,10 @@ add_llvm_component_library(LLVMSparcDesc
   SparcTargetStreamer.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  Sparc
-  )
-
-set(xxx
   MC
   SparcInfo
   Support
+
+  ADD_TO_COMPONENT
+  Sparc
   )

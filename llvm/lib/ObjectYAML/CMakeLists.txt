@@ -26,9 +26,6 @@ add_llvm_component_library(LLVMObjectYAML
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/ObjectYAML
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   BinaryFormat
   Object
   Support

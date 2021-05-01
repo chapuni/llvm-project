@@ -6,9 +6,6 @@ add_llvm_component_library(LLVMOrcTargetProcess
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/ExecutionEngine/Orc
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   OrcShared
   Support
   )

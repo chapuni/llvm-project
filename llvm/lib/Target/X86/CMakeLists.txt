@@ -83,12 +83,6 @@ set(sources
 
 add_llvm_target(X86CodeGen ${sources}
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  X86
-)
-
-set(xxx
   Analysis
   AsmPrinter
   CodeGen
@@ -102,7 +96,10 @@ set(xxx
   GlobalISel
   ProfileData
   CFGuard
-  )
+
+  ADD_TO_COMPONENT
+  X86
+)
 
 add_subdirectory(AsmParser)
 add_subdirectory(Disassembler)

@@ -1,10 +1,6 @@
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   Object
   ObjectYAML
-  LLVMTestingSupport
   )
 
 add_llvm_unittest(ObjectYAMLTests
@@ -14,3 +10,5 @@ add_llvm_unittest(ObjectYAMLTests
   YAML2ObjTest.cpp
   YAMLTest.cpp
   )
+
+target_link_libraries(ObjectYAMLTests PRIVATE LLVMTestingSupport)

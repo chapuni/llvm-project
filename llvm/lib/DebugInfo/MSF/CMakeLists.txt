@@ -7,8 +7,5 @@ add_llvm_component_library(LLVMDebugInfoMSF
   "${LLVM_MAIN_INCLUDE_DIR}/llvm/DebugInfo/MSF"
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Support
   )

@@ -1,9 +1,5 @@
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   DebugInfoMSF
-  LLVMTestingSupport
   )
 
 add_llvm_unittest(DebugInfoMSFTests
@@ -11,3 +7,5 @@ add_llvm_unittest(DebugInfoMSFTests
   MSFBuilderTest.cpp
   MSFCommonTest.cpp
   )
+
+target_link_libraries(DebugInfoMSFTests PRIVATE LLVMTestingSupport)

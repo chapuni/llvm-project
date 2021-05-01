@@ -28,12 +28,6 @@ add_llvm_target(MSP430CodeGen
   MSP430MCInstLower.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  MSP430
-  )
-
-set(xxx
   AsmPrinter
   CodeGen
   Core
@@ -43,6 +37,9 @@ set(xxx
   SelectionDAG
   Support
   Target
+
+  ADD_TO_COMPONENT
+  MSP430
   )
 
 add_subdirectory(MCTargetDesc)

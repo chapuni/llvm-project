@@ -14,9 +14,6 @@ add_llvm_component_library(LLVMCoroutines
   LLVMAnalysis
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Analysis
   Core
   IPO

@@ -1,7 +1,4 @@
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   ${LLVM_TARGETS_TO_BUILD}
   JITLink
   Object
@@ -9,9 +6,10 @@ set(xxx
   OrcTargetProcess
   RuntimeDyld
   Support
-  LLVMTestingSupport
   )
 
 add_llvm_unittest(JITLinkTests
     LinkGraphTests.cpp
   )
+
+target_link_libraries(JITLinkTests PRIVATE LLVMTestingSupport)

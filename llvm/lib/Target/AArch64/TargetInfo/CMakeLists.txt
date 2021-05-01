@@ -4,11 +4,10 @@ add_llvm_component_library(LLVMAArch64Info
   AArch64TargetInfo.cpp
 
   LINK_COMPONENTS
+  Support
 
   ADD_TO_COMPONENT
   AArch64
   )
-
-#  Support
 
 add_dependencies(LLVMAArch64Info AArch64CommonTableGen)

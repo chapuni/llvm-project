@@ -31,9 +31,6 @@ add_llvm_component_library(LLVMGlobalISel
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Analysis
   Core
   CodeGen

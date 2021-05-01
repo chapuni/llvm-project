@@ -54,9 +54,6 @@ add_llvm_component_library(LLVMipo
   IPO
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   AggressiveInstCombine
   Analysis
   BitReader

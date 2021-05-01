@@ -8,8 +8,5 @@ add_llvm_component_library(LLVMOption
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Option
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Support
   )

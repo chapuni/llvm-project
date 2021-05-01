@@ -12,13 +12,10 @@ add_llvm_component_library(LLVMRISCVDesc
   RISCVELFStreamer.cpp
 
   LINK_COMPONENTS
+  MC
+  RISCVInfo
+  Support
 
   ADD_TO_COMPONENT
   RISCV
 )
-
-set(xxx
-  MC
-  RISCVInfo
-  Support
-  )

@@ -17,9 +17,6 @@ add_llvm_component_library(LLVMFrontendOpenMP
   omp_cpp
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Core
   Support
   TransformUtils

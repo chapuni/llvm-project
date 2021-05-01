@@ -1,7 +1,4 @@
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   Analysis
   AsmParser
   Core
@@ -9,7 +6,6 @@ set(xxx
   Passes
   TransformUtils
   ScalarOpts
-  LLVMTestingSupport
   )
 
 add_llvm_unittest(IRTests
@@ -49,3 +45,5 @@ add_llvm_unittest(IRTests
   VerifierTest.cpp
   VPIntrinsicTest.cpp
   )
+
+target_link_libraries(IRTests PRIVATE LLVMTestingSupport)

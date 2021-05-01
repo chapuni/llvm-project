@@ -6,9 +6,6 @@ add_llvm_component_library(LLVMDlltoolDriver
   DlltoolDriver.cpp
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Object
   Option
   Support

@@ -19,9 +19,6 @@ add_llvm_component_library(LLVMDebugInfoGSYM
   LLVMMC
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   MC
   Object
   Support

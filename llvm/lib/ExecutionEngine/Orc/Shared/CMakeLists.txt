@@ -9,8 +9,5 @@ add_llvm_component_library(LLVMOrcShared
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Support
   )

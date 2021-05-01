@@ -11,11 +11,8 @@ add_library(LLVMExegesisX86
 
 llvm_update_compile_flags(LLVMExegesisX86)
 llvm_map_components_to_libnames(libs
-  Exegesis
-  )
-
-set(xxx
   X86
+  Exegesis
   )
 
 target_link_libraries(LLVMExegesisX86 ${libs})

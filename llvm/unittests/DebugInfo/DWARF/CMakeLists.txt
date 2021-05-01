@@ -1,7 +1,4 @@
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   ${LLVM_TARGETS_TO_BUILD}
   AsmPrinter
   BinaryFormat
@@ -10,7 +7,6 @@ set(xxx
   Object
   ObjectYAML
   Support
-  LLVMTestingSupport
   )
 
 add_llvm_unittest(DebugInfoDWARFTests
@@ -28,3 +24,5 @@ add_llvm_unittest(DebugInfoDWARFTests
   DWARFListTableTest.cpp
   DWARFLocationExpressionTest.cpp
   )
+
+target_link_libraries(DebugInfoDWARFTests PRIVATE LLVMTestingSupport)

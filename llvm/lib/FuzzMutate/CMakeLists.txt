@@ -12,9 +12,6 @@ add_llvm_component_library(LLVMFuzzMutate
   intrinsics_gen
 
   LINK_COMPONENTS
-  )
-
-set(xxx
   Analysis
   BitReader
   BitWriter

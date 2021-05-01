@@ -1,11 +1,7 @@
 set(LLVM_LINK_COMPONENTS
-  )
-
-set(xxx
   DebugInfoCodeView
   DebugInfoMSF
   DebugInfoPDB
-  LLVMTestingSupport
   )
 
 add_llvm_unittest_with_input_files(DebugInfoPDBTests
@@ -15,3 +11,5 @@ add_llvm_unittest_with_input_files(DebugInfoPDBTests
   StringTableBuilderTest.cpp
   PDBApiTest.cpp
   )
+
+target_link_libraries(DebugInfoPDBTests PRIVATE LLVMTestingSupport)

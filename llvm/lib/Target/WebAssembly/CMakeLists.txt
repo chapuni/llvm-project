@@ -62,12 +62,6 @@ add_llvm_target(WebAssemblyCodeGen
   intrinsics_gen
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  WebAssembly
-)
-
-set(xxx
   Analysis
   AsmPrinter
   BinaryFormat
@@ -81,7 +75,10 @@ set(xxx
   TransformUtils
   WebAssemblyDesc
   WebAssemblyInfo
-  )
+
+  ADD_TO_COMPONENT
+  WebAssembly
+)
 
 add_subdirectory(AsmParser)
 add_subdirectory(Disassembler)

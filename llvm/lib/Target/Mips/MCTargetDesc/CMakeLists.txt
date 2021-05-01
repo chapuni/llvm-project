@@ -14,13 +14,10 @@ add_llvm_component_library(LLVMMipsDesc
   MipsTargetStreamer.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  Mips
-  )
-
-set(xxx
   MC
   MipsInfo
   Support
+
+  ADD_TO_COMPONENT
+  Mips
   )

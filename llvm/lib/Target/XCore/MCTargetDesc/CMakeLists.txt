@@ -4,13 +4,10 @@ add_llvm_component_library(LLVMXCoreDesc
   XCoreMCAsmInfo.cpp
 
   LINK_COMPONENTS
-
-  ADD_TO_COMPONENT
-  XCore
-  )
-
-set(xxx
   MC
   Support
   XCoreInfo
+
+  ADD_TO_COMPONENT
+  XCore
   )
