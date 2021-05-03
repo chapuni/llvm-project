@@ -529,6 +529,17 @@ if ( LLVM_COMPILER_IS_GCC_COMPATIBLE AND LLVM_ENABLE_MODULES )
        (uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")))
     set(module_flags "${module_flags} -gmodules")
   endif()
+
+  set(module_flags "${module_flags} -fmodule-file-deps")
+  #set(module_flags "${module_flags} -Xclang -fmodules-strict-context-hash -w -fno-caret-diagnostics") # for clang-scan-deps
+  set(module_flags "${module_flags} -fmodules-ignore-macro=CMAKE_CFG_INTDIR")
+  set(module_flags "${module_flags} -fmodules-ignore-macro=GTEST_HAS_RTTI")
+  set(module_flags "${module_flags} -fmodules-ignore-macro=GTEST_HAS_TR1_TUPLE")
+  set(module_flags "${module_flags} -fmodules-ignore-macro=LLVM_ENABLE_PLUGINS")
+  set(module_flags "${module_flags} -fmodules-ignore-macro=LLVM_EXEGESIS_INITIALIZE_NATIVE_TARGET")
+  set(module_flags "${module_flags} -fmodules-ignore-macro=PipSqueak_EXPORTS")
+  set(module_flags "${module_flags} -fmodules-ignore-macro=SecondLib_EXPORTS")
+
   set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${module_flags}")
 
   # Check that we can build code with modules enabled, and that repeatedly
