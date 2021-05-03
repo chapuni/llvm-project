@@ -130,7 +130,7 @@ public:
     //
     // TODO: Implement diagnostic bucketing and header search pruning to reduce
     // the impact of strict context hashing.
-    Compiler.getHeaderSearchOpts().ModulesStrictContextHash = true;
+    // Compiler.getHeaderSearchOpts().ModulesStrictContextHash = true;
 
     auto Action = std::make_unique<PreprocessOnlyAction>();
     const bool Result = Compiler.ExecuteAction(*Action);
