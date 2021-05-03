@@ -1,4 +1,4 @@
-add_subdirectory(GlobalISel)
+#add_subdirectory(GlobalISel)
 
 set(LLVM_LINK_COMPONENTS Support)
 
