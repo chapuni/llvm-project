@@ -37,6 +37,9 @@ enum class ScanningOutputFormat {
   /// intermodule dependency information.
   Make,
 
+  /// Ninja-build dyndep
+  Ninja,
+
   /// This outputs the full module dependency graph suitable for use for
   /// explicitly building modules.
   Full,

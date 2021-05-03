@@ -115,6 +115,7 @@ public:
 
     switch (Format) {
     case ScanningOutputFormat::Make:
+    case ScanningOutputFormat::Ninja:
       Compiler.addDependencyCollector(
           std::make_shared<DependencyConsumerForwarder>(std::move(Opts),
                                                         Consumer));
