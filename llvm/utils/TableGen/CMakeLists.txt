@@ -1,5 +1,3 @@
-add_subdirectory(GlobalISel)
-
 add_tablegen(llvm-tblgen LLVM
   AsmMatcherEmitter.cpp
   AsmWriterEmitter.cpp

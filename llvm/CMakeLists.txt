@@ -924,6 +924,7 @@ set(LLVM_ENABLE_TABLEGEN_MODULARIZED ON)
 add_subdirectory(lib/Demangle)
 add_subdirectory(lib/Support)
 add_subdirectory(lib/TableGen)
+add_subdirectory(utils/TableGen/GlobalISel)
 
 add_subdirectory(utils/TableGen)
 
