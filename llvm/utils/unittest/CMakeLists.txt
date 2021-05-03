@@ -31,7 +31,7 @@ if(CXX_SUPPORTS_COVERED_SWITCH_DEFAULT_FLAG)
   add_definitions("-Wno-covered-switch-default")
 endif()
 
-set(LLVM_REQUIRES_RTTI 1)
+set(LLVM_REQUIRES_RTTI 0)
 add_definitions( -DGTEST_HAS_RTTI=0 )
 
 find_library(LLVM_PTHREAD_LIBRARY_PATH pthread)
