@@ -124,6 +124,8 @@ static llvm::cl::opt<ScanningOutputFormat> Format(
     "format", llvm::cl::desc("The output format for the dependencies"),
     llvm::cl::values(clEnumValN(ScanningOutputFormat::Make, "make",
                                 "Makefile compatible dep file"),
+                     clEnumValN(ScanningOutputFormat::Ninja, "ninja",
+                                "Ninja-build dyndep"),
                      clEnumValN(ScanningOutputFormat::Full, "experimental-full",
                                 "Full dependency graph suitable"
                                 " for explicitly building modules. This format "
@@ -505,6 +507,11 @@ int main(int argc, const char **argv) {
     llvm::outs() << "Running clang-scan-deps on " << Inputs.size()
                  << " files using " << Pool.getThreadCount() << " workers\n";
   }
+
+  if (Format == ScanningOutputFormat::Ninja) {
+    llvm::outs() << "ninja_dyndep_version=1\n";
+  }
+
   for (unsigned I = 0; I < Pool.getThreadCount(); ++I) {
     Pool.async([I, &Lock, &Index, &Inputs, &HadErrors, &FD, &WorkerTools,
                 &DependencyOS, &Errs]() {
@@ -526,7 +533,7 @@ int main(int argc, const char **argv) {
           CWD = std::move(Cmd.Directory);
         }
         // Run the tool on it.
-        if (Format == ScanningOutputFormat::Make) {
+        if (Format == ScanningOutputFormat::Make || Format == ScanningOutputFormat::Ninja) {
           auto MaybeFile = WorkerTools[I]->getDependencyFile(*Input, CWD);
           if (handleMakeDependencyToolResult(Filename, MaybeFile, DependencyOS,
                                              Errs))
