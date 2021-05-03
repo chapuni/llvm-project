@@ -922,6 +922,19 @@ if( MINGW AND NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
   llvm_replace_compiler_option(CMAKE_CXX_FLAGS_RELEASE "-O3" "-O2")
 endif()
 
+##############################################################################
+if (LLVM_ENABLE_MODULES)
+  set(stub_h ${CMAKE_BINARY_DIR}/include/stub_all.h)
+
+  add_custom_command(OUTPUT ${stub_h}
+    COMMAND touch ${stub_h})
+
+  add_custom_target(stub_all DEPENDS ${stub_h})
+
+  list(APPEND LLVM_COMMON_DEPENDS stub_all)
+endif()
+##############################################################################
+
 # Put this before tblgen. Else we have a circular dependence.
 add_subdirectory(lib/Demangle)
 add_subdirectory(lib/Support)
@@ -1132,3 +1145,9 @@ endif()
 if (LLVM_INCLUDE_UTILS AND LLVM_INCLUDE_TOOLS)
   add_subdirectory(utils/llvm-locstats)
 endif()
+
+##############################################################################
+if (LLVM_ENABLE_MODULES)
+  add_subdirectory(xxx)
+endif()
+##############################################################################
