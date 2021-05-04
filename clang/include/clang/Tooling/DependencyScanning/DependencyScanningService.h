@@ -51,7 +51,8 @@ class DependencyScanningService {
 public:
   DependencyScanningService(ScanningMode Mode, ScanningOutputFormat Format,
                             bool ReuseFileManager = true,
-                            bool SkipExcludedPPRanges = true);
+                            bool SkipExcludedPPRanges = true,
+                            std::vector<std::string> &&stubs = std::vector<std::string>());
 
   ScanningMode getMode() const { return Mode; }
 
@@ -65,6 +66,8 @@ public:
     return SharedCache;
   }
 
+  const std::vector<std::string> &getStubFiles() const { return StubFiles; }
+
 private:
   const ScanningMode Mode;
   const ScanningOutputFormat Format;
@@ -75,6 +78,8 @@ private:
   const bool SkipExcludedPPRanges;
   /// The global file system cache.
   DependencyScanningFilesystemSharedCache SharedCache;
+  /// Virtual stub files
+  const std::vector<std::string> StubFiles;
 };
 
 } // end namespace dependencies
