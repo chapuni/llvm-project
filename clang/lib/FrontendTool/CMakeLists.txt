@@ -26,9 +26,6 @@ endif()
 add_clang_library(clangFrontendTool
   ExecuteCompilerInvocation.cpp
 
-  DEPENDS
-  ClangDriverOptions
-
   LINK_LIBS
   ${link_libs}
   )

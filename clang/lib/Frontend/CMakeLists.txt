@@ -42,7 +42,6 @@ add_clang_library(clangFrontend
   InterfaceStubFunctionsConsumer.cpp
 
   DEPENDS
-  ClangDriverOptions
   intrinsics_gen
 
   LINK_LIBS

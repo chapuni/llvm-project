@@ -77,9 +77,6 @@ add_clang_library(clangDriver
   Types.cpp
   XRayArgs.cpp
 
-  DEPENDS
-  ClangDriverOptions
-
   LINK_LIBS
   clangBasic
   ${system_libs}
