@@ -926,14 +926,15 @@ set(LLVM_ENABLE_TABLEGEN_MODULARIZED OFF)
 
 ##############################################################################
 if (LLVM_ENABLE_MODULES)
-  set(stub_h ${CMAKE_BINARY_DIR}/include/stub_all.h)
+  set(anchor_h ${CMAKE_BINARY_DIR}/include/stub_anchor.h)
 
-  add_custom_command(OUTPUT ${stub_h}
-    COMMAND touch ${stub_h})
+  add_custom_command(OUTPUT ${anchor_h}
+    COMMAND touch ${anchor_h})
 
-  add_custom_target(stub_all DEPENDS ${stub_h})
+  add_custom_target(anchor_all DEPENDS ${anchor_h})
+  set_target_properties(anchor_all PROPERTIES EXCLUDE_FROM_ALL ON)
 
-  list(APPEND LLVM_COMMON_DEPENDS stub_all)
+  list(APPEND LLVM_COMMON_DEPENDS anchor_all)
 endif()
 ##############################################################################
 
