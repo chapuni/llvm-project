@@ -10,9 +10,6 @@ add_clang_library(clangDependencyScanning
   DependencyScanningTool.cpp
   ModuleDepCollector.cpp
 
-  DEPENDS
-  ClangDriverOptions
-
   LINK_LIBS
   clangAST
   clangBasic
