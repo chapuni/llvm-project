@@ -83,15 +83,25 @@ mods = {
     ],
 }
 
+print("""
+# Generated file
+
+set(moddir ${CMAKE_BINARY_DIR}/module.cache/M3KM4RGVENIL)""")
+
 for (h,ms) in mods.items():
+    def fn(x):
+        return "%s.cpp" % x
+
+    print("\n# modulemap %s (%d modules)" % (h, len(ms)))
+
+    mn = "mod_%s" % h
+    print("llvm_add_library(%s STATIC EXCLUDE_FROM_ALL\n  %s\n  )" % (mn, "\n  ".join(map(fn, ms))))
+    print("set_target_properties(%s PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})" % (mn))
     for m in ms:
-        cfn = "stub_%s.cpp" % m
-        mn = "mod_%s" % m
+        cfn = fn(m)
         with open("xxx/%s" % cfn, "w") as f:
             f.write("#pragma clang module import %s\n" % m)
-        print("llvm_add_library(%s %s)" % (mn, cfn))
-        print("set_target_properties(%s PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})" % (mn))
-        print("set_source_files_properties(%s PROPERTIES OBJECT_OUTPUTS ${CMAKE_BINARY_DIR}/module.cache/%s/%s-%s.pcm)" % (cfn, "A27QS4X7KY8D", m, h))
-        print("add_dependencies(%s anchor_all)" % mn)
+        print("set_source_files_properties(%s PROPERTIES OBJECT_OUTPUTS ${moddir}/%s-%s.pcm)" % (cfn, m, h))
+    print("add_dependencies(%s anchor_all)" % mn)
 
 #EOF
