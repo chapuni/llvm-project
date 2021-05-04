@@ -149,6 +149,11 @@ llvm::cl::opt<std::string>
                   llvm::cl::desc("Compilation database"), llvm::cl::Required,
                   llvm::cl::cat(DependencyScannerCategory));
 
+llvm::cl::opt<std::string>
+    CDBX("cdbx",
+         llvm::cl::desc("Extended Compilation database"),
+         llvm::cl::cat(DependencyScannerCategory));
+
 llvm::cl::opt<bool> ReuseFileManager(
     "reuse-filemanager",
     llvm::cl::desc("Reuse the file manager and its cache between invocations."),
@@ -408,6 +413,50 @@ int main(int argc, const char **argv) {
     return 1;
   }
 
+  std::vector<std::string> vvv;
+
+  if (CDBX.size() > 0) {
+    llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> DatabaseBuffer =
+      llvm::MemoryBuffer::getFile(CDBX,
+                                  /*FileSize=*/-1,
+                                  /*RequiresNullTerminator=*/true,
+                                  /*IsVolatile=*/true);
+    if (std::error_code Result = DatabaseBuffer.getError()) {
+      ErrorMessage = "Error while opening JSON database: " + Result.message();
+    } else {
+      auto cdbx = llvm::json::parse((*DatabaseBuffer)->getBuffer());
+      if (cdbx) {
+      auto cdbo = cdbx->getAsObject();
+
+      llvm::SmallString<80> wd;
+      if (auto r = cdbo->getString("build_root")) {
+        wd = llvm::StringRef(CDBX);
+        llvm::sys::path::remove_filename(wd);
+        llvm::sys::fs::make_absolute(wd);
+        llvm::sys::path::append(wd, std::string(*r));
+        llvm::sys::path::remove_dots(wd, true);
+      }
+
+      if (auto vfiles = cdbo->getArray("vfiles")) {
+        for (const auto& f : *vfiles) {
+          if (auto fs = f.getAsString()) {
+            llvm::SmallString<80> tf = wd;
+            llvm::sys::path::append(tf, *fs);
+            vvv.emplace_back(tf);
+          } else {
+            fprintf(stderr, "fs err\n");
+          }
+        }
+      } else {
+        fprintf(stderr, "cdbo err\n");
+      }
+      } else {
+        fprintf(stderr, "cdbx err\n");
+      }
+    }
+
+  }
+
   llvm::cl::PrintOptionValues();
 
   // The command options are rewritten to run Clang in preprocessor only mode.
@@ -469,6 +518,8 @@ int main(int argc, const char **argv) {
         AdjustedArgs.push_back("-sys-header-deps");
         AdjustedArgs.push_back("-Wno-error");
 
+        AdjustedArgs.push_back("-fmodules-cache-path=/home/chapuni/llvm/3m/module.cache/m");
+
         if (!HasResourceDir) {
           StringRef ResourceDir =
               ResourceDirCache.findResourceDir(Args);
@@ -487,7 +538,7 @@ int main(int argc, const char **argv) {
   SharedStream DependencyOS(llvm::outs());
 
   DependencyScanningService Service(ScanMode, Format, ReuseFileManager,
-                                    SkipExcludedPPRanges);
+                                    SkipExcludedPPRanges, std::move(vvv));
   llvm::ThreadPool Pool(llvm::hardware_concurrency(NumThreads));
   std::vector<std::unique_ptr<DependencyScanningTool>> WorkerTools;
   for (unsigned I = 0; I < Pool.getThreadCount(); ++I)
@@ -535,6 +586,66 @@ int main(int argc, const char **argv) {
         // Run the tool on it.
         if (Format == ScanningOutputFormat::Make || Format == ScanningOutputFormat::Ninja) {
           auto MaybeFile = WorkerTools[I]->getDependencyFile(*Input, CWD);
+#if 1
+          if (Format == ScanningOutputFormat::Ninja && MaybeFile) {
+            auto& d = MaybeFile.get();
+            if (d.find("xxx/CMakeFiles/mod_") == 0) {
+              std::string mod = d.substr(19, d.find(".dir/") - 19);
+
+              int i = 20;
+              while (true) {
+                auto x = d.find(mod, i);
+                if (x == d.npos) break;
+                auto s = d.rfind(' ', x);
+                s = (s == d.npos ? 0 : s + 1);
+                auto e = d.find(' ', x);
+                if (memcmp(&d.c_str()[e - 4], ".pcm", 4) == 0) {
+#if 1
+                  d.erase(s, e - s);
+#else
+                  d[s + 1] = '<';
+                  d[x] = '*';
+                  d[e - 1] = '>';
+#endif
+                }
+                i = e;
+              }
+            }
+            while (true) {
+              const char *px = "/home/chapuni/llvm/3m/";
+              auto m = d.find(px);
+              if (m == d.npos) break;
+              d.erase(m, strlen(px));
+            }
+            std::vector<const char*> ap =
+              {
+               "/usr/",
+               "/home/chapuni/llvm/install/",
+               "/home/chapuni/llvm/llvm-project/",
+              };
+            for (auto px : ap) {
+              while (true) {
+                auto m = d.find(px);
+                if (m == d.npos) break;
+                d.erase(m, d.find(' ', m) - m);
+              }
+            }
+            int i = 0;
+            while (true) {
+              const char* msep = "/m/";
+              auto x = d.find(msep, i);
+              if (x == d.npos) break;
+              d.erase(x, strlen(msep) - 1);
+              i = x;
+            }
+            for (auto& c : d) {
+              if (c == '\n' || c == '\\') c = ' ';
+            }
+            d.back() = '\n';
+            d.insert(d.find_first_of(':') + 1, "dyndep|");
+            d.insert(0, "build ");
+          }
+#endif
           if (handleMakeDependencyToolResult(Filename, MaybeFile, DependencyOS,
                                              Errs))
             HadErrors = true;
