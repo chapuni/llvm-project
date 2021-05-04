@@ -115,6 +115,19 @@ function(tablegen project ofn)
     GENERATED 1)
 endfunction()
 
+# Push ${target} if ${TABLEGEN_OUTPUT}s in INCLUDE_DIRECTORIES
+function(llvm_push_generator_target)
+  foreach(inc ${tblgen_includes})
+    foreach(fn ${TABLEGEN_OUTPUT})
+      file(RELATIVE_PATH rfn ${inc} ${fn})
+      if(NOT "${rfn}" MATCHES "^[.][.]")
+        set_property(GLOBAL APPEND PROPERTY LLVM_GENERATOR_TARGETS ${target})
+        return()
+      endif()
+    endforeach()
+  endforeach()
+endfunction()
+
 # Creates a target for publicly exporting tablegen dependencies.
 function(add_public_tablegen_target target)
   if(NOT TABLEGEN_OUTPUT)
@@ -127,6 +140,14 @@ function(add_public_tablegen_target target)
   endif()
   set_target_properties(${target} PROPERTIES FOLDER "Tablegenning")
   set(LLVM_COMMON_DEPENDS ${LLVM_COMMON_DEPENDS} ${target} PARENT_SCOPE)
+
+  # Prepend
+  get_directory_property(tblgen_includes INCLUDE_DIRECTORIES)
+  set_property(GLOBAL APPEND PROPERTY LLVM_GENERATOR_INCLUDES ${tblgen_includes})
+
+  # Push target for modules if the output is in includes
+  llvm_push_generator_target()
+
 endfunction()
 
 macro(add_tablegen target project)
