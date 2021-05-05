@@ -158,16 +158,16 @@ DependencyScanningWorker::DependencyScanningWorker(
   RealFS = llvm::vfs::createPhysicalFileSystem();
 
   if (Service.getStubFiles().size() > 0) {
-    IntrusiveRefCntPtr<llvm::vfs::InMemoryFileSystem>
-      StubFS(new llvm::vfs::InMemoryFileSystem());
-    IntrusiveRefCntPtr<llvm::vfs::OverlayFileSystem>
-      Overlay(new llvm::vfs::OverlayFileSystem(RealFS));
-    Overlay->pushOverlay(StubFS);
-    RealFS = Overlay;
+    auto overlay = new llvm::vfs::OverlayFileSystem(RealFS);
+    StubFS = new llvm::vfs::InMemoryFileSystem();
+    overlay->pushOverlay(StubFS);
 
     for (const std::string &files : Service.getStubFiles()) {
       StubFS->addFile(files, 0, llvm::MemoryBuffer::getMemBuffer(""));
     }
+
+    OverriddenRealFS = RealFS;
+    RealFS = overlay;
   }
 
   if (Service.canSkipExcludedPPRanges())

@@ -69,6 +69,10 @@ private:
   std::unique_ptr<ExcludedPreprocessorDirectiveSkipMapping> PPSkipMappings;
 
   llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> RealFS;
+  /// Backup of RealFS
+  llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> OverriddenRealFS;
+  /// An alternative of Tooling::mapVirtualFile()
+  llvm::IntrusiveRefCntPtr<llvm::vfs::InMemoryFileSystem> StubFS;
   /// The file system that is used by each worker when scanning for
   /// dependencies. This filesystem persists accross multiple compiler
   /// invocations.
