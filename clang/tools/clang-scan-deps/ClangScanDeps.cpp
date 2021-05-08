@@ -6,6 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "EnumModules.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/DependencyScanning/DependencyScanningService.h"
@@ -153,6 +154,10 @@ llvm::cl::opt<std::string>
     CDBX("cdbx",
          llvm::cl::desc("Extended Compilation database"),
          llvm::cl::cat(DependencyScannerCategory));
+
+llvm::cl::opt<bool> EnumModulesMode(
+    "enum-modules",
+    llvm::cl::desc("Enumerate available modules"));
 
 llvm::cl::opt<bool> ReuseFileManager(
     "reuse-filemanager",
@@ -539,6 +544,11 @@ int main(int argc, const char **argv) {
 
   DependencyScanningService Service(ScanMode, Format, ReuseFileManager,
                                     SkipExcludedPPRanges, std::move(vvv));
+
+  if (EnumModulesMode) {
+    return EnumModules(*AdjustingCompilations);
+  }
+
   llvm::ThreadPool Pool(llvm::hardware_concurrency(NumThreads));
   std::vector<std::unique_ptr<DependencyScanningTool>> WorkerTools;
   for (unsigned I = 0; I < Pool.getThreadCount(); ++I)

@@ -4,6 +4,7 @@ set(LLVM_LINK_COMPONENTS
 
 add_clang_tool(clang-scan-deps
   ClangScanDeps.cpp
+  EnumModules.cpp
   )
 
 set(CLANG_SCAN_DEPS_LIB_DEPS
