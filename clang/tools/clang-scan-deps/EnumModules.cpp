@@ -12,6 +12,8 @@
 #include "clang/Lex/HeaderSearch.h"
 #include "clang/Tooling/CompilationDatabase.h"
 #include "clang/Tooling/Tooling.h"
+#include "llvm/Support/JSON.h"
+#include "llvm/Support/Path.h"
 
 using namespace clang;
 
@@ -51,12 +53,13 @@ public:
     auto Action = std::make_unique<InitOnlyAction>();
     //auto Action = std::make_unique<DumpCompilerOptionsAction>();
     const bool Result = Compiler.ExecuteAction(*Action);
+    if (!Result) return false;
 #else
     auto Action = std::make_unique<PreprocessOnlyAction>();
     const bool Result = Compiler.ExecuteAction(*Action);
 #endif
     //FileMgr->clearStatCache();
-#if 1
+#if 0
     fprintf(stderr, "%d:PP=%d\n", __LINE__, Compiler.hasPreprocessor());
     auto& PP = Compiler.getPreprocessor();
     auto& HS = PP.getHeaderSearchInfo();
@@ -82,7 +85,54 @@ public:
       }
     }
 #endif
-    return Result;
+
+#if 1
+#if 0
+    std::map<std::string,
+	     std::map<llvm::StringRef,
+		      std::set<Module *>>> modsInMaps;
+
+    llvm::json::Object ooo;
+#endif
+    llvm::json::Object outMods;
+    llvm::json::Object outHashes;
+
+    auto& PP = Compiler.getPreprocessor();
+    auto& HS = PP.getHeaderSearchInfo();
+    llvm::SmallVector<Module*, 12> mods;
+    HS.collectAllModules(mods);
+    for (auto mod : mods) {
+      auto map = HS.getModuleMap().getModuleMapFileForUniquing(mod);
+      std::string modFileName = HS.getCachedModuleFileName(mod);
+      llvm::StringRef dir(llvm::sys::path::parent_path(StringRef(modFileName)));
+      llvm::StringRef hash(*llvm::sys::path::rbegin(dir));
+      dir = llvm::sys::path::parent_path(dir);
+      llvm::StringRef fn(llvm::sys::path::filename(StringRef(modFileName)));
+      if (!mod->isAvailable()) continue;
+#if 0
+      modsInMaps[std::string(dir)][map->getName()].insert(mod);
+#endif
+      llvm::json::Object recMod {
+        {"filename", std::string(fn)},
+        {"modulemap", map->getName()},
+      };
+      outMods[mod->getFullModuleName()] = std::move(recMod);
+      llvm::json::Object recHash
+        {
+         {"dir", std::string(dir)},
+        };
+      outHashes[std::string(hash)] = std::move(recHash);
+    }
+
+    llvm::json::Object root {
+      {"modules", std::move(outMods)},
+      {"hashes", std::move(outHashes)},
+    };
+
+    llvm::outs() << llvm::formatv("{0:2}\n", llvm::json::Value(std::move(root)));
+#endif
+
+    return true;
   }
 };
 
@@ -90,7 +140,8 @@ public:
 
 bool EnumModules(const clang::tooling::CompilationDatabase &CDB) {
   tooling::ClangTool Tool(CDB, CDB.getAllFiles().front());
+  Tool.mapVirtualFile("/tmp/foo.cc", "");
   Tool.clearArgumentsAdjusters();
   EnumModulesAction Action;
-  return !Tool.run(&Action);
+  return Tool.run(&Action);
 }

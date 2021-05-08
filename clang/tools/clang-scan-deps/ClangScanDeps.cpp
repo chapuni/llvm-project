@@ -431,38 +431,43 @@ int main(int argc, const char **argv) {
     } else {
       auto cdbx = llvm::json::parse((*DatabaseBuffer)->getBuffer());
       if (cdbx) {
-      auto cdbo = cdbx->getAsObject();
+        auto cdbo = cdbx->getAsObject();
 
-      llvm::SmallString<80> wd;
-      if (auto r = cdbo->getString("build_root")) {
-        wd = llvm::StringRef(CDBX);
-        llvm::sys::path::remove_filename(wd);
-        llvm::sys::fs::make_absolute(wd);
-        llvm::sys::path::append(wd, std::string(*r));
-        llvm::sys::path::remove_dots(wd, true);
-      }
-
-      if (auto vfiles = cdbo->getArray("vfiles")) {
-        for (const auto& f : *vfiles) {
-          if (auto fs = f.getAsString()) {
-            llvm::SmallString<80> tf = wd;
-            llvm::sys::path::append(tf, *fs);
-            vvv.emplace_back(tf);
-          } else {
-            fprintf(stderr, "fs err\n");
-          }
+        llvm::SmallString<80> wd;
+        if (auto r = cdbo->getString("build_root")) {
+          wd = llvm::StringRef(CDBX);
+          llvm::sys::path::remove_filename(wd);
+          llvm::sys::fs::make_absolute(wd);
+          llvm::sys::path::append(wd, std::string(*r));
+          llvm::sys::path::remove_dots(wd, true);
         }
-      } else {
-        fprintf(stderr, "cdbo err\n");
-      }
+
+        if (auto vfiles = cdbo->getArray("vfiles")) {
+          for (const auto& f : *vfiles) {
+            if (auto fs = f.getAsString()) {
+              llvm::SmallString<80> tf = wd;
+              llvm::sys::path::append(tf, *fs);
+              vvv.emplace_back(tf);
+            } else {
+              fprintf(stderr, "fs err\n");
+            }
+          }
+        } else {
+          fprintf(stderr, "cdbo err\n");
+        }
       } else {
         fprintf(stderr, "cdbx err\n");
       }
     }
-
   }
 
   llvm::cl::PrintOptionValues();
+
+  if (EnumModulesMode) {
+    auto r = EnumModules(*Compilations);
+    fprintf(stderr, "r=%d\n", r);
+    return !r;
+  }
 
   // The command options are rewritten to run Clang in preprocessor only mode.
   auto AdjustingCompilations =
@@ -523,7 +528,9 @@ int main(int argc, const char **argv) {
         AdjustedArgs.push_back("-sys-header-deps");
         AdjustedArgs.push_back("-Wno-error");
 
-        AdjustedArgs.push_back("-fmodules-cache-path=/home/chapuni/llvm/3m/module.cache/m");
+        if (!EnumModulesMode && ScanMode == ScanningMode::MinimizedSourcePreprocessing) {
+          AdjustedArgs.push_back("-fmodules-cache-path=/home/chapuni/llvm/3m/module.cache/m");
+        }
 
         if (!HasResourceDir) {
           StringRef ResourceDir =
@@ -544,10 +551,6 @@ int main(int argc, const char **argv) {
 
   DependencyScanningService Service(ScanMode, Format, ReuseFileManager,
                                     SkipExcludedPPRanges, std::move(vvv));
-
-  if (EnumModulesMode) {
-    return EnumModules(*AdjustingCompilations);
-  }
 
   llvm::ThreadPool Pool(llvm::hardware_concurrency(NumThreads));
   std::vector<std::unique_ptr<DependencyScanningTool>> WorkerTools;
@@ -599,8 +602,11 @@ int main(int argc, const char **argv) {
 #if 1
           if (Format == ScanningOutputFormat::Ninja && MaybeFile) {
             auto& d = MaybeFile.get();
-            if (d.find("xxx/CMakeFiles/mod_") == 0) {
-              std::string mod = d.substr(19, d.find(".dir/") - 19);
+            auto sss = d.find(".dir/");
+            auto eee = d.find(".cpp.o:");
+            if (sss != d.npos && eee != d.npos && sss < eee) {
+              sss += 5;
+              std::string mod = d.substr(sss, eee - sss);
 
               int i = 20;
               while (true) {
