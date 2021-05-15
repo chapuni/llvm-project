@@ -23,6 +23,7 @@ execute_process(
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/genmodules.py
   ${cmake_to_generate}
   ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/..
   ${module_dir}
   ${LLVM_SCAN_DEPS}
   ${LLVM_DEFINITIONS}
