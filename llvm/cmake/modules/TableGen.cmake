@@ -152,7 +152,7 @@ endfunction()
 
 macro(add_tablegen target project)
   set(${target}_OLD_LLVM_LINK_COMPONENTS ${LLVM_LINK_COMPONENTS})
-  set(LLVM_LINK_COMPONENTS ${LLVM_LINK_COMPONENTS} TableGen)
+  set(LLVM_LINK_COMPONENTS TableGen ${LLVM_LINK_COMPONENTS})
 
   # CMake doesn't let compilation units depend on their dependent libraries on some generators.
   if(NOT CMAKE_GENERATOR STREQUAL "Ninja" AND NOT XCODE)
