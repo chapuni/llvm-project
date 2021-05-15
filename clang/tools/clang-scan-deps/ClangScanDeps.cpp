@@ -602,6 +602,31 @@ int main(int argc, const char **argv) {
 #if 1
           if (Format == ScanningOutputFormat::Ninja && MaybeFile) {
             auto& d = MaybeFile.get();
+            auto sss = d.find(".dir/");
+            auto eee = d.find(".cpp.o:");
+            if (sss != d.npos && eee != d.npos && sss < eee) {
+              sss += 5;
+              std::string mod = d.substr(sss, eee - sss);
+
+              int i = 20;
+              while (true) {
+                auto x = d.find(mod, i);
+                if (x == d.npos) break;
+                auto s = d.rfind(' ', x);
+                s = (s == d.npos ? 0 : s + 1);
+                auto e = d.find(' ', x);
+                if (memcmp(&d.c_str()[e - 4], ".pcm", 4) == 0) {
+#if 1
+                  d.erase(s, e - s);
+#else
+                  d[s + 1] = '<';
+                  d[x] = '*';
+                  d[e - 1] = '>';
+#endif
+                }
+                i = e;
+              }
+            }
             while (true) {
               const char *px = "/home/chapuni/llvm/3m/";
               auto m = d.find(px);
