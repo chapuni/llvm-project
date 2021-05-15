@@ -76,14 +76,76 @@ if(LLVM_INTEGRATED_CRT_ALLOC)
   endif()
 endif()
 
-add_llvm_component_library(LLVMSupport OBJECT
-  AArch64TargetParser.cpp
-  ABIBreak.cpp
-  ARMTargetParser.cpp
-  AMDGPUMetadata.cpp
-  APFixedPoint.cpp
+set(LLVMTableGenLite_sources
   APFloat.cpp
   APInt.cpp
+  ARMTargetParser.cpp
+  CodeGenCoverage.cpp
+  CommandLine.cpp
+  ConvertUTF.cpp
+  ConvertUTFWrapper.cpp
+  CrashRecoveryContext.cpp
+  Debug.cpp
+  Error.cpp
+  ErrorHandling.cpp
+  FoldingSet.cpp
+  FormattedStream.cpp
+  FormatVariadic.cpp
+  Hashing.cpp
+  InitLLVM.cpp
+  IntEqClasses.cpp
+  JSON.cpp
+  MD5.cpp
+  ManagedStatic.cpp
+  MemAlloc.cpp
+  MemoryBuffer.cpp
+  NativeFormatting.cpp
+  Optional.cpp
+  PrettyStackTrace.cpp
+  Program.cpp
+  Regex.cpp
+  Signposts.cpp
+  SmallPtrSet.cpp
+  SmallVector.cpp
+  SourceMgr.cpp
+  StringExtras.cpp
+  StringMap.cpp
+  StringRef.cpp
+  StringSaver.cpp
+  Timer.cpp
+  ToolOutputFile.cpp
+  Triple.cpp
+  Twine.cpp
+  Unicode.cpp
+  VirtualFileSystem.cpp
+  WithColor.cpp
+  YAMLParser.cpp
+  raw_ostream.cpp
+  regcomp.c
+  regerror.c
+  regexec.c
+  regfree.c
+  regstrlcpy.c
+
+  # System
+  Atomic.cpp
+  Errno.cpp
+  Host.cpp
+  Path.cpp
+  Process.cpp
+  Signals.cpp
+  Threading.cpp
+  ThreadLocal.cpp
+  Watchdog.cpp
+  )
+
+add_llvm_component_library(LLVMSupport
+  OBJECT
+  ${LLVMTableGenLite_sources}
+  AArch64TargetParser.cpp
+  ABIBreak.cpp
+  AMDGPUMetadata.cpp
+  APFixedPoint.cpp
   APSInt.cpp
   ARMBuildAttrs.cpp
   ARMAttributeParser.cpp
@@ -100,74 +162,43 @@ add_llvm_component_library(LLVMSupport OBJECT
   circular_raw_ostream.cpp
   Chrono.cpp
   COM.cpp
-  CodeGenCoverage.cpp
-  CommandLine.cpp
   Compression.cpp
   CRC.cpp
-  ConvertUTF.cpp
-  ConvertUTFWrapper.cpp
-  CrashRecoveryContext.cpp
   DataExtractor.cpp
-  Debug.cpp
   DebugCounter.cpp
   DeltaAlgorithm.cpp
   DAGDeltaAlgorithm.cpp
   DJB.cpp
   ELFAttributeParser.cpp
   ELFAttributes.cpp
-  Error.cpp
-  ErrorHandling.cpp
   ExtensibleRTTI.cpp
   FileCollector.cpp
   FileUtilities.cpp
   FileOutputBuffer.cpp
-  FoldingSet.cpp
-  FormattedStream.cpp
-  FormatVariadic.cpp
   GlobPattern.cpp
   GraphWriter.cpp
-  Hashing.cpp
-  InitLLVM.cpp
   InstructionCost.cpp
-  IntEqClasses.cpp
   IntervalMap.cpp
   ItaniumManglingCanonicalizer.cpp
-  JSON.cpp
   KnownBits.cpp
   LEB128.cpp
   LineIterator.cpp
   Locale.cpp
   LockFileManager.cpp
   LowLevelType.cpp
-  ManagedStatic.cpp
   MathExtras.cpp
-  MemAlloc.cpp
-  MemoryBuffer.cpp
   MemoryBufferRef.cpp
-  MD5.cpp
-  NativeFormatting.cpp
   OptimizedStructLayout.cpp
-  Optional.cpp
   Parallel.cpp
   PluginLoader.cpp
-  PrettyStackTrace.cpp
   RandomNumberGenerator.cpp
-  Regex.cpp
   RISCVAttributes.cpp
   RISCVAttributeParser.cpp
   ScaledNumber.cpp
   ScopedPrinter.cpp
   SHA1.cpp
-  Signposts.cpp
-  SmallPtrSet.cpp
-  SmallVector.cpp
-  SourceMgr.cpp
   SpecialCaseList.cpp
   Statistic.cpp
-  StringExtras.cpp
-  StringMap.cpp
-  StringSaver.cpp
-  StringRef.cpp
   SuffixTree.cpp
   SymbolRemappingReader.cpp
   SystemUtils.cpp
@@ -175,47 +206,23 @@ add_llvm_component_library(LLVMSupport OBJECT
   TargetParser.cpp
   ThreadPool.cpp
   TimeProfiler.cpp
-  Timer.cpp
-  ToolOutputFile.cpp
   TrigramIndex.cpp
-  Triple.cpp
-  Twine.cpp
-  Unicode.cpp
   UnicodeCaseFold.cpp
   VersionTuple.cpp
-  VirtualFileSystem.cpp
-  WithColor.cpp
   X86TargetParser.cpp
-  YAMLParser.cpp
   YAMLTraits.cpp
   raw_os_ostream.cpp
-  raw_ostream.cpp
-  regcomp.c
-  regerror.c
-  regexec.c
-  regfree.c
-  regstrlcpy.c
   xxhash.cpp
   Z3Solver.cpp
 
   ${ALLOCATOR_FILES}
 
 # System
-  Atomic.cpp
   DynamicLibrary.cpp
-  Errno.cpp
-  Host.cpp
   Memory.cpp
-  Path.cpp
-  Process.cpp
-  Program.cpp
   RWMutex.cpp
-  Signals.cpp
   TargetRegistry.cpp
-  ThreadLocal.cpp
-  Threading.cpp
   Valgrind.cpp
-  Watchdog.cpp
 
   ADDITIONAL_HEADER_DIRS
   Unix
@@ -253,8 +260,13 @@ if(LLVM_ENABLE_TERMINFO)
   set(llvm_system_libs ${llvm_system_libs} "${terminfo_library}")
 endif()
 
-set_property(TARGET LLVMSupport PROPERTY LLVM_SYSTEM_LIBS "${llvm_system_libs}")
+list(TRANSFORM LLVMTableGenLite_sources REPLACE "^(.+)\.(c|cpp)$" "/\\1\\\\\.\\2" OUTPUT_VARIABLE srcs_escaped)
+list(JOIN srcs_escaped "|" srcs_regex)
 
+set_target_properties(LLVMSupport PROPERTIES
+  LLVMTableGenLite_sources_regex "(${srcs_regex})"
+  LLVM_SYSTEM_LIBS "${llvm_system_libs}"
+  )
 
 if(LLVM_INTEGRATED_CRT_ALLOC)
   if(LLVM_INTEGRATED_CRT_ALLOC MATCHES "snmalloc$")

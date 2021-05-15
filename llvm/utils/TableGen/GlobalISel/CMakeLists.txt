@@ -1,8 +1,3 @@
-set(LLVM_LINK_COMPONENTS
-  Support
-  TableGen
-  )
-
 llvm_add_library(LLVMTableGenGlobalISel STATIC DISABLE_LLVM_LINK_LLVM_DYLIB
                  CodeExpander.cpp
                  GIMatchDag.cpp
@@ -12,4 +7,5 @@ llvm_add_library(LLVMTableGenGlobalISel STATIC DISABLE_LLVM_LINK_LLVM_DYLIB
                  GIMatchDagPredicate.cpp
                  GIMatchDagPredicateDependencyEdge.cpp
                  GIMatchTree.cpp
+		 LINK_LIBS LLVMTableGenLite
                 )

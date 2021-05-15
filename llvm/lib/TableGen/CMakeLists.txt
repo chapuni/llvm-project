@@ -1,11 +1,5 @@
-if(NOT BUILD_SHARED_LIBS)
-  set(tablegen_objs
-    $<TARGET_OBJECTS:obj.LLVMSupport>
-    $<TARGET_OBJECTS:obj.LLVMDemangle>
-  )
-endif()
-
-add_llvm_component_library(LLVMTableGen SHARED
+add_llvm_component_library(LLVMTableGen
+  OBJECT
   DetailedRecordsBackend.cpp
   Error.cpp
   JSONBackend.cpp
@@ -18,11 +12,19 @@ add_llvm_component_library(LLVMTableGen SHARED
   TGLexer.cpp
   TGParser.cpp
 
-  ${tablegen_objs}
-
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/TableGen
+  )
 
-  LINK_COMPONENTS
-  Support
+target_link_libraries(LLVMTableGen PUBLIC LLVMSupport)
+
+add_llvm_library(LLVMTableGenLite SHARED PARTIAL_SOURCES_INTENDED
+  $<TARGET_OBJECTS:obj.LLVMTableGen>
+  $<FILTER:$<TARGET_OBJECTS:obj.LLVMSupport>,INCLUDE,$<TARGET_PROPERTY:LLVMSupport,LLVMTableGenLite_sources_regex>>
+  )
+
+target_link_libraries(LLVMTableGenLite PRIVATE
+  ${LLVM_PTHREAD_LIB}
+  rt
+  /usr/lib/x86_64-linux-gnu/libtinfo.so
   )
