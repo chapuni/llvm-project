@@ -76,7 +76,7 @@ if(LLVM_INTEGRATED_CRT_ALLOC)
   endif()
 endif()
 
-add_llvm_component_library(LLVMSupport
+add_llvm_component_library(LLVMSupport OBJECT
   AArch64TargetParser.cpp
   ABIBreak.cpp
   ARMTargetParser.cpp

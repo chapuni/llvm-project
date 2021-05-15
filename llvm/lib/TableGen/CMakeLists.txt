@@ -1,4 +1,11 @@
-add_llvm_component_library(LLVMTableGen
+if(NOT BUILD_SHARED_LIBS)
+  set(tablegen_objs
+    $<TARGET_OBJECTS:obj.LLVMSupport>
+    $<TARGET_OBJECTS:obj.LLVMDemangle>
+  )
+endif()
+
+add_llvm_component_library(LLVMTableGen SHARED
   DetailedRecordsBackend.cpp
   Error.cpp
   JSONBackend.cpp
@@ -10,6 +17,8 @@ add_llvm_component_library(LLVMTableGen
   TableGenBackendSkeleton.cpp
   TGLexer.cpp
   TGParser.cpp
+
+  ${tablegen_objs}
 
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/TableGen
