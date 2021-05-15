@@ -97,8 +97,13 @@ set_target_properties(%s PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BIN
     ))
         for (mod,pcm) in mods.items():
             cfn = fn(mod)
-            with open("%s" % cfn, "w") as f:
-                f.write("#pragma clang module import %s\n" % mod)
+            line = "#pragma clang module import %s\n" % mod
+            with open("%s" % cfn) as f:
+                if line==f.read():
+                    line = ""
+            if line != "":
+                with open("%s" % cfn, "w") as f:
+                    f.write(line)
             cmake.write("set_source_files_properties(%s PROPERTIES COMPILE_OPTIONS -fmodule-name=%s OBJECT_OUTPUTS ${moddir}/%s)\n" % (cfn, mod, pcm))
         cmake.write("add_dependencies(%s anchor_all)\n" % mn)
 
