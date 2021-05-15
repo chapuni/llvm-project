@@ -1,7 +1,6 @@
 if(NOT BUILD_SHARED_LIBS)
   set(tablegen_objs
-    $<TARGET_OBJECTS:obj.LLVMSupport>
-    $<TARGET_OBJECTS:obj.LLVMDemangle>
+    $<TARGET_OBJECTS:obj.LLVMSupportLite>
   )
 endif()
 
@@ -24,7 +23,7 @@ add_llvm_component_library(LLVMTableGen SHARED
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/TableGen
 
   LINK_LIBS
-  LLVMSupport
+  LLVMSupportLite
   )
 
 if (BUILD_SHARED_LIBS)
