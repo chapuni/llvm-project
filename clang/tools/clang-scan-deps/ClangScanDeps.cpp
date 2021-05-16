@@ -595,23 +595,30 @@ int main(int argc, const char **argv) {
               sss += 5;
               std::string mod = d.substr(sss, eee - sss);
 
-              int i = 20;
+              int i = eee;
               while (true) {
                 auto x = d.find(mod, i);
                 if (x == d.npos) break;
                 auto s = d.rfind(' ', x);
                 s = (s == d.npos ? 0 : s + 1);
                 auto e = d.find(' ', x);
+                if (e == d.npos) {
+                  e = d.find('\n', x);
+                  if (e == d.npos) e = d.size();
+                }
                 if (memcmp(&d.c_str()[e - 4], ".pcm", 4) == 0) {
 #if 1
                   d.erase(s, e - s);
+                  i = s;
 #else
                   d[s + 1] = '<';
                   d[x] = '*';
                   d[e - 1] = '>';
+                  i = e;
 #endif
+                } else {
+                  i = e;
                 }
-                i = e;
               }
             }
             while (true) {
