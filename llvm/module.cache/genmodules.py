@@ -105,7 +105,7 @@ set_target_properties(%s PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BIN
             if line != "":
                 with open(cfn, "w") as f:
                     f.write(line)
-            cmake.write("set_source_files_properties(%s PROPERTIES COMPILE_OPTIONS -fmodule-name=%s OBJECT_OUTPUTS ${moddir}/%s)\n" % (cfn, mod, pcm))
+            cmake.write("set_source_files_properties(%s PROPERTIES OBJECT_OUTPUTS ${moddir}/%s)\n" % (cfn, pcm))
         cmake.write("add_dependencies(%s anchor_all)\n" % mn)
 
     cmake.write("\n#EOF\n")
