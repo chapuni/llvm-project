@@ -1,19 +1,31 @@
 #add_subdirectory(GlobalISel)
 
+add_llvm_library(LLVMTableGenCodeGen SHARED
+  CodeGenHwModes.cpp
+  CodeGenInstruction.cpp
+  CodeGenRegisters.cpp
+  CodeGenSchedule.cpp
+  CodeGenTarget.cpp
+  InfoByHwMode.cpp
+  SDNodeProperties.cpp
+  SubtargetFeatureInfo.cpp
+  Types.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGen
+  LLVMSupport
+  )
+
 add_tablegen(llvm-tblgen LLVM
-  AsmMatcherEmitter.cpp
   AsmWriterEmitter.cpp
   AsmWriterInst.cpp
   Attributes.cpp
   CallingConvEmitter.cpp
   CodeEmitterGen.cpp
   CodeGenDAGPatterns.cpp
-  CodeGenHwModes.cpp
-  CodeGenInstruction.cpp
   CodeGenMapTable.cpp
-  CodeGenRegisters.cpp
-  CodeGenSchedule.cpp
-  CodeGenTarget.cpp
   DAGISelEmitter.cpp
   DAGISelMatcherEmitter.cpp
   DAGISelMatcherGen.cpp
@@ -28,7 +40,6 @@ add_tablegen(llvm-tblgen LLVM
   FixedLenDecoderEmitter.cpp
   GICombinerEmitter.cpp
   GlobalISelEmitter.cpp
-  InfoByHwMode.cpp
   InstrInfoEmitter.cpp
   InstrDocsEmitter.cpp
   IntrinsicEmitter.cpp
@@ -40,12 +51,9 @@ add_tablegen(llvm-tblgen LLVM
   RISCVCompressInstEmitter.cpp
   RegisterBankEmitter.cpp
   RegisterInfoEmitter.cpp
-  SDNodeProperties.cpp
   SearchableTableEmitter.cpp
   SubtargetEmitter.cpp
-  SubtargetFeatureInfo.cpp
   TableGen.cpp
-  Types.cpp
   X86DisassemblerTables.cpp
   X86EVEX2VEXTablesEmitter.cpp
   X86FoldTablesEmitter.cpp
@@ -53,6 +61,22 @@ add_tablegen(llvm-tblgen LLVM
   X86RecognizableInstr.cpp
   WebAssemblyDisassemblerEmitter.cpp
   CTagsEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
   )
-target_link_libraries(llvm-tblgen PRIVATE LLVMTableGenGlobalISel)
+target_link_libraries(llvm-tblgen PRIVATE
+  LLVMTableGenCodeGen
+  LLVMTableGenGlobalISel
+  )
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
+
+add_llvm_library(llvm-tblgen-gen-asm-matcher MODULE
+  AsmMatcherEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )

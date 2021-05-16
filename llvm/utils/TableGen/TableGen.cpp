@@ -12,6 +12,7 @@
 
 #include "TableGenBackends.h" // Declares all backends.
 #include "llvm/Support/CommandLine.h"
+#include "llvm/Support/DynamicLibrary.h"
 #include "llvm/Support/InitLLVM.h"
 #include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
@@ -20,6 +21,7 @@
 using namespace llvm;
 
 enum ActionType {
+  NullAction = 0,
   PrintRecords,
   PrintDetailedRecords,
   NullBackend,
@@ -29,7 +31,9 @@ enum ActionType {
   GenInstrInfo,
   GenInstrDocs,
   GenAsmWriter,
+#if 0
   GenAsmMatcher,
+#endif
   GenDisassembler,
   GenPseudoLowering,
   GenCompressInst,
@@ -96,8 +100,10 @@ cl::opt<ActionType> Action(
                    "Generate pseudo instruction lowering"),
         clEnumValN(GenCompressInst, "gen-compress-inst-emitter",
                    "Generate RISCV compressed instructions."),
+#if 0
         clEnumValN(GenAsmMatcher, "gen-asm-matcher",
                    "Generate assembly instruction matcher"),
+#endif
         clEnumValN(GenDAGISel, "gen-dag-isel",
                    "Generate a DAG instruction selector"),
         clEnumValN(GenDFAPacketizer, "gen-dfa-packetizer",
@@ -147,6 +153,8 @@ cl::opt<std::string> Class("class", cl::desc("Print Enum list for this class"),
 
 int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
   switch (Action) {
+  case NullAction:
+    return 1;
   case PrintRecords:
     OS << Records;              // No argument, dump all contents
     break;
@@ -176,9 +184,11 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
   case GenAsmWriter:
     EmitAsmWriter(Records, OS);
     break;
+#if 0
   case GenAsmMatcher:
     EmitAsmMatcher(Records, OS);
     break;
+#endif
   case GenDisassembler:
     EmitDisassembler(Records, OS);
     break;
@@ -280,6 +290,18 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
 
 int main(int argc, char **argv) {
   InitLLVM X(argc, argv);
+
+#if 1
+  std::string Error;
+  const char* Filename = "llvm-tblgen-gen-asm-matcher.so";
+  auto r =  sys::DynamicLibrary::LoadLibraryPermanently(Filename, &Error);
+  if (r) {
+    errs() << "Error opening '" << Filename << "': " << Error
+           << "\n  -load request ignored.\n";
+    return 1;
+  }
+#endif
+
   cl::ParseCommandLineOptions(argc, argv);
 
   return TableGenMain(argv[0], &LLVMTableGenMain);
