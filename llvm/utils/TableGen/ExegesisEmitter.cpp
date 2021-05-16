@@ -204,12 +204,7 @@ void ExegesisEmitter::run(raw_ostream &OS) const {
   emitPfmCountersLookupTable(OS);
 }
 
-} // end anonymous namespace
+TableGen::EmitterAction<ExegesisEmitter>
+    Action("gen-exegesis", "Generate llvm-exegesis tables");
 
-namespace llvm {
-
-void EmitExegesis(RecordKeeper &RK, raw_ostream &OS) {
-  ExegesisEmitter(RK).run(OS);
-}
-
-} // end namespace llvm
+} // namespace

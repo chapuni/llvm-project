@@ -90,7 +90,6 @@ public:
 
   void run(raw_ostream &OS);
 };
-} // end anonymous namespace
 
 DFAPacketizerEmitter::DFAPacketizerEmitter(RecordKeeper &R)
     : TargetName(std::string(CodeGenTarget(R).getName())), Records(R) {}
@@ -354,11 +353,7 @@ void DFAPacketizerEmitter::emitForItineraries(
      << "\n}\n\n";
 }
 
-namespace llvm {
+TableGen::EmitterAction<DFAPacketizerEmitter>
+    Action("gen-dfa-packetizer", "Generate DFA Packetizer for VLIW targets");
 
-void EmitDFAPacketizer(RecordKeeper &RK, raw_ostream &OS) {
-  emitSourceFileHeader("Target DFA Packetizer Tables", OS);
-  DFAPacketizerEmitter(RK).run(OS);
-}
-
-} // end namespace llvm
+} // namespace

@@ -20,6 +20,8 @@
 
 using namespace llvm;
 
+namespace {
+
 static std::string getOptionName(const Record &R) {
   // Use the record name unless EnumName is defined.
   if (isa<UnsetInit>(R.getValueInit("EnumName")))
@@ -212,7 +214,6 @@ static MarshallingInfo createMarshallingInfo(const Record &R) {
 /// OptParserEmitter - This tablegen backend takes an input .td file
 /// describing a list of options and emits a data structure for parsing and
 /// working with those options when given an input command line.
-namespace llvm {
 void EmitOptParser(RecordKeeper &Records, raw_ostream &OS) {
   // Get the option groups and options.
   const std::vector<Record*> &Groups =
@@ -485,4 +486,8 @@ void EmitOptParser(RecordKeeper &Records, raw_ostream &OS) {
   OS << "\n";
   OS << "#endif // OPTTABLE_ARG_INIT\n";
 }
-} // end namespace llvm
+
+TableGen::Action Action(EmitOptParser, "gen-opt-parser-defs",
+                        "Generate option definitions");
+
+} // namespace

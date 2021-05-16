@@ -94,7 +94,7 @@ using namespace llvm::X86Disassembler;
 /// X86RecognizableInstr.cpp contains the implementation for a single
 ///   instruction.
 
-namespace llvm {
+namespace {
 
 void EmitDisassembler(RecordKeeper &Records, raw_ostream &OS) {
   CodeGenTarget Target(Records);
@@ -147,4 +147,7 @@ void EmitDisassembler(RecordKeeper &Records, raw_ostream &OS) {
                       "MCDisassembler::Fail", "");
 }
 
-} // end namespace llvm
+TableGen::Action Action(EmitDisassembler, "gen-disassembler",
+                        "Generate disassembler");
+
+} // namespace

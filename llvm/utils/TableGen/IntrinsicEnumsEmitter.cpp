@@ -11,12 +11,13 @@
 //===----------------------------------------------------------------------===//
 
 #include "CodeGenIntrinsics.h"
-#include "TableGenBackends.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Error.h"
 #include "llvm/TableGen/Record.h"
 #include "llvm/TableGen/TableGenBackend.h"
 using namespace llvm;
+
+namespace {
 
 cl::OptionCategory GenIntrinsicCat("Options for -gen-intrinsic-enums");
 cl::opt<std::string>
@@ -24,7 +25,6 @@ cl::opt<std::string>
                     cl::desc("Generate intrinsics with this target prefix"),
                     cl::value_desc("target prefix"), cl::cat(GenIntrinsicCat));
 
-namespace {
 class IntrinsicEmitter {
   RecordKeeper &Records;
 
@@ -35,7 +35,6 @@ public:
 
   void EmitEnumInfo(const CodeGenIntrinsicTable &Ints, raw_ostream &OS);
 };
-} // namespace
 
 //===----------------------------------------------------------------------===//
 // IntrinsicEmitter Implementation
@@ -108,6 +107,7 @@ void IntrinsicEmitter::EmitEnumInfo(const CodeGenIntrinsicTable &Ints,
   }
 }
 
-void llvm::EmitIntrinsicEnums(RecordKeeper &RK, raw_ostream &OS) {
-  IntrinsicEmitter(RK).run(OS);
-}
+TableGen::EmitterAction<IntrinsicEmitter> Action("gen-intrinsic-enums",
+                                                 "Generate intrinsic enums");
+
+} // namespace

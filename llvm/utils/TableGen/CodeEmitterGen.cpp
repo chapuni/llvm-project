@@ -651,13 +651,7 @@ void CodeEmitterGen::run(raw_ostream &o) {
   o << "#endif\n";
 }
 
-} // end anonymous namespace
+TableGen::EmitterAction<CodeEmitterGen> Action("gen-emitter",
+                                               "Generate machine code emitter");
 
-namespace llvm {
-
-void EmitCodeEmitter(RecordKeeper &RK, raw_ostream &OS) {
-  emitSourceFileHeader("Machine Code Emitter", OS);
-  CodeEmitterGen(RK).run(OS);
-}
-
-} // end namespace llvm
+} // namespace

@@ -15,7 +15,6 @@
 #include "SequenceToOffsetTable.h"
 #include "TableGenBackends.h"
 #include "llvm/ADT/StringExtras.h"
-#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Error.h"
 #include "llvm/TableGen/Record.h"
 #include "llvm/TableGen/StringMatcher.h"
@@ -43,7 +42,6 @@ public:
   void EmitIntrinsicToBuiltinMap(const CodeGenIntrinsicTable &Ints, bool IsGCC,
                                  raw_ostream &OS);
 };
-} // namespace
 
 //===----------------------------------------------------------------------===//
 // IntrinsicEmitter Implementation
@@ -506,7 +504,6 @@ void IntrinsicEmitter::EmitGenerator(const CodeGenIntrinsicTable &Ints,
   OS << "#endif\n\n";  // End of GET_INTRINSIC_GENERATOR_GLOBAL
 }
 
-namespace {
 struct AttributeComparator {
   bool operator()(const CodeGenIntrinsic *L, const CodeGenIntrinsic *R) const {
     // Sort throwing intrinsics after non-throwing intrinsics.
@@ -549,7 +546,6 @@ struct AttributeComparator {
     return (L->ArgumentAttributes < R->ArgumentAttributes);
   }
 };
-} // namespace
 
 /// EmitAttributes - This emits the Intrinsic::getAttributes method.
 void IntrinsicEmitter::EmitAttributes(const CodeGenIntrinsicTable &Ints,
@@ -938,6 +934,7 @@ void IntrinsicEmitter::EmitIntrinsicToBuiltinMap(
   OS << "#endif\n\n";
 }
 
-void llvm::EmitIntrinsicImpl(RecordKeeper &RK, raw_ostream &OS) {
-  IntrinsicEmitter(RK).run(OS);
-}
+TableGen::EmitterAction<IntrinsicEmitter>
+    Action("gen-intrinsic-impl", "Generate intrinsic information");
+
+} // namespace

@@ -31,7 +31,6 @@ private:
   void EmitAction(Record *Action, unsigned Indent, raw_ostream &O);
   unsigned Counter;
 };
-} // End anonymous namespace
 
 void CallingConvEmitter::run(raw_ostream &O) {
   std::vector<Record*> CCs = Records.getAllDerivedDefinitions("CallingConv");
@@ -292,11 +291,7 @@ void CallingConvEmitter::EmitAction(Record *Action,
   }
 }
 
-namespace llvm {
+TableGen::EmitterAction<CallingConvEmitter>
+    Action("gen-callingconv", "Generate calling convention descriptions");
 
-void EmitCallingConv(RecordKeeper &RK, raw_ostream &OS) {
-  emitSourceFileHeader("Calling Convention Implementation Fragment", OS);
-  CallingConvEmitter(RK).run(OS);
-}
-
-} // End llvm namespace
+} // namespace

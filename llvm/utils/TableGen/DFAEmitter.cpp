@@ -251,7 +251,6 @@ public:
   void printActionType(raw_ostream &OS) override;
   void printActionValue(action_type A, raw_ostream &OS) override;
 };
-} // namespace
 
 void AutomatonEmitter::run(raw_ostream &OS) {
   for (Record *R : Records.getAllDerivedDefinitions("GenericAutomaton")) {
@@ -387,10 +386,7 @@ void CustomDfaEmitter::printActionValue(action_type A, raw_ostream &OS) {
     OS << ")";
 }
 
-namespace llvm {
+TableGen::EmitterAction<AutomatonEmitter> Action("gen-automata",
+                                                 "Generate generic automata");
 
-void EmitAutomata(RecordKeeper &RK, raw_ostream &OS) {
-  AutomatonEmitter(RK).run(OS);
-}
-
-} // namespace llvm
+} // namespace

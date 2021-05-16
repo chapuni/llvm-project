@@ -22,13 +22,14 @@
 #include "CodeGenInstruction.h"
 #include "CodeGenTarget.h"
 #include "TableGenBackends.h"
+#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include <string>
 #include <vector>
 
 using namespace llvm;
 
-namespace llvm {
+namespace {
 
 void writeTitle(StringRef Str, raw_ostream &OS, char Kind = '-') {
   OS << std::string(Str.size(), Kind) << "\n" << Str << "\n"
@@ -232,4 +233,7 @@ void EmitInstrDocs(RecordKeeper &RK, raw_ostream &OS) {
   }
 }
 
-} // end namespace llvm
+TableGen::Action Action(EmitInstrDocs, "gen-instr-docs",
+                        "Generate instruction documentation");
+
+} // namespace
