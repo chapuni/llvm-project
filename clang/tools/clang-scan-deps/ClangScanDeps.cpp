@@ -143,7 +143,7 @@ llvm::cl::opt<unsigned>
     NumThreads("j", llvm::cl::Optional,
                llvm::cl::desc("Number of worker threads to use (default: use "
                               "all concurrent threads)"),
-               llvm::cl::init(0), llvm::cl::cat(DependencyScannerCategory));
+               llvm::cl::init(1), llvm::cl::cat(DependencyScannerCategory));
 
 llvm::cl::opt<std::string>
     CompilationDB("compilation-database",
@@ -469,13 +469,22 @@ int main(int argc, const char **argv) {
     return !r;
   }
 
+  llvm::SmallString<32> realModuleCachePath;
+  llvm::SmallString<32> tempModuleCachePath;
+
+  if (!EnumModulesMode && ScanMode == ScanningMode::MinimizedSourcePreprocessing) {
+    llvm::sys::fs::createUniqueDirectory("clang-scan-deps", tempModuleCachePath);
+  }
+
   // The command options are rewritten to run Clang in preprocessor only mode.
   auto AdjustingCompilations =
       std::make_unique<tooling::ArgumentsAdjustingCompilations>(
           std::move(Compilations));
   ResourceDirectoryCache ResourceDirCache;
   AdjustingCompilations->appendArgumentsAdjuster(
-      [&ResourceDirCache](const tooling::CommandLineArguments &Args,
+                                                 [&ResourceDirCache,
+                                                  &realModuleCachePath,
+                                                  &tempModuleCachePath](const tooling::CommandLineArguments &Args,
                           StringRef FileName) {
         std::string LastO = "";
         bool HasMT = false;
@@ -501,6 +510,9 @@ int main(int argc, const char **argv) {
               HasMD = true;
             if (Arg == "-resource-dir")
               HasResourceDir = true;
+            if (Arg.startswith("-fmodules-cache-path=")) {
+              realModuleCachePath = llvm::StringRef(Arg).substr(strlen("-fmodules-cache-path="));
+            }
             --Idx;
           }
         }
@@ -528,8 +540,8 @@ int main(int argc, const char **argv) {
         AdjustedArgs.push_back("-sys-header-deps");
         AdjustedArgs.push_back("-Wno-error");
 
-        if (!EnumModulesMode && ScanMode == ScanningMode::MinimizedSourcePreprocessing) {
-          AdjustedArgs.push_back("-fmodules-cache-path=/home/chapuni/llvm/3m/module.cache/m");
+        if (!tempModuleCachePath.empty()) {
+          AdjustedArgs.push_back(std::string("-fmodules-cache-path=") + std::string(tempModuleCachePath));
         }
 
         if (!HasResourceDir) {
@@ -578,6 +590,7 @@ int main(int argc, const char **argv) {
 
   for (unsigned I = 0; I < Pool.getThreadCount(); ++I) {
     Pool.async([I, &Lock, &Index, &Inputs, &HadErrors, &FD, &WorkerTools,
+                &realModuleCachePath, &tempModuleCachePath,
                 &DependencyOS, &Errs]() {
       llvm::StringSet<> AlreadySeenModules;
       while (true) {
@@ -653,14 +666,25 @@ int main(int argc, const char **argv) {
                 d.erase(m, d.find(' ', m) - m);
               }
             }
-            int i = 0;
-            while (true) {
-              const char* msep = "/m/";
-              auto x = d.find(msep, i);
-              if (x == d.npos) break;
-              d.erase(x, strlen(msep) - 1);
-              i = x;
+#if 1
+            if (!realModuleCachePath.empty()) {
+              llvm::StringRef reldir = realModuleCachePath;
+              if (reldir.startswith(CWD)) {
+                reldir = reldir.substr(CWD.size());
+                if (reldir[0] == '/')
+                  reldir = reldir.substr(1);
+              }
+
+              int i = 0;
+              while (true) {
+                auto x = d.find(std::string(tempModuleCachePath), i);
+                if (x == d.npos) break;
+                d.erase(x, tempModuleCachePath.size());
+                d.insert(x, std::string(reldir));
+                i = x;
+              }
             }
+#endif
             for (auto& c : d) {
               if (c == '\n' || c == '\\') c = ' ';
             }
@@ -686,6 +710,9 @@ int main(int argc, const char **argv) {
 
   if (Format == ScanningOutputFormat::Full)
     FD.printFullOutput(llvm::outs());
+
+  if (!tempModuleCachePath.empty())
+    llvm::sys::fs::remove_directories(tempModuleCachePath);
 
   return HadErrors;
 }
