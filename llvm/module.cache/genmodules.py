@@ -106,6 +106,7 @@ set_target_properties(%s PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BIN
                 with open(cfn, "w") as f:
                     f.write(line)
             cmake.write("set_source_files_properties(%s PROPERTIES OBJECT_OUTPUTS ${moddir}/%s)\n" % (cfn, pcm))
+            cmake.write("set_property(TARGET %s APPEND PROPERTY ADDITIONAL_CLEAN_FILES ${moddir}/%s)\n" % (mn, pcm))
         cmake.write("add_dependencies(%s anchor_all)\n" % mn)
 
     cmake.write("\n#EOF\n")
