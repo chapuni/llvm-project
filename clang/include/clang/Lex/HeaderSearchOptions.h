@@ -177,6 +177,9 @@ public:
   /// The set of user-provided virtual filesystem overlay files.
   std::vector<std::string> VFSOverlayFiles;
 
+  /// "Depth of include module files in dependency output (INT_MAX by default)
+  int MaxIncludeModuleDepth;
+
   /// Include the compiler builtin includes.
   unsigned UseBuiltinIncludes : 1;
 

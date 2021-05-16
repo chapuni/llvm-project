@@ -1118,6 +1118,12 @@ compileModuleImpl(CompilerInstance &ImportingInstance, SourceLocation ImportLoc,
   Instance.setModuleDepCollector(ImportingInstance.getModuleDepCollector());
   Inv.getDependencyOutputOpts() = DependencyOutputOptions();
 
+#if 1
+  if (HSOpts.MaxIncludeModuleDepth >= 0) --HSOpts.MaxIncludeModuleDepth;
+  fprintf(stderr, "dep=%d\n", HSOpts.MaxIncludeModuleDepth);
+#endif
+  fprintf(stderr, "%s:%d\n", __func__, __LINE__);
+
   ImportingInstance.getDiagnostics().Report(ImportLoc,
                                             diag::remark_module_build)
     << ModuleName << ModuleFileName;
@@ -1682,6 +1688,12 @@ ModuleLoadResult CompilerInstance::findOrCompileModuleAndReadAST(
     return ModuleLoadResult::OtherUncachedFailure;
   }
 
+  fprintf(stderr, "%s:%d\n", __func__, __LINE__);
+  if (getHeaderSearchOpts().MaxIncludeModuleDepth <= 0) {
+    return ModuleLoadResult::OtherUncachedFailure;
+  }
+  fprintf(stderr, "%s:%d\n", __func__, __LINE__);
+
   // Create an ASTReader on demand.
   if (!getASTReader())
     createASTReader();
@@ -1709,6 +1721,7 @@ ModuleLoadResult CompilerInstance::findOrCompileModuleAndReadAST(
                                             : serialization::MK_ImplicitModule,
                                   ImportLoc, ARRFlags)) {
   case ASTReader::Success: {
+    fprintf(stderr, "%s:%d\n", __func__, __LINE__);
     if (M)
       return M;
     assert(Source != MS_ModuleCache &&
@@ -1767,6 +1780,7 @@ ModuleLoadResult CompilerInstance::findOrCompileModuleAndReadAST(
     return ModuleLoadResult();
   }
 
+  fprintf(stderr, "%s:%d\n", __func__, __LINE__);
   // The module file is missing or out-of-date. Build it.
   assert(M && "missing module, but trying to compile for cache");
 

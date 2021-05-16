@@ -1881,6 +1881,10 @@ defm modules_validate_system_headers : BoolOption<"f", "modules-validate-system-
   HeaderSearchOpts<"ModulesValidateSystemHeaders">, DefaultFalse,
   PosFlag<SetTrue, [CC1Option], "Validate the system headers that a module depends on when loading the module">,
   NegFlag<SetFalse, [NoXarchOption]>>, Group<i_Group>;
+def module_file_deps_depth : Joined<["-"], "module-file-depth=">,
+  Group<i_Group>, Flags<[CC1Option]>, MetaVarName<"<number>">,
+  HelpText<"Depth of include module files">,
+  MarshallingInfoStringInt<HeaderSearchOpts<"MaxIncludeModuleDepth">, "INT_MAX">;
 
 def fvalidate_ast_input_files_content:
   Flag <["-"], "fvalidate-ast-input-files-content">,
