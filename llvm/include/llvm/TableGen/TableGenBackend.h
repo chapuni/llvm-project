@@ -13,6 +13,10 @@
 #ifndef LLVM_TABLEGEN_TABLEGENBACKEND_H
 #define LLVM_TABLEGEN_TABLEGENBACKEND_H
 
+// FIXME: Remove them!
+#include "llvm/Support/CommandLine.h"
+#include "llvm/TableGen/Main.h"
+
 namespace llvm {
 
 class StringRef;
