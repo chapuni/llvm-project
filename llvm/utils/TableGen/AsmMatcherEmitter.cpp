@@ -109,6 +109,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/TableGen/Error.h"
+#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include "llvm/TableGen/StringMatcher.h"
 #include "llvm/TableGen/StringToOffsetTable.h"
@@ -122,6 +123,12 @@
 using namespace llvm;
 
 #define DEBUG_TYPE "asm-matcher-emitter"
+
+extern cl::OptionCategory PluginCat;
+
+void XXXReg(void (*fn)(RecordKeeper &Records, raw_ostream &OS)) {
+  assert(!"XXX");
+}
 
 cl::OptionCategory AsmMatcherEmitterCat("Options for -gen-asm-matcher");
 
@@ -3977,11 +3984,18 @@ void AsmMatcherEmitter::run(raw_ostream &OS) {
   OS << "#endif // GET_MNEMONIC_CHECKER\n\n";
 }
 
-namespace llvm {
+namespace {
 
-void EmitAsmMatcher(RecordKeeper &RK, raw_ostream &OS) {
+bool EmitAsmMatcher(raw_ostream &OS, RecordKeeper &RK) {
+  assert(!"XXX");
   emitSourceFileHeader("Assembly Matcher Source Fragment", OS);
   AsmMatcherEmitter(RK).run(OS);
+  return 0;
 }
 
-} // end namespace llvm
+cl::opt<bool> Action("gen-asm-matcher",
+                     cl::desc("Generate assembly instruction matcher"),
+                     cl::callback([](const bool &) { TableGenRegisterAction(EmitAsmMatcher); }),
+                     cl::cat(PluginCat));
+
+} // end anonymous namespace

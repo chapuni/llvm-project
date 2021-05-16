@@ -28,6 +28,8 @@
 #include <system_error>
 using namespace llvm;
 
+cl::OptionCategory PluginCat("XXXXX");
+
 static cl::opt<std::string>
 OutputFilename("o", cl::desc("Output filename"), cl::value_desc("filename"),
                cl::init("-"));
@@ -54,6 +56,13 @@ WriteIfChanged("write-if-changed", cl::desc("Only write output if it changed"));
 
 static cl::opt<bool>
 TimePhases("time-phases", cl::desc("Time phases of parser and backend"));
+
+static TableGenMainFn *LoadedActionFn = nullptr;
+
+void llvm::TableGenRegisterAction(TableGenMainFn *ActionFn) {
+  assert(!LoadedActionFn && "An action can be specified once");
+  LoadedActionFn = ActionFn;
+}
 
 static int reportError(const char *ProgName, Twine Msg) {
   errs() << ProgName << ": " << Msg;
@@ -86,6 +95,8 @@ static int createDependencyFile(const TGParser &Parser, const char *argv0) {
 int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   RecordKeeper Records;
 
+  if (!LoadedActionFn) LoadedActionFn = MainFn;
+
   if (TimePhases)
     Records.startPhaseTiming();
 
@@ -117,7 +128,7 @@ int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   Records.startBackendTimer("Backend overall");
   std::string OutString;
   raw_string_ostream Out(OutString);
-  unsigned status = MainFn(Out, Records);
+  unsigned status = LoadedActionFn(Out, Records);
   Records.stopBackendTimer();
   if (status)
     return 1;
