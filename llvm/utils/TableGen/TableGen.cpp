@@ -48,7 +48,6 @@ enum ActionType {
   GenGICombiner,
   GenX86FoldTables,
   GenRegisterBank,
-  GenExegesis,
   GenAutomata,
   GenDirectivesEnumDecl,
   GenDirectivesEnumImpl,
@@ -108,8 +107,6 @@ cl::opt<ActionType> Action(
                    "Generate X86 fold tables"),
         clEnumValN(GenRegisterBank, "gen-register-bank",
                    "Generate registers bank descriptions"),
-        clEnumValN(GenExegesis, "gen-exegesis",
-                   "Generate llvm-exegesis tables"),
         clEnumValN(GenAutomata, "gen-automata", "Generate generic automata"),
         clEnumValN(GenDirectivesEnumDecl, "gen-directive-decl",
                    "Generate directive related declaration code (header file)"),
@@ -221,9 +218,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenX86FoldTables:
     EmitX86FoldTables(Records, OS);
-    break;
-  case GenExegesis:
-    EmitExegesis(Records, OS);
     break;
   case GenAutomata:
     EmitAutomata(Records, OS);
