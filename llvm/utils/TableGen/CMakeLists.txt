@@ -70,6 +70,12 @@ target_link_libraries(llvm-tblgen PRIVATE
   )
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
 
+add_custom_target(llvm-tblgen-all)
+
+#add_dependencies(llvm-tblgen-all llvm-tblgen)
+# XXX
+add_dependencies(llvm-tblgen llvm-tblgen-all)
+
 add_llvm_library(llvm-tblgen-asm-matcher MODULE
   AsmMatcherEmitter.cpp
 
@@ -80,5 +86,6 @@ add_llvm_library(llvm-tblgen-asm-matcher MODULE
   LLVMTableGen
   LLVMSupport
   )
+add_dependencies(llvm-tblgen-all llvm-tblgen-asm-matcher)
 
 llvm_check_source_file_list()
