@@ -20,7 +20,7 @@ class RecordKeeper;
 
 /// Perform the action using Records, and write output to OS.
 /// Returns true on error, false otherwise.
-using TableGenMainFn = bool (raw_ostream &OS, RecordKeeper &Records);
+using TableGenMainFn = int (raw_ostream &OS, RecordKeeper &Records);
 
 int TableGenMain(const char *argv0, TableGenMainFn *MainFn);
 
