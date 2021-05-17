@@ -18,6 +18,7 @@
 #include "TGParser.h"
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/Support/CommandLine.h"
+#include "llvm/Support/DynamicLibrary.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/ToolOutputFile.h"
@@ -28,8 +29,6 @@
 #include <unistd.h>
 #include <system_error>
 using namespace llvm;
-
-cl::OptionCategory PluginCat("XXXXX");
 
 static cl::opt<std::string>
 OutputFilename("o", cl::desc("Output filename"), cl::value_desc("filename"),
@@ -58,12 +57,50 @@ WriteIfChanged("write-if-changed", cl::desc("Only write output if it changed"));
 static cl::opt<bool>
 TimePhases("time-phases", cl::desc("Time phases of parser and backend"));
 
+namespace llvm {
+namespace TableGen {
 static TableGenMainFn *LoadedActionFn = nullptr;
 
-void llvm::TableGenRegisterAction(TableGenMainFn *ActionFn) {
+void RegisterAction(TableGenMainFn *ActionFn) {
   assert(!LoadedActionFn && "An action can be specified once");
   LoadedActionFn = ActionFn;
 }
+
+static
+void xxx(StringRef prefix, StringRef argv1) {
+  StringRef cmd;    // "gen-foo-quux"
+
+  if (argv1.startswith("--gen-")) {
+    cmd = argv1.substr(2);
+  } else if (argv1.startswith("-gen-")) {
+    cmd = argv1.substr(1);
+  } else {
+    return;
+  }
+
+  const auto& map = cl::getRegisteredOptions();
+  if (cmd.size() == strlen("gen-") || map.find(cmd) != map.end()) {
+    return;
+  }
+
+  std::string Error;
+  std::string Filename = prefix.str() + "-" + cmd.substr(4).str() + ".so";
+  auto r =  sys::DynamicLibrary::LoadLibraryPermanently(Filename.c_str(), &Error);
+  if (r) {
+    errs() << "Error opening '" << Filename << "': " << Error
+       << "\n  -load request ignored.\n";
+    std::exit(1);
+  }
+}
+
+void ParseCommandLineOptions(int argc, char **argv) {
+  if (argc >= 2)
+    xxx("llvm-tblgen", argv[1]);
+
+  cl::ParseCommandLineOptions(argc, argv);
+}
+} // end namespace TableGen
+} // end namespace llvm
 
 static int reportError(const char *ProgName, Twine Msg) {
   errs() << ProgName << ": " << Msg;
@@ -96,7 +133,7 @@ static int createDependencyFile(const TGParser &Parser, const char *argv0) {
 int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   RecordKeeper Records;
 
-  if (!LoadedActionFn) LoadedActionFn = MainFn;
+  if (!TableGen::LoadedActionFn) TableGen::LoadedActionFn = MainFn;
 
   if (TimePhases)
     Records.startPhaseTiming();
@@ -129,7 +166,7 @@ int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   Records.startBackendTimer("Backend overall");
   std::string OutString;
   raw_string_ostream Out(OutString);
-  unsigned status = LoadedActionFn(Out, Records);
+  unsigned status = TableGen::LoadedActionFn(Out, Records);
   Records.stopBackendTimer();
   if (status)
     return 1;

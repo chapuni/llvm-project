@@ -70,7 +70,7 @@ target_link_libraries(llvm-tblgen PRIVATE
   )
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
 
-add_llvm_library(llvm-tblgen-gen-asm-matcher MODULE
+add_llvm_library(llvm-tblgen-asm-matcher MODULE
   AsmMatcherEmitter.cpp
 
   PARTIAL_SOURCES_INTENDED
