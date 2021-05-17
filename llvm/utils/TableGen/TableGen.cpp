@@ -32,7 +32,6 @@ enum ActionType {
   GenDisassembler,
   GenPseudoLowering,
   GenCompressInst,
-  GenDAGISel,
   GenDFAPacketizer,
   GenFastISel,
   GenSubtarget,
@@ -82,8 +81,6 @@ cl::opt<ActionType> Action(
                    "Generate pseudo instruction lowering"),
         clEnumValN(GenCompressInst, "gen-compress-inst-emitter",
                    "Generate RISCV compressed instructions."),
-        clEnumValN(GenDAGISel, "gen-dag-isel",
-                   "Generate a DAG instruction selector"),
         clEnumValN(GenDFAPacketizer, "gen-dfa-packetizer",
                    "Generate DFA Packetizer for VLIW targets"),
         clEnumValN(GenFastISel, "gen-fast-isel",
@@ -164,9 +161,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenCompressInst:
     EmitCompressInst(Records, OS);
-    break;
-  case GenDAGISel:
-    EmitDAGISel(Records, OS);
     break;
   case GenDFAPacketizer:
     EmitDFAPacketizer(Records, OS);
