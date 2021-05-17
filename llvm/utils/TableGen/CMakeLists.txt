@@ -40,7 +40,6 @@ add_tablegen(llvm-tblgen LLVM
   PseudoLoweringEmitter.cpp
   RISCVCompressInstEmitter.cpp
   SearchableTableEmitter.cpp
-  SubtargetEmitter.cpp
   TableGen.cpp
   X86DisassemblerTables.cpp
   X86FoldTablesEmitter.cpp
@@ -211,5 +210,17 @@ add_llvm_library(llvm-tblgen-register-info MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-register-info)
+
+add_llvm_library(llvm-tblgen-subtarget MODULE
+  SubtargetEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-subtarget)
 
 llvm_check_source_file_list()
