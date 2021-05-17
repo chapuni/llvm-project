@@ -886,3 +886,9 @@ void EmitInstrInfo(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-instr-info",
+                     cl::desc("Generate instruction descriptions"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitInstrInfo); }));
+} // end anonymous namespace
