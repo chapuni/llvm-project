@@ -21,6 +21,7 @@ add_tablegen(llvm-tblgen LLVM
   DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
   DisassemblerEmitter.cpp
+  EmitLongStrLiterals.cpp
   ExegesisEmitter.cpp
   FastISelEmitter.cpp
   FixedLenDecoderEmitter.cpp
