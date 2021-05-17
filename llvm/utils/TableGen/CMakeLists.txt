@@ -31,7 +31,6 @@ add_tablegen(llvm-tblgen LLVM
   DirectiveEmitter.cpp
   DisassemblerEmitter.cpp
   FixedLenDecoderEmitter.cpp
-  GICombinerEmitter.cpp
   InstrInfoEmitter.cpp
   InstrDocsEmitter.cpp
   IntrinsicEmitter.cpp
@@ -57,7 +56,8 @@ add_tablegen(llvm-tblgen LLVM
   )
 target_link_libraries(llvm-tblgen PRIVATE
   LLVMTableGenCodeGen
-  LLVMTableGenGlobalISel
+  LLVMTableGen
+  LLVMSupport
   )
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
 
@@ -165,5 +165,18 @@ add_llvm_library(llvm-tblgen-global-isel MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-global-isel)
+
+add_llvm_library(llvm-tblgen-global-isel-combiner MODULE
+  GICombinerEmitter.cpp
+  $<TARGET_OBJECTS:obj.LLVMTableGenGlobalISel>
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-global-isel-combiner)
 
 llvm_check_source_file_list()
