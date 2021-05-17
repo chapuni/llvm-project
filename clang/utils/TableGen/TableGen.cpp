@@ -245,7 +245,7 @@ ClangComponent("clang-component",
                cl::desc("Only use warnings from specified component"),
                cl::value_desc("component"), cl::Hidden);
 
-bool ClangTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
+int ClangTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
   switch (Action) {
   case PrintRecords:
     OS << Records;           // No argument, dump all contents
@@ -445,7 +445,7 @@ bool ClangTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   }
 
-  return false;
+  return 0;
 }
 }
 

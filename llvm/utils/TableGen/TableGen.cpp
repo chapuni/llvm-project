@@ -145,7 +145,7 @@ cl::opt<std::string> Class("class", cl::desc("Print Enum list for this class"),
                            cl::value_desc("class name"),
                            cl::cat(PrintEnumsCat));
 
-bool LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
+int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
   switch (Action) {
   case PrintRecords:
     OS << Records;              // No argument, dump all contents
@@ -274,7 +274,7 @@ bool LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   }
 
-  return false;
+  return 0;
 }
 }
 
