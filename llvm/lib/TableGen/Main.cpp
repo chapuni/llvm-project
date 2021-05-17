@@ -165,10 +165,10 @@ int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   Records.startBackendTimer("Backend overall");
   std::string OutString;
   raw_string_ostream Out(OutString);
-  unsigned status = TableGen::LoadedActionFn(Out, Records);
+  int status = TableGen::LoadedActionFn(Out, Records);
   Records.stopBackendTimer();
   if (status)
-    return 1;
+    return status;
 
   // Always write the depfile, even if the main output hasn't changed.
   // If it's missing, Ninja considers the output dirty.  If this was below

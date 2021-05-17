@@ -11,6 +11,8 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
   SubtargetFeatureInfo.cpp
   Types.cpp
 
+  EmitLongStrLiterals.cpp
+
   PARTIAL_SOURCES_INTENDED
 
   LINK_LIBS
