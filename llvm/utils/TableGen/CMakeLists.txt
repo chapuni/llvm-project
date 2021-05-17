@@ -30,7 +30,6 @@ add_tablegen(llvm-tblgen LLVM
   DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
   DisassemblerEmitter.cpp
-  ExegesisEmitter.cpp
   FastISelEmitter.cpp
   FixedLenDecoderEmitter.cpp
   GICombinerEmitter.cpp
@@ -133,5 +132,16 @@ add_llvm_library(llvm-tblgen-x86-EVEX2VEX-tables MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-x86-EVEX2VEX-tables)
+
+add_llvm_library(llvm-tblgen-exegesis MODULE
+  ExegesisEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-exegesis)
 
 llvm_check_source_file_list()
