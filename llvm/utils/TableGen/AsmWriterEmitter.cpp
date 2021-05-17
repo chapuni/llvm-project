@@ -1304,3 +1304,9 @@ void EmitAsmWriter(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-asm-writer",
+                     cl::desc("Generate assembly writer"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitAsmWriter); }));
+} // end anonymous namespace

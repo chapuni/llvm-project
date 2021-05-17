@@ -1,6 +1,7 @@
 #add_subdirectory(GlobalISel)
 
 add_llvm_library(LLVMTableGenCodeGen SHARED
+  AsmWriterInst.cpp
   CodeGenHwModes.cpp
   CodeGenInstruction.cpp
   CodeGenRegisters.cpp
@@ -21,8 +22,6 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
   )
 
 add_tablegen(llvm-tblgen LLVM
-  AsmWriterEmitter.cpp
-  AsmWriterInst.cpp
   Attributes.cpp
   CallingConvEmitter.cpp
   CodeEmitterGen.cpp
@@ -89,5 +88,17 @@ add_llvm_library(llvm-tblgen-asm-matcher MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-asm-matcher)
+
+add_llvm_library(llvm-tblgen-asm-writer MODULE
+  AsmWriterEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-asm-writer)
 
 llvm_check_source_file_list()
