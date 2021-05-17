@@ -5,10 +5,12 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
   CodeGenDAGPatterns.cpp
   CodeGenHwModes.cpp
   CodeGenInstruction.cpp
+  CodeGenMapTable.cpp
   CodeGenRegisters.cpp
   CodeGenSchedule.cpp
   CodeGenTarget.cpp
   InfoByHwMode.cpp
+  PredicateExpander.cpp
   SDNodeProperties.cpp
   SubtargetFeatureInfo.cpp
   Types.cpp
@@ -25,19 +27,16 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
 add_tablegen(llvm-tblgen LLVM
   Attributes.cpp
   CodeEmitterGen.cpp
-  CodeGenMapTable.cpp
   DFAEmitter.cpp
   DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
   DisassemblerEmitter.cpp
   FixedLenDecoderEmitter.cpp
-  InstrInfoEmitter.cpp
   InstrDocsEmitter.cpp
   IntrinsicEmitter.cpp
   OptEmitter.cpp
   OptParserEmitter.cpp
   OptRSTEmitter.cpp
-  PredicateExpander.cpp
   PseudoLoweringEmitter.cpp
   RISCVCompressInstEmitter.cpp
   RegisterBankEmitter.cpp
@@ -178,5 +177,17 @@ add_llvm_library(llvm-tblgen-global-isel-combiner MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-global-isel-combiner)
+
+add_llvm_library(llvm-tblgen-instr-info MODULE
+  InstrInfoEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-instr-info)
 
 llvm_check_source_file_list()
