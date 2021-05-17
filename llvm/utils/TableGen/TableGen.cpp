@@ -32,7 +32,6 @@ enum ActionType {
   GenDisassembler,
   GenPseudoLowering,
   GenCompressInst,
-  GenCallingConv,
   GenDAGISel,
   GenDFAPacketizer,
   GenFastISel,
@@ -77,8 +76,6 @@ cl::opt<ActionType> Action(
                    "Generate instruction descriptions"),
         clEnumValN(GenInstrDocs, "gen-instr-docs",
                    "Generate instruction documentation"),
-        clEnumValN(GenCallingConv, "gen-callingconv",
-                   "Generate calling convention descriptions"),
         clEnumValN(GenDisassembler, "gen-disassembler",
                    "Generate disassembler"),
         clEnumValN(GenPseudoLowering, "gen-pseudo-lowering",
@@ -158,9 +155,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenInstrDocs:
     EmitInstrDocs(Records, OS);
-    break;
-  case GenCallingConv:
-    EmitCallingConv(Records, OS);
     break;
   case GenDisassembler:
     EmitDisassembler(Records, OS);

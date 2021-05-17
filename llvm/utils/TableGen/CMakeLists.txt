@@ -23,7 +23,6 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
 
 add_tablegen(llvm-tblgen LLVM
   Attributes.cpp
-  CallingConvEmitter.cpp
   CodeEmitterGen.cpp
   CodeGenDAGPatterns.cpp
   CodeGenMapTable.cpp
@@ -100,5 +99,17 @@ add_llvm_library(llvm-tblgen-asm-writer MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-asm-writer)
+
+add_llvm_library(llvm-tblgen-callingconv MODULE
+  CallingConvEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-callingconv)
 
 llvm_check_source_file_list()
