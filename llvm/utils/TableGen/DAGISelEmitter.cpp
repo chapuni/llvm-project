@@ -193,3 +193,9 @@ void EmitDAGISel(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // End llvm namespace
+
+namespace {
+cl::opt<bool> Action("gen-dag-isel",
+                     cl::desc("Generate a DAG instruction selector"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitDAGISel); }));
+} // end anonymous namespace

@@ -2,6 +2,7 @@
 
 add_llvm_library(LLVMTableGenCodeGen SHARED
   AsmWriterInst.cpp
+  CodeGenDAGPatterns.cpp
   CodeGenHwModes.cpp
   CodeGenInstruction.cpp
   CodeGenRegisters.cpp
@@ -24,13 +25,7 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
 add_tablegen(llvm-tblgen LLVM
   Attributes.cpp
   CodeEmitterGen.cpp
-  CodeGenDAGPatterns.cpp
   CodeGenMapTable.cpp
-  DAGISelEmitter.cpp
-  DAGISelMatcherEmitter.cpp
-  DAGISelMatcherGen.cpp
-  DAGISelMatcherOpt.cpp
-  DAGISelMatcher.cpp
   DFAEmitter.cpp
   DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
@@ -111,5 +106,21 @@ add_llvm_library(llvm-tblgen-callingconv MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-callingconv)
+
+add_llvm_library(llvm-tblgen-dag-isel MODULE
+  DAGISelEmitter.cpp
+  DAGISelMatcher.cpp
+  DAGISelMatcherEmitter.cpp
+  DAGISelMatcherGen.cpp
+  DAGISelMatcherOpt.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-dag-isel)
 
 llvm_check_source_file_list()
