@@ -1696,3 +1696,9 @@ void EmitRegisterInfo(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-register-info",
+                     cl::desc("Generate registers and register classes info"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitRegisterInfo); }));
+} // end anonymous namespace

@@ -26,7 +26,6 @@ enum ActionType {
   NullBackend,
   DumpJSON,
   GenEmitter,
-  GenRegisterInfo,
   GenInstrDocs,
   GenDisassembler,
   GenPseudoLowering,
@@ -62,8 +61,6 @@ cl::opt<ActionType> Action(
         clEnumValN(DumpJSON, "dump-json",
                    "Dump all records as machine-readable JSON"),
         clEnumValN(GenEmitter, "gen-emitter", "Generate machine code emitter"),
-        clEnumValN(GenRegisterInfo, "gen-register-info",
-                   "Generate registers and register classes info"),
         clEnumValN(GenInstrDocs, "gen-instr-docs",
                    "Generate instruction documentation"),
         clEnumValN(GenDisassembler, "gen-disassembler",
@@ -122,9 +119,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenEmitter:
     EmitCodeEmitter(Records, OS);
-    break;
-  case GenRegisterInfo:
-    EmitRegisterInfo(Records, OS);
     break;
   case GenInstrDocs:
     EmitInstrDocs(Records, OS);
