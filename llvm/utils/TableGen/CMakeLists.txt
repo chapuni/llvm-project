@@ -39,7 +39,6 @@ add_tablegen(llvm-tblgen LLVM
   OptRSTEmitter.cpp
   PseudoLoweringEmitter.cpp
   RISCVCompressInstEmitter.cpp
-  RegisterInfoEmitter.cpp
   SearchableTableEmitter.cpp
   SubtargetEmitter.cpp
   TableGen.cpp
@@ -200,5 +199,17 @@ add_llvm_library(llvm-tblgen-register-bank MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-register-bank)
+
+add_llvm_library(llvm-tblgen-register-info MODULE
+  RegisterInfoEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-register-info)
 
 llvm_check_source_file_list()
