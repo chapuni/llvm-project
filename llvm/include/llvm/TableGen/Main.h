@@ -22,7 +22,10 @@ class RecordKeeper;
 /// Returns true on error, false otherwise.
 using TableGenMainFn = int (raw_ostream &OS, RecordKeeper &Records);
 
-void TableGenRegisterAction(TableGenMainFn *ActionFn);
+namespace TableGen {
+extern void RegisterAction(TableGenMainFn *ActionFn);
+extern void ParseCommandLineOptions(int argc, char **argv);
+} // end namespace TableGen
 
 int TableGenMain(const char *argv0, TableGenMainFn *MainFn);
 

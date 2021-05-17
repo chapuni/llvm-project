@@ -124,15 +124,9 @@ using namespace llvm;
 
 #define DEBUG_TYPE "asm-matcher-emitter"
 
-extern cl::OptionCategory PluginCat;
-
-void XXXReg(void (*fn)(RecordKeeper &Records, raw_ostream &OS)) {
-  assert(!"XXX");
-}
-
 cl::OptionCategory AsmMatcherEmitterCat("Options for -gen-asm-matcher");
 
-static cl::opt<std::string>
+ cl::opt<std::string>
     MatchPrefix("match-prefix", cl::init(""),
                 cl::desc("Only match instructions with the given prefix"),
                 cl::cat(AsmMatcherEmitterCat));
@@ -3984,18 +3978,18 @@ void AsmMatcherEmitter::run(raw_ostream &OS) {
   OS << "#endif // GET_MNEMONIC_CHECKER\n\n";
 }
 
-namespace {
+namespace llvm {
 
 bool EmitAsmMatcher(raw_ostream &OS, RecordKeeper &RK) {
-  assert(!"XXX");
   emitSourceFileHeader("Assembly Matcher Source Fragment", OS);
   AsmMatcherEmitter(RK).run(OS);
   return 0;
 }
 
+} // end namespace llvm
+
+namespace {
 cl::opt<bool> Action("gen-asm-matcher",
                      cl::desc("Generate assembly instruction matcher"),
-                     cl::callback([](const bool &) { TableGenRegisterAction(EmitAsmMatcher); }),
-                     cl::cat(PluginCat));
-
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitAsmMatcher); }));
 } // end anonymous namespace
