@@ -30,7 +30,6 @@ add_tablegen(llvm-tblgen LLVM
   DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
   DisassemblerEmitter.cpp
-  FastISelEmitter.cpp
   FixedLenDecoderEmitter.cpp
   GICombinerEmitter.cpp
   GlobalISelEmitter.cpp
@@ -143,5 +142,17 @@ add_llvm_library(llvm-tblgen-exegesis MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-exegesis)
+
+add_llvm_library(llvm-tblgen-fast-isel MODULE
+  FastISelEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-fast-isel)
 
 llvm_check_source_file_list()
