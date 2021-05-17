@@ -15,6 +15,7 @@
 #ifndef LLVM_UTILS_TABLEGEN_SEQUENCETOOFFSETTABLE_H
 #define LLVM_UTILS_TABLEGEN_SEQUENCETOOFFSETTABLE_H
 
+#include "EmitLongStrLiterals.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/raw_ostream.h"
 #include <algorithm>
@@ -24,7 +25,6 @@
 #include <map>
 
 namespace llvm {
-extern llvm::cl::opt<bool> EmitLongStrLiterals;
 
 // Helper function for SequenceToOffsetTable<string>.
 static inline void printStrLitEscChar(raw_ostream &OS, char C) {
