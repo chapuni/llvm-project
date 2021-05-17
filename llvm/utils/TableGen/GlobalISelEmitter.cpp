@@ -6166,3 +6166,9 @@ void EmitGlobalISel(RecordKeeper &RK, raw_ostream &OS) {
   GlobalISelEmitter(RK).run(OS);
 }
 } // End llvm namespace
+
+namespace {
+cl::opt<bool> Action("gen-global-isel",
+                     cl::desc("Generate GlobalISel selector"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitGlobalISel); }));
+} // end anonymous namespace
