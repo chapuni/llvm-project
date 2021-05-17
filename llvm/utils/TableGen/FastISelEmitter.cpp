@@ -891,3 +891,9 @@ void EmitFastISel(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // End llvm namespace
+
+namespace {
+cl::opt<bool> Action("gen-fast-isel",
+                     cl::desc("Generate a \"fast\" instruction selector"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitFastISel); }));
+} // end anonymous namespace
