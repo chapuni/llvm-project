@@ -80,3 +80,5 @@ add_llvm_library(llvm-tblgen-asm-matcher MODULE
   LLVMTableGen
   LLVMSupport
   )
+
+llvm_check_source_file_list()
