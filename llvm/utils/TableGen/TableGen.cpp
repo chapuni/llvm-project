@@ -43,7 +43,6 @@ enum ActionType {
   GenAttributes,
   GenSearchableTables,
   GenX86FoldTables,
-  GenRegisterBank,
   GenAutomata,
   GenDirectivesEnumDecl,
   GenDirectivesEnumImpl,
@@ -93,8 +92,6 @@ cl::opt<ActionType> Action(
                    "Generate generic binary-searchable table"),
         clEnumValN(GenX86FoldTables, "gen-x86-fold-tables",
                    "Generate X86 fold tables"),
-        clEnumValN(GenRegisterBank, "gen-register-bank",
-                   "Generate registers bank descriptions"),
         clEnumValN(GenAutomata, "gen-automata", "Generate generic automata"),
         clEnumValN(GenDirectivesEnumDecl, "gen-directive-decl",
                    "Generate directive related declaration code (header file)"),
@@ -188,9 +185,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenSearchableTables:
     EmitSearchableTables(Records, OS);
-    break;
-  case GenRegisterBank:
-    EmitRegisterBank(Records, OS);
     break;
   case GenX86FoldTables:
     EmitX86FoldTables(Records, OS);
