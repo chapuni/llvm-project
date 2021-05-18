@@ -49,15 +49,15 @@ public:
     // the impact of strict context hashing.
     // Compiler.getHeaderSearchOpts().ModulesStrictContextHash = true;
 
-#if 1
+#if 0
     auto Action = std::make_unique<InitOnlyAction>();
     //auto Action = std::make_unique<DumpCompilerOptionsAction>();
     const bool Result = Compiler.ExecuteAction(*Action);
-    if (!Result) return false;
 #else
     auto Action = std::make_unique<PreprocessOnlyAction>();
     const bool Result = Compiler.ExecuteAction(*Action);
 #endif
+    if (!Result) return false;
     //FileMgr->clearStatCache();
 #if 0
     fprintf(stderr, "%d:PP=%d\n", __LINE__, Compiler.hasPreprocessor());
