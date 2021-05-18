@@ -33,7 +33,6 @@ add_tablegen(llvm-tblgen LLVM
   DisassemblerEmitter.cpp
   FixedLenDecoderEmitter.cpp
   InstrDocsEmitter.cpp
-  IntrinsicEmitter.cpp
   OptEmitter.cpp
   OptParserEmitter.cpp
   OptRSTEmitter.cpp
@@ -266,5 +265,29 @@ add_llvm_library(llvm-tblgen-pseudo-lowering MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-pseudo-lowering)
+
+add_llvm_library(llvm-tblgen-intrinsic-enums MODULE
+  IntrinsicEnumsEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-intrinsic-enums)
+
+add_llvm_library(llvm-tblgen-intrinsic-impl MODULE
+  IntrinsicImplEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-intrinsic-impl)
 
 llvm_check_source_file_list()
