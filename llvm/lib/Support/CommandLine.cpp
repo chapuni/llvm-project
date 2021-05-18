@@ -1945,7 +1945,7 @@ size_t generic_parser_base::getOptionWidth(const Option &O) const {
       if (!shouldPrintOption(Name, getDescription(i), O))
         continue;
       size_t NameSize = Name.empty() ? EmptyOption.size() : Name.size();
-      Size = std::max(Size, NameSize + OptionPrefixesSize + 2);
+      Size = std::max(Size, NameSize + OptionPrefixesSize);
     }
     return Size;
   } else {
