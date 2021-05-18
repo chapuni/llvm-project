@@ -46,7 +46,6 @@ enum ActionType {
   GenSearchableTables,
   GenGlobalISel,
   GenGICombiner,
-  GenX86EVEX2VEXTables,
   GenX86FoldTables,
   GenRegisterBank,
   GenExegesis,
@@ -105,8 +104,6 @@ cl::opt<ActionType> Action(
                    "Generate GlobalISel selector"),
         clEnumValN(GenGICombiner, "gen-global-isel-combiner",
                    "Generate GlobalISel combiner"),
-        clEnumValN(GenX86EVEX2VEXTables, "gen-x86-EVEX2VEX-tables",
-                   "Generate X86 EVEX to VEX compress tables"),
         clEnumValN(GenX86FoldTables, "gen-x86-fold-tables",
                    "Generate X86 fold tables"),
         clEnumValN(GenRegisterBank, "gen-register-bank",
@@ -221,9 +218,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenRegisterBank:
     EmitRegisterBank(Records, OS);
-    break;
-  case GenX86EVEX2VEXTables:
-    EmitX86EVEX2VEXTables(Records, OS);
     break;
   case GenX86FoldTables:
     EmitX86FoldTables(Records, OS);

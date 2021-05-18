@@ -50,7 +50,6 @@ add_tablegen(llvm-tblgen LLVM
   SubtargetEmitter.cpp
   TableGen.cpp
   X86DisassemblerTables.cpp
-  X86EVEX2VEXTablesEmitter.cpp
   X86FoldTablesEmitter.cpp
   X86ModRMFilters.cpp
   X86RecognizableInstr.cpp
@@ -122,5 +121,17 @@ add_llvm_library(llvm-tblgen-dag-isel MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-dag-isel)
+
+add_llvm_library(llvm-tblgen-x86-EVEX2VEX-tables MODULE
+  X86EVEX2VEXTablesEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-x86-EVEX2VEX-tables)
 
 llvm_check_source_file_list()
