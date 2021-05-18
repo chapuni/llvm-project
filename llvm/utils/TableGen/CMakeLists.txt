@@ -31,7 +31,8 @@ add_tablegen(llvm-tblgen LLVM
   InfoByHwMode.cpp
   InstrInfoEmitter.cpp
   InstrDocsEmitter.cpp
-  IntrinsicEmitter.cpp
+  IntrinsicEnumsEmitter.cpp
+  IntrinsicImplEmitter.cpp
   OptEmitter.cpp
   OptParserEmitter.cpp
   OptRSTEmitter.cpp
