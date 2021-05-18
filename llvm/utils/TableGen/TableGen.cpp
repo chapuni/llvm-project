@@ -39,7 +39,6 @@ enum ActionType {
   GenOptRST,
   GenCTags,
   GenAttributes,
-  GenSearchableTables,
   GenAutomata,
   GenDirectivesEnumDecl,
   GenDirectivesEnumImpl,
@@ -81,8 +80,6 @@ cl::opt<ActionType> Action(
         clEnumValN(GenOptRST, "gen-opt-rst", "Generate option RST"),
         clEnumValN(GenCTags, "gen-ctags", "Generate ctags-compatible index"),
         clEnumValN(GenAttributes, "gen-attrs", "Generate attributes"),
-        clEnumValN(GenSearchableTables, "gen-searchable-tables",
-                   "Generate generic binary-searchable table"),
         clEnumValN(GenAutomata, "gen-automata", "Generate generic automata"),
         clEnumValN(GenDirectivesEnumDecl, "gen-directive-decl",
                    "Generate directive related declaration code (header file)"),
@@ -167,9 +164,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenAttributes:
     EmitAttributes(Records, OS);
-    break;
-  case GenSearchableTables:
-    EmitSearchableTables(Records, OS);
     break;
   case GenAutomata:
     EmitAutomata(Records, OS);
