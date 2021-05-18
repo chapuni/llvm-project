@@ -1,5 +1,16 @@
 #add_subdirectory(GlobalISel)
 
+add_llvm_library(LLVMTableGenCodeGenIntrinsics SHARED
+  CodeGenIntrinsics.cpp
+  SDNodeProperties.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGen
+  LLVMSupport
+  )
+
 add_llvm_library(LLVMTableGenCodeGen SHARED
   AsmWriterInst.cpp
   CodeGenDAGPatterns.cpp
@@ -11,7 +22,6 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
   CodeGenTarget.cpp
   InfoByHwMode.cpp
   PredicateExpander.cpp
-  SDNodeProperties.cpp
   SubtargetFeatureInfo.cpp
   Types.cpp
 
@@ -20,6 +30,7 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
   PARTIAL_SOURCES_INTENDED
 
   LINK_LIBS
+  LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
   LLVMSupport
   )
@@ -152,6 +163,7 @@ add_llvm_library(llvm-tblgen-global-isel MODULE
 
   LINK_LIBS
   LLVMTableGenCodeGen
+  LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
   LLVMSupport
   )
@@ -237,6 +249,7 @@ add_llvm_library(llvm-tblgen-searchable-tables MODULE
 
   LINK_LIBS
   LLVMTableGenCodeGen
+  LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
   LLVMSupport
   )
@@ -272,7 +285,7 @@ add_llvm_library(llvm-tblgen-intrinsic-enums MODULE
   PARTIAL_SOURCES_INTENDED
 
   LINK_LIBS
-  LLVMTableGenCodeGen
+  LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
   LLVMSupport
   )
@@ -285,6 +298,7 @@ add_llvm_library(llvm-tblgen-intrinsic-impl MODULE
 
   LINK_LIBS
   LLVMTableGenCodeGen
+  LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
   LLVMSupport
   )
