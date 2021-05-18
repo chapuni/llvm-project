@@ -842,3 +842,9 @@ void EmitSearchableTables(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // End llvm namespace.
+
+namespace {
+cl::opt<bool> Action("gen-searchable-tables",
+                     cl::desc("Generate generic binary-searchable table"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitSearchableTables); }));
+} // end anonymous namespace
