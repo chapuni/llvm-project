@@ -8,6 +8,7 @@ add_tablegen(llvm-tblgen LLVM
   CodeGenDAGPatterns.cpp
   CodeGenHwModes.cpp
   CodeGenInstruction.cpp
+  CodeGenIntrinsics.cpp
   CodeGenMapTable.cpp
   CodeGenRegisters.cpp
   CodeGenSchedule.cpp
