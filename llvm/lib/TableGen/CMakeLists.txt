@@ -23,6 +23,10 @@ add_llvm_component_library(LLVMTableGen SHARED
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/TableGen
 
-  LINK_COMPONENTS
-  Support
+  LINK_LIBS
+  LLVMSupport
   )
+
+if (BUILD_SHARED_LIBS)
+  target_link_libraries(LLVMTableGen INTERFACE LLVMSupport)
+endif()

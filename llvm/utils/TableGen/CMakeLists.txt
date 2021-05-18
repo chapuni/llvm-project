@@ -8,7 +8,6 @@ add_llvm_library(LLVMTableGenCodeGenIntrinsics SHARED
 
   LINK_LIBS
   LLVMTableGen
-  LLVMSupport
   )
 
 add_llvm_library(LLVMTableGenCodeGen SHARED
@@ -32,7 +31,6 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
   LINK_LIBS
   LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
-  LLVMSupport
   )
 
 add_tablegen(llvm-tblgen LLVM
@@ -59,7 +57,6 @@ add_tablegen(llvm-tblgen LLVM
 target_link_libraries(llvm-tblgen PRIVATE
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
 
@@ -77,7 +74,6 @@ add_llvm_library(llvm-tblgen-asm-matcher MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-asm-matcher)
 
@@ -89,7 +85,6 @@ add_llvm_library(llvm-tblgen-asm-writer MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-asm-writer)
 
@@ -101,7 +96,6 @@ add_llvm_library(llvm-tblgen-callingconv MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-callingconv)
 
@@ -117,7 +111,6 @@ add_llvm_library(llvm-tblgen-dag-isel MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-dag-isel)
 
@@ -129,7 +122,6 @@ add_llvm_library(llvm-tblgen-x86-EVEX2VEX-tables MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-x86-EVEX2VEX-tables)
 
@@ -140,7 +132,7 @@ add_llvm_library(llvm-tblgen-exegesis MODULE
 
   LINK_LIBS
   LLVMTableGen
-  LLVMSupport
+
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-exegesis)
 
@@ -152,7 +144,6 @@ add_llvm_library(llvm-tblgen-fast-isel MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-fast-isel)
 
@@ -165,7 +156,6 @@ add_llvm_library(llvm-tblgen-global-isel MODULE
   LLVMTableGenCodeGen
   LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-global-isel)
 
@@ -178,7 +168,6 @@ add_llvm_library(llvm-tblgen-global-isel-combiner MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-global-isel-combiner)
 
@@ -190,7 +179,6 @@ add_llvm_library(llvm-tblgen-instr-info MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-instr-info)
 
@@ -202,7 +190,6 @@ add_llvm_library(llvm-tblgen-register-bank MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-register-bank)
 
@@ -214,7 +201,6 @@ add_llvm_library(llvm-tblgen-register-info MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-register-info)
 
@@ -226,7 +212,6 @@ add_llvm_library(llvm-tblgen-subtarget MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-subtarget)
 
@@ -238,7 +223,6 @@ add_llvm_library(llvm-tblgen-x86-fold-tables MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-x86-fold-tables)
 
@@ -251,7 +235,6 @@ add_llvm_library(llvm-tblgen-searchable-tables MODULE
   LLVMTableGenCodeGen
   LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-searchable-tables)
 
@@ -263,7 +246,6 @@ add_llvm_library(llvm-tblgen-compress-inst-emitter MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-compress-inst-emitter)
 
@@ -275,7 +257,6 @@ add_llvm_library(llvm-tblgen-pseudo-lowering MODULE
   LINK_LIBS
   LLVMTableGenCodeGen
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-pseudo-lowering)
 
@@ -287,7 +268,6 @@ add_llvm_library(llvm-tblgen-intrinsic-enums MODULE
   LINK_LIBS
   LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-intrinsic-enums)
 
@@ -300,7 +280,6 @@ add_llvm_library(llvm-tblgen-intrinsic-impl MODULE
   LLVMTableGenCodeGen
   LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
-  LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-intrinsic-impl)
 
