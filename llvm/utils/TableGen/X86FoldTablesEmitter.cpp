@@ -678,3 +678,9 @@ void EmitX86FoldTables(RecordKeeper &RK, raw_ostream &o) {
   X86FoldTablesEmitter(RK).run(OS);
 }
 } // namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-x86-fold-tables",
+                     cl::desc("Generate X86 fold tables"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitX86FoldTables); }));
+} // end anonymous namespace
