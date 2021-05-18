@@ -38,7 +38,6 @@ add_tablegen(llvm-tblgen LLVM
   OptParserEmitter.cpp
   OptRSTEmitter.cpp
   PseudoLoweringEmitter.cpp
-  RISCVCompressInstEmitter.cpp
   TableGen.cpp
   X86DisassemblerTables.cpp
   X86ModRMFilters.cpp
@@ -244,5 +243,17 @@ add_llvm_library(llvm-tblgen-searchable-tables MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-searchable-tables)
+
+add_llvm_library(llvm-tblgen-compress-inst-emitter MODULE
+  RISCVCompressInstEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-compress-inst-emitter)
 
 llvm_check_source_file_list()

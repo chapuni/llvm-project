@@ -29,7 +29,6 @@ enum ActionType {
   GenInstrDocs,
   GenDisassembler,
   GenPseudoLowering,
-  GenCompressInst,
   GenDFAPacketizer,
   GenIntrinsicEnums,
   GenIntrinsicImpl,
@@ -64,8 +63,6 @@ cl::opt<ActionType> Action(
                    "Generate disassembler"),
         clEnumValN(GenPseudoLowering, "gen-pseudo-lowering",
                    "Generate pseudo instruction lowering"),
-        clEnumValN(GenCompressInst, "gen-compress-inst-emitter",
-                   "Generate RISCV compressed instructions."),
         clEnumValN(GenDFAPacketizer, "gen-dfa-packetizer",
                    "Generate DFA Packetizer for VLIW targets"),
         clEnumValN(GenIntrinsicEnums, "gen-intrinsic-enums",
@@ -119,9 +116,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenPseudoLowering:
     EmitPseudoLowering(Records, OS);
-    break;
-  case GenCompressInst:
-    EmitCompressInst(Records, OS);
     break;
   case GenDFAPacketizer:
     EmitDFAPacketizer(Records, OS);
