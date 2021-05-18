@@ -42,7 +42,6 @@ add_tablegen(llvm-tblgen LLVM
   SearchableTableEmitter.cpp
   TableGen.cpp
   X86DisassemblerTables.cpp
-  X86FoldTablesEmitter.cpp
   X86ModRMFilters.cpp
   X86RecognizableInstr.cpp
   WebAssemblyDisassemblerEmitter.cpp
@@ -222,5 +221,17 @@ add_llvm_library(llvm-tblgen-subtarget MODULE
   LLVMSupport
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-subtarget)
+
+add_llvm_library(llvm-tblgen-x86-fold-tables MODULE
+  X86FoldTablesEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  LLVMSupport
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-x86-fold-tables)
 
 llvm_check_source_file_list()
