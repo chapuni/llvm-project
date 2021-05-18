@@ -235,3 +235,9 @@ void EmitX86EVEX2VEXTables(RecordKeeper &RK, raw_ostream &OS) {
   X86EVEX2VEXTablesEmitter(RK).run(OS);
 }
 }
+
+namespace {
+cl::opt<bool> Action("gen-x86-EVEX2VEX-tables",
+                     cl::desc("Generate X86 EVEX to VEX compress tables"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitX86EVEX2VEXTables); }));
+} // end anonymous namespace
