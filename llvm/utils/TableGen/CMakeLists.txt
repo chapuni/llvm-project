@@ -36,7 +36,6 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
 
 add_tablegen(llvm-tblgen LLVM
   Attributes.cpp
-  CodeEmitterGen.cpp
   DFAEmitter.cpp
   DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
@@ -299,5 +298,16 @@ add_llvm_library(llvm-tblgen-disassembler MODULE
   LLVMTableGen
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-disassembler)
+
+add_llvm_library(llvm-tblgen-emitter MODULE
+  CodeEmitterGen.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-emitter)
 
 llvm_check_source_file_list()
