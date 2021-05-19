@@ -46,7 +46,6 @@ add_tablegen(llvm-tblgen LLVM
   PARTIAL_SOURCES_INTENDED
   )
 target_link_libraries(llvm-tblgen PRIVATE
-  LLVMTableGenCodeGen
   LLVMTableGen
   )
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
