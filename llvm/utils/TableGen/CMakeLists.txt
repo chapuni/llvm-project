@@ -40,15 +40,10 @@ add_tablegen(llvm-tblgen LLVM
   DFAEmitter.cpp
   DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
-  DisassemblerEmitter.cpp
   OptEmitter.cpp
   OptParserEmitter.cpp
   OptRSTEmitter.cpp
   TableGen.cpp
-  X86DisassemblerTables.cpp
-  X86ModRMFilters.cpp
-  X86RecognizableInstr.cpp
-  WebAssemblyDisassemblerEmitter.cpp
   CTagsEmitter.cpp
 
   PARTIAL_SOURCES_INTENDED
@@ -289,5 +284,20 @@ add_llvm_library(llvm-tblgen-instr-docs MODULE
   LLVMTableGen
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-instr-docs)
+
+add_llvm_library(llvm-tblgen-disassembler MODULE
+  DisassemblerEmitter.cpp
+  WebAssemblyDisassemblerEmitter.cpp
+  X86DisassemblerTables.cpp
+  X86ModRMFilters.cpp
+  X86RecognizableInstr.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-disassembler)
 
 llvm_check_source_file_list()
