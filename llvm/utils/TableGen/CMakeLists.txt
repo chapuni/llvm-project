@@ -62,9 +62,7 @@ set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
 
 add_custom_target(llvm-tblgen-all)
 
-#add_dependencies(llvm-tblgen-all llvm-tblgen)
-# XXX
-add_dependencies(llvm-tblgen llvm-tblgen-all)
+add_dependencies(llvm-tblgen-all llvm-tblgen)
 
 add_llvm_library(llvm-tblgen-asm-matcher MODULE
   AsmMatcherEmitter.cpp
