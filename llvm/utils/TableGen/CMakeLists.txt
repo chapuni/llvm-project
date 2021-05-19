@@ -275,7 +275,6 @@ add_llvm_library(llvm-tblgen-intrinsic-impl MODULE
   PARTIAL_SOURCES_INTENDED
 
   LINK_LIBS
-  LLVMTableGenCodeGen
   LLVMTableGenCodeGenIntrinsics
   LLVMTableGen
   )
