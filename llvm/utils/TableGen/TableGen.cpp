@@ -25,14 +25,12 @@ enum ActionType {
   PrintDetailedRecords,
   NullBackend,
   DumpJSON,
-  GenDFAPacketizer,
   PrintEnums,
   PrintSets,
   GenOptParserDefs,
   GenOptRST,
   GenCTags,
   GenAttributes,
-  GenAutomata,
   GenDirectivesEnumDecl,
   GenDirectivesEnumImpl,
   GenDirectivesEnumGen,
@@ -50,8 +48,6 @@ cl::opt<ActionType> Action(
                    "Do nothing after parsing (useful for timing)"),
         clEnumValN(DumpJSON, "dump-json",
                    "Dump all records as machine-readable JSON"),
-        clEnumValN(GenDFAPacketizer, "gen-dfa-packetizer",
-                   "Generate DFA Packetizer for VLIW targets"),
         clEnumValN(PrintEnums, "print-enums", "Print enum values for a class"),
         clEnumValN(PrintSets, "print-sets",
                    "Print expanded sets for testing DAG exprs"),
@@ -60,7 +56,6 @@ cl::opt<ActionType> Action(
         clEnumValN(GenOptRST, "gen-opt-rst", "Generate option RST"),
         clEnumValN(GenCTags, "gen-ctags", "Generate ctags-compatible index"),
         clEnumValN(GenAttributes, "gen-attrs", "Generate attributes"),
-        clEnumValN(GenAutomata, "gen-automata", "Generate generic automata"),
         clEnumValN(GenDirectivesEnumDecl, "gen-directive-decl",
                    "Generate directive related declaration code (header file)"),
         clEnumValN(GenDirectivesEnumImpl, "gen-directive-impl",
@@ -87,9 +82,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case DumpJSON:
     EmitJSON(Records, OS);
-    break;
-  case GenDFAPacketizer:
-    EmitDFAPacketizer(Records, OS);
     break;
   case GenOptParserDefs:
     EmitOptParser(Records, OS);
@@ -123,9 +115,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case GenAttributes:
     EmitAttributes(Records, OS);
-    break;
-  case GenAutomata:
-    EmitAutomata(Records, OS);
     break;
   case GenDirectivesEnumDecl:
     EmitDirectivesDecl(Records, OS);

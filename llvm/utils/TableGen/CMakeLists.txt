@@ -36,8 +36,6 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
 
 add_tablegen(llvm-tblgen LLVM
   Attributes.cpp
-  DFAEmitter.cpp
-  DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
   OptEmitter.cpp
   OptParserEmitter.cpp
@@ -298,6 +296,32 @@ add_llvm_library(llvm-tblgen-disassembler MODULE
   LLVMTableGen
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-disassembler)
+
+add_llvm_library(llvm-tblgen-automata SHARED
+  DFAEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  )
+set_target_properties(llvm-tblgen-automata PROPERTIES
+      PREFIX ""
+      )
+add_dependencies(llvm-tblgen-all llvm-tblgen-automata)
+
+add_llvm_library(llvm-tblgen-dfa-packetizer MODULE
+  DFAPacketizerEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  llvm-tblgen-automata
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-dfa-packetizer)
 
 add_llvm_library(llvm-tblgen-emitter MODULE
   CodeEmitterGen.cpp
