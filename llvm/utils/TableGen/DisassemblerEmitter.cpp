@@ -154,3 +154,9 @@ void EmitDisassembler(RecordKeeper &Records, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-disassembler",
+                     cl::desc("Generate disassembler"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitDisassembler); }));
+} // end anonymous namespace
