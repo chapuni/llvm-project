@@ -41,7 +41,6 @@ add_tablegen(llvm-tblgen LLVM
   DirectiveEmitter.cpp
   DisassemblerEmitter.cpp
   FixedLenDecoderEmitter.cpp
-  InstrDocsEmitter.cpp
   OptEmitter.cpp
   OptParserEmitter.cpp
   OptRSTEmitter.cpp
@@ -279,5 +278,16 @@ add_llvm_library(llvm-tblgen-intrinsic-impl MODULE
   LLVMTableGen
   )
 add_dependencies(llvm-tblgen-all llvm-tblgen-intrinsic-impl)
+
+add_llvm_library(llvm-tblgen-instr-docs MODULE
+  InstrDocsEmitter.cpp
+
+  PARTIAL_SOURCES_INTENDED
+
+  LINK_LIBS
+  LLVMTableGenCodeGen
+  LLVMTableGen
+  )
+add_dependencies(llvm-tblgen-all llvm-tblgen-instr-docs)
 
 llvm_check_source_file_list()
