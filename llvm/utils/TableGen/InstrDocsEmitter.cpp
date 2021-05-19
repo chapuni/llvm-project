@@ -234,3 +234,9 @@ void EmitInstrDocs(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-instr-docs",
+                     cl::desc("Generate instruction documentation"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitInstrDocs); }));
+} // end anonymous namespace
