@@ -25,7 +25,6 @@ enum ActionType {
   PrintDetailedRecords,
   NullBackend,
   DumpJSON,
-  GenEmitter,
   GenDFAPacketizer,
   PrintEnums,
   PrintSets,
@@ -51,7 +50,6 @@ cl::opt<ActionType> Action(
                    "Do nothing after parsing (useful for timing)"),
         clEnumValN(DumpJSON, "dump-json",
                    "Dump all records as machine-readable JSON"),
-        clEnumValN(GenEmitter, "gen-emitter", "Generate machine code emitter"),
         clEnumValN(GenDFAPacketizer, "gen-dfa-packetizer",
                    "Generate DFA Packetizer for VLIW targets"),
         clEnumValN(PrintEnums, "print-enums", "Print enum values for a class"),
@@ -89,9 +87,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case DumpJSON:
     EmitJSON(Records, OS);
-    break;
-  case GenEmitter:
-    EmitCodeEmitter(Records, OS);
     break;
   case GenDFAPacketizer:
     EmitDFAPacketizer(Records, OS);

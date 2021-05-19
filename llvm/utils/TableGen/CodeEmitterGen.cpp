@@ -661,3 +661,9 @@ void EmitCodeEmitter(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-emitter",
+                     cl::desc("Generate machine code emitter"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitCodeEmitter); }));
+} // end anonymous namespace
