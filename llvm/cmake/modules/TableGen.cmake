@@ -91,6 +91,14 @@ function(tablegen project ofn)
   get_directory_property(tblgen_includes INCLUDE_DIRECTORIES)
   list(TRANSFORM tblgen_includes PREPEND -I)
 
+  if (TARGET "${${project}_TABLEGEN_EXE}" AND "${ARGN}" MATCHES "^--?gen-")
+    list(GET ARGN 0 arg0)
+    string(REGEX REPLACE "^--?gen-(.+)" "llvm-tblgen-\\1" plugin_name "${arg0}")
+    if (NOT TARGET "${plugin_name}")
+      set(plugin_name)
+    endif()
+  endif()
+
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
     COMMAND ${${project}_TABLEGEN_EXE} ${ARGN} -I ${CMAKE_CURRENT_SOURCE_DIR}
     ${tblgen_includes}
@@ -103,6 +111,7 @@ function(tablegen project ofn)
     # explicitly list it here:
     DEPENDS ${${project}_TABLEGEN_TARGET} ${${project}_TABLEGEN_EXE}
       ${local_tds} ${global_tds}
+      ${plugin_name}
     ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}
     COMMENT "Building ${ofn}..."
     )
