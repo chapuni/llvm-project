@@ -19,6 +19,7 @@ add_llvm_library(LLVMTableGenCodeGen SHARED
   CodeGenRegisters.cpp
   CodeGenSchedule.cpp
   CodeGenTarget.cpp
+  FixedLenDecoderEmitter.cpp # unused Action
   InfoByHwMode.cpp
   PredicateExpander.cpp
   SubtargetFeatureInfo.cpp
@@ -40,7 +41,6 @@ add_tablegen(llvm-tblgen LLVM
   DFAPacketizerEmitter.cpp
   DirectiveEmitter.cpp
   DisassemblerEmitter.cpp
-  FixedLenDecoderEmitter.cpp
   OptEmitter.cpp
   OptParserEmitter.cpp
   OptRSTEmitter.cpp
