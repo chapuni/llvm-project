@@ -109,7 +109,6 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/TableGen/Error.h"
-#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include "llvm/TableGen/StringMatcher.h"
 #include "llvm/TableGen/StringToOffsetTable.h"
@@ -126,7 +125,7 @@ using namespace llvm;
 
 cl::OptionCategory AsmMatcherEmitterCat("Options for -gen-asm-matcher");
 
- cl::opt<std::string>
+static cl::opt<std::string>
     MatchPrefix("match-prefix", cl::init(""),
                 cl::desc("Only match instructions with the given prefix"),
                 cl::cat(AsmMatcherEmitterCat));
@@ -3980,10 +3979,9 @@ void AsmMatcherEmitter::run(raw_ostream &OS) {
 
 namespace llvm {
 
-bool EmitAsmMatcher(raw_ostream &OS, RecordKeeper &RK) {
+void EmitAsmMatcher(RecordKeeper &RK, raw_ostream &OS) {
   emitSourceFileHeader("Assembly Matcher Source Fragment", OS);
   AsmMatcherEmitter(RK).run(OS);
-  return 0;
 }
 
 } // end namespace llvm
