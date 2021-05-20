@@ -59,9 +59,9 @@ TimePhases("time-phases", cl::desc("Time phases of parser and backend"));
 
 namespace llvm {
 namespace TableGen {
-static TableGenMainFn *LoadedActionFn = nullptr;
+static TableGenActionFn *LoadedActionFn = nullptr;
 
-void RegisterAction(TableGenMainFn *ActionFn) {
+void RegisterAction(TableGenActionFn *ActionFn) {
   assert(!LoadedActionFn && "An action can be specified once");
   LoadedActionFn = ActionFn;
 }
@@ -133,8 +133,6 @@ static int createDependencyFile(const TGParser &Parser, const char *argv0) {
 int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   RecordKeeper Records;
 
-  if (!TableGen::LoadedActionFn) TableGen::LoadedActionFn = MainFn;
-
   if (TimePhases)
     Records.startPhaseTiming();
 
@@ -166,7 +164,13 @@ int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   Records.startBackendTimer("Backend overall");
   std::string OutString;
   raw_string_ostream Out(OutString);
-  int status = TableGen::LoadedActionFn(Out, Records);
+  int status;
+  if (TableGen::LoadedActionFn) {
+    TableGen::LoadedActionFn(Records, Out);
+    status = 0;
+  } else {
+    status = MainFn(Out, Records);
+  }
   Records.stopBackendTimer();
   if (status)
     return status;
