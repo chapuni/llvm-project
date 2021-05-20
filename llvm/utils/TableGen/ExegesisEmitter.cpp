@@ -13,12 +13,10 @@
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/SmallSet.h"
 #include "llvm/ADT/StringRef.h"
-#include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/Format.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/TableGen/Error.h"
-#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include "llvm/TableGen/TableGenBackend.h"
 #include <algorithm>
@@ -210,9 +208,8 @@ void ExegesisEmitter::run(raw_ostream &OS) const {
 
 namespace llvm {
 
-int EmitExegesis(raw_ostream &OS, RecordKeeper &RK) {
+void EmitExegesis(RecordKeeper &RK, raw_ostream &OS) {
   ExegesisEmitter(RK).run(OS);
-  return 0;
 }
 
 } // end namespace llvm
