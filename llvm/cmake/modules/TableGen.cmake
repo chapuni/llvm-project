@@ -159,8 +159,7 @@ function(add_public_tablegen_target target)
 
 endfunction()
 
-macro(add_tablegen target project)
-  set(${target}_OLD_LLVM_LINK_COMPONENTS ${LLVM_LINK_COMPONENTS})
+function(add_tablegen_impl target)
   set(LLVM_LINK_COMPONENTS TableGen ${LLVM_LINK_COMPONENTS})
 
   # CMake doesn't let compilation units depend on their dependent libraries on some generators.
@@ -170,7 +169,10 @@ macro(add_tablegen target project)
   endif()
 
   add_llvm_executable(${target} DISABLE_LLVM_LINK_LLVM_DYLIB ${ARGN})
-  set(LLVM_LINK_COMPONENTS ${${target}_OLD_LLVM_LINK_COMPONENTS})
+endfunction()
+
+macro(add_tablegen target project)
+  add_tablegen_impl(${target} ${ARGN})
 
   set(${project}_TABLEGEN "${target}" CACHE
       STRING "Native TableGen executable. Saves building one when cross-compiling.")
