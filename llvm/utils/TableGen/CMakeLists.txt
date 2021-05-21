@@ -1,4 +1,4 @@
-#add_subdirectory(GlobalISel)
+set(LLVM_ENABLE_TABLEGEN_MODULARIZED ON)
 
 add_tablegen(llvm-tblgen LLVM
   Attributes.cpp
@@ -15,10 +15,6 @@ target_link_libraries(llvm-tblgen PRIVATE
   LLVMTableGen
   )
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
-
-add_custom_target(llvm-tblgen-all)
-
-add_dependencies(llvm-tblgen-all llvm-tblgen)
 
 add_llvm_library(llvm-tblgen-intrinsic-enums SHARED
   CodeGenIntrinsics.cpp
