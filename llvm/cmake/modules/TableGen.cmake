@@ -160,6 +160,9 @@ function(add_public_tablegen_target target)
 endfunction()
 
 function(add_tablegen_impl target)
+  set(tblgen_all "${target}-all")
+  add_custom_target(${tblgen_all})
+
   set(LLVM_LINK_COMPONENTS TableGen ${LLVM_LINK_COMPONENTS})
 
   # CMake doesn't let compilation units depend on their dependent libraries on some generators.
@@ -168,7 +171,63 @@ function(add_tablegen_impl target)
     set(LLVM_ENABLE_OBJLIB ON)
   endif()
 
-  add_llvm_executable(${target} DISABLE_LLVM_LINK_LLVM_DYLIB ${ARGN})
+  cmake_parse_arguments(T
+    "PARTIAL_SOURCES_INTENDED"
+    ""
+    ""
+    ${ARGN})
+
+  set(residual_args ${T_UNPARSED_ARGUMENTS})
+  list(FIND residual_args MODULE midx)
+  list(SUBLIST residual_args 0 ${midx} t_args)
+  while (${midx} GREATER_EQUAL 0)
+    list(SUBLIST residual_args ${midx} -1 residual_args)
+    list(REMOVE_AT residual_args 0) # "MODULE"
+    list(FIND residual_args MODULE midx)
+    list(SUBLIST residual_args 0 ${midx} m_args) # midx may be -1
+    list(GET m_args 0 m_name)
+    list(REMOVE_AT m_args 0)
+    set(m_target "${target}-${m_name}")
+    cmake_parse_arguments(M
+      "SHARED"
+      ""
+      "DEPENDS"
+      ${m_args})
+    if(${M_SHARED})
+      set(m_type SHARED)
+    else()
+      set(m_type MODULE)
+    endif()
+    add_llvm_library(${m_target} ${m_type}
+      ${M_UNPARSED_ARGUMENTS}
+      PARTIAL_SOURCES_INTENDED
+      )
+    set_target_properties(${m_target} PROPERTIES
+      PREFIX ""
+      )
+    set(m_deps)
+    foreach(d ${M_DEPENDS})
+      if(NOT TARGET "${target}-${d}")
+	message(FATAL_ERROR "${m_name}: Unknown depend: (${target}-)${d}")
+      endif()
+      list(APPEND m_deps "${target}-${d}")
+    endforeach()
+    if(NOT m_deps)
+      list(APPEND m_deps LLVMTableGen)
+    endif()
+    target_link_libraries(${m_target} PUBLIC ${m_deps})
+    add_dependencies(${tblgen_all} ${m_target})
+  endwhile()
+
+  add_llvm_executable(${target}
+    DISABLE_LLVM_LINK_LLVM_DYLIB
+    PARTIAL_SOURCES_INTENDED
+    ${t_args})
+  add_dependencies(${tblgen_all} ${target})
+
+  if(NOT ${T_PARTIAL_SOURCES_INTENDED})
+    llvm_check_source_file_list()
+  endif()
 endfunction()
 
 macro(add_tablegen target project)
