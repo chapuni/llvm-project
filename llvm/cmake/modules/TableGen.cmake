@@ -91,6 +91,14 @@ function(tablegen project ofn)
   get_directory_property(tblgen_includes INCLUDE_DIRECTORIES)
   list(TRANSFORM tblgen_includes PREPEND -I)
 
+  if (TARGET "${${project}_TABLEGEN_EXE}" AND "${ARGN}" MATCHES "^--?gen-")
+    list(GET ARGN 0 arg0)
+    string(REGEX REPLACE "^--?gen-(.+)" "${${project}_TABLEGEN_EXE}-\\1" plugin_name "${arg0}")
+    if (NOT TARGET "${plugin_name}")
+      set(plugin_name)
+    endif()
+  endif()
+
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
     COMMAND ${${project}_TABLEGEN_EXE} ${ARGN} -I ${CMAKE_CURRENT_SOURCE_DIR}
     ${tblgen_includes}
@@ -103,6 +111,7 @@ function(tablegen project ofn)
     # explicitly list it here:
     DEPENDS ${${project}_TABLEGEN_TARGET} ${${project}_TABLEGEN_EXE}
       ${local_tds} ${global_tds}
+      ${plugin_name}
     ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}
     COMMENT "Building ${ofn}..."
     )
@@ -132,13 +141,97 @@ endfunction()
 function(add_tablegen_impl target)
   set(LLVM_LINK_COMPONENTS TableGen ${LLVM_LINK_COMPONENTS})
 
-  # CMake doesn't let compilation units depend on their dependent libraries on some generators.
-  if(NOT CMAKE_GENERATOR STREQUAL "Ninja" AND NOT XCODE)
-    # FIXME: It leaks to user, callee of add_tablegen.
-    set(LLVM_ENABLE_OBJLIB ON)
+  if(NOT XCODE)
+    # CMake doesn't let compilation units depend on their dependent libraries on some generators.
+    if(NOT CMAKE_GENERATOR STREQUAL "Ninja")
+      set(LLVM_ENABLE_OBJLIB ON)
+    endif()
+    if (NOT ${LLVM_ENABLE_TABLEGEN_MODULARIZED})
+      set(LLVM_ENABLE_OBJLIB ON)
+    endif()
   endif()
 
-  add_llvm_executable(${target} DISABLE_LLVM_LINK_LLVM_DYLIB ${ARGN})
+  cmake_parse_arguments(T
+    "PARTIAL_SOURCES_INTENDED"
+    ""
+    ""
+    ${ARGN})
+
+  set(residual_args ${T_UNPARSED_ARGUMENTS})
+  list(FIND residual_args MODULE midx)
+  list(SUBLIST residual_args 0 ${midx} t_args)
+  while (${midx} GREATER_EQUAL 0)
+    list(SUBLIST residual_args ${midx} -1 residual_args)
+    list(REMOVE_AT residual_args 0) # "MODULE"
+    list(FIND residual_args MODULE midx)
+    list(SUBLIST residual_args 0 ${midx} m_args) # midx may be -1
+    list(GET m_args 0 m_name)
+    list(REMOVE_AT m_args 0)
+    set(m_target "${target}-${m_name}")
+    cmake_parse_arguments(M
+      "SHARED"
+      ""
+      "DEPENDS"
+      ${m_args})
+
+    if (NOT ${LLVM_ENABLE_TABLEGEN_MODULARIZED})
+      list(JOIN M_UNPARSED_ARGUMENTS "," m_items)
+      list(APPEND m_module_args "${m_name}=${m_items}")
+      list(APPEND t_args ${M_UNPARSED_ARGUMENTS})
+      continue()
+    endif()
+
+    if(${M_SHARED})
+      set(m_type SHARED)
+    else()
+      set(m_type MODULE)
+    endif()
+    add_llvm_library(${m_target} ${m_type}
+      ${M_UNPARSED_ARGUMENTS}
+      PARTIAL_SOURCES_INTENDED
+      )
+    set_target_properties(${m_target} PROPERTIES
+      PREFIX ""
+      )
+    set(m_deps)
+    foreach(d ${M_DEPENDS})
+      if(NOT TARGET "${target}-${d}")
+        message(FATAL_ERROR "${m_name}: Unknown depend: (${target}-)${d}")
+      endif()
+      list(APPEND m_deps "${target}-${d}")
+    endforeach()
+    if(NOT m_deps)
+      list(APPEND m_deps LLVMTableGen)
+    endif()
+    target_link_libraries(${m_target} PUBLIC ${m_deps})
+    list(APPEND modules ${m_target})
+  endwhile()
+
+  add_llvm_executable(${target}
+    DISABLE_LLVM_LINK_LLVM_DYLIB
+    PARTIAL_SOURCES_INTENDED
+    ${t_args})
+  message("<${t_args}>")
+
+  # Check and suggest deps
+  if (TARGET obj.${target} AND NOT "${m_module_args}" STREQUAL "")
+    set(tblgen_all_args
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/xxx.py
+      ${CMAKE_CURRENT_BINARY_DIR}
+      "$<JOIN:$<TARGET_OBJECTS:obj.${target}>,$<COMMA>>"
+      ${m_module_args}
+      DEPENDS obj.${target}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      )
+  endif()
+
+  set(tblgen_all "${target}-all")
+  add_custom_target(${tblgen_all} ${tblgen_all_args})
+  add_dependencies(${tblgen_all} ${target} ${modules})
+
+  if(NOT ${T_PARTIAL_SOURCES_INTENDED})
+    llvm_check_source_file_list()
+  endif()
 endfunction()
 
 macro(add_tablegen target project)
