@@ -23,6 +23,10 @@ class Record;
 class RecordKeeper;
 class CodeGenTarget;
 
+/// getValueType - Return the MVT::SimpleValueType that the specified TableGen
+/// record corresponds to.
+MVT::SimpleValueType getValueType(Record *Rec);
+
 struct CodeGenIntrinsic {
   Record *TheDef;             // The actual record defining this intrinsic.
   std::string Name;           // The name of the LLVM function "llvm.bswap.i32"
