@@ -39,12 +39,6 @@ static cl::opt<unsigned>
                  cl::desc("Make -gen-asm-writer emit assembly writer #N"),
                  cl::cat(AsmWriterCat));
 
-/// getValueType - Return the MVT::SimpleValueType that the specified TableGen
-/// record corresponds to.
-MVT::SimpleValueType llvm::getValueType(Record *Rec) {
-  return (MVT::SimpleValueType)Rec->getValueAsInt("Value");
-}
-
 StringRef llvm::getName(MVT::SimpleValueType T) {
   switch (T) {
   case MVT::Other:   return "UNKNOWN";
