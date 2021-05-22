@@ -9,39 +9,30 @@ add_tablegen(llvm-tblgen LLVM
   TableGen.cpp
   CTagsEmitter.cpp
 
-  PARTIAL_SOURCES_INTENDED
-  )
-target_link_libraries(llvm-tblgen PRIVATE
-  LLVMTableGen
-  )
-set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
+  MODULE exegesis
+  ExegesisEmitter.cpp
 
-add_llvm_library(llvm-tblgen-intrinsic-enums SHARED
+  MODULE intrinsic-enums
   CodeGenIntrinsics.cpp
   IntrinsicEnumsEmitter.cpp
   SDNodeProperties.cpp
+  SHARED
 
-  PARTIAL_SOURCES_INTENDED
-  )
-target_link_libraries(llvm-tblgen-intrinsic-enums PUBLIC
-  LLVMTableGen
-  )
-set_target_properties(llvm-tblgen-intrinsic-enums PROPERTIES
-  PREFIX ""
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-intrinsic-enums)
+  MODULE automata
+  DFAEmitter.cpp
+  SHARED
 
-add_llvm_library(llvm-tblgen-intrinsic-impl MODULE
+  MODULE searchable-tables
+  SearchableTableEmitter.cpp
+  DEPENDS intrinsic-enums
+
+  MODULE intrinsic-impl
+  EmitLongStrLiterals.cpp
   IntrinsicImplEmitter.cpp
+  SHARED
+  DEPENDS intrinsic-enums
 
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  llvm-tblgen-intrinsic-enums
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-intrinsic-impl)
-
-add_llvm_library(llvm-tblgen-callingconv SHARED
+  MODULE callingconv
   CallingConvEmitter.cpp
   CodeGenHwModes.cpp
   CodeGenInstruction.cpp
@@ -49,258 +40,98 @@ add_llvm_library(llvm-tblgen-callingconv SHARED
   CodeGenSchedule.cpp
   CodeGenTarget.cpp
   InfoByHwMode.cpp
+  SHARED
+  DEPENDS intrinsic-impl
 
-  PARTIAL_SOURCES_INTENDED
-  )
-target_link_libraries(llvm-tblgen-callingconv PUBLIC
-  llvm-tblgen-intrinsic-enums
-  )
-set_target_properties(llvm-tblgen-callingconv PROPERTIES
-  PREFIX ""
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-callingconv)
+  MODULE pseudo-lowering
+  PseudoLoweringEmitter.cpp
+  DEPENDS callingconv
 
-add_llvm_library(llvm-tblgen-emitter SHARED
+  MODULE x86-EVEX2VEX-tables
+  X86EVEX2VEXTablesEmitter.cpp
+  DEPENDS callingconv
+
+  MODULE compress-inst-emitter
+  RISCVCompressInstEmitter.cpp
+  DEPENDS callingconv
+
+  MODULE x86-fold-tables
+  X86FoldTablesEmitter.cpp
+  DEPENDS callingconv
+
+  MODULE dfa-packetizer
+  DFAPacketizerEmitter.cpp
+  DEPENDS automata callingconv
+
+  MODULE global-isel-combiner
+  GICombinerEmitter.cpp
+  $<TARGET_OBJECTS:obj.LLVMTableGenGlobalISel>
+
+  MODULE instr-docs
+  CodeGenDAGPatterns.cpp
+  InstrDocsEmitter.cpp
+  SHARED
+  DEPENDS callingconv
+
+  MODULE register-bank
+  RegisterBankEmitter.cpp
+  DEPENDS callingconv
+
+  MODULE subtarget
+  PredicateExpander.cpp
+  SubtargetEmitter.cpp
+  SHARED
+  DEPENDS callingconv
+
+  MODULE disassembler
+  DisassemblerEmitter.cpp
+  FixedLenDecoderEmitter.cpp # unused Action
+  WebAssemblyDisassemblerEmitter.cpp
+  X86DisassemblerTables.cpp
+  X86ModRMFilters.cpp
+  X86RecognizableInstr.cpp
+  DEPENDS callingconv
+
+  MODULE instr-info
+  CodeGenMapTable.cpp
+  InstrInfoEmitter.cpp
+  DEPENDS instr-docs subtarget
+
+  MODULE emitter
   CodeEmitterGen.cpp
   SubtargetFeatureInfo.cpp
   Types.cpp
+  SHARED
+  DEPENDS callingconv
 
-  PARTIAL_SOURCES_INTENDED
-  )
-target_link_libraries(llvm-tblgen-emitter PUBLIC
-  llvm-tblgen-callingconv
-  )
-set_target_properties(llvm-tblgen-emitter PROPERTIES
-  PREFIX ""
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-emitter)
+  MODULE register-info
+  RegisterInfoEmitter.cpp
+  DEPENDS emitter
 
-add_llvm_library(LLVMTableGenCodeGen SHARED
-  AsmWriterInst.cpp
-  CodeGenDAGPatterns.cpp
-  CodeGenMapTable.cpp
-  FixedLenDecoderEmitter.cpp # unused Action
-  PredicateExpander.cpp
-
-  EmitLongStrLiterals.cpp
-
-  PARTIAL_SOURCES_INTENDED
-  )
-target_link_libraries(LLVMTableGenCodeGen PUBLIC
-  llvm-tblgen-emitter
-  )
-
-add_llvm_library(llvm-tblgen-asm-matcher MODULE
+  MODULE asm-matcher
   AsmMatcherEmitter.cpp
+  DEPENDS emitter
 
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-asm-matcher)
-
-add_llvm_library(llvm-tblgen-asm-writer MODULE
+  MODULE asm-writer
   AsmWriterEmitter.cpp
+  AsmWriterInst.cpp
+  DEPENDS emitter
 
-  PARTIAL_SOURCES_INTENDED
+  MODULE fast-isel
+  FastISelEmitter.cpp
+  DEPENDS emitter instr-docs subtarget
 
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-asm-writer)
+  MODULE global-isel
+  GlobalISelEmitter.cpp
+  DEPENDS emitter instr-docs subtarget
 
-add_llvm_library(llvm-tblgen-dag-isel MODULE
+  MODULE dag-isel
   DAGISelEmitter.cpp
   DAGISelMatcher.cpp
   DAGISelMatcherEmitter.cpp
   DAGISelMatcherGen.cpp
   DAGISelMatcherOpt.cpp
 
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-dag-isel)
-
-add_llvm_library(llvm-tblgen-x86-EVEX2VEX-tables MODULE
-  X86EVEX2VEXTablesEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-x86-EVEX2VEX-tables)
-
-add_llvm_library(llvm-tblgen-exegesis MODULE
-  ExegesisEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-exegesis)
-
-add_llvm_library(llvm-tblgen-fast-isel MODULE
-  FastISelEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-fast-isel)
-
-add_llvm_library(llvm-tblgen-global-isel MODULE
-  GlobalISelEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-global-isel)
-
-add_llvm_library(llvm-tblgen-global-isel-combiner MODULE
-  GICombinerEmitter.cpp
-  $<TARGET_OBJECTS:obj.LLVMTableGenGlobalISel>
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-global-isel-combiner)
-
-add_llvm_library(llvm-tblgen-instr-info MODULE
-  InstrInfoEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-instr-info)
-
-add_llvm_library(llvm-tblgen-register-bank MODULE
-  RegisterBankEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-register-bank)
-
-add_llvm_library(llvm-tblgen-register-info MODULE
-  RegisterInfoEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-register-info)
-
-add_llvm_library(llvm-tblgen-subtarget MODULE
-  SubtargetEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-subtarget)
-
-add_llvm_library(llvm-tblgen-x86-fold-tables MODULE
-  X86FoldTablesEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-x86-fold-tables)
-
-add_llvm_library(llvm-tblgen-searchable-tables MODULE
-  SearchableTableEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  llvm-tblgen-intrinsic-enums
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-searchable-tables)
-
-add_llvm_library(llvm-tblgen-compress-inst-emitter MODULE
-  RISCVCompressInstEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-compress-inst-emitter)
-
-add_llvm_library(llvm-tblgen-pseudo-lowering MODULE
-  PseudoLoweringEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-pseudo-lowering)
-
-add_llvm_library(llvm-tblgen-instr-docs MODULE
-  InstrDocsEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-instr-docs)
-
-add_llvm_library(llvm-tblgen-disassembler MODULE
-  DisassemblerEmitter.cpp
-  WebAssemblyDisassemblerEmitter.cpp
-  X86DisassemblerTables.cpp
-  X86ModRMFilters.cpp
-  X86RecognizableInstr.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  LLVMTableGenCodeGen
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-disassembler)
-
-add_llvm_library(llvm-tblgen-automata SHARED
-  DFAEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-  )
-target_link_libraries(llvm-tblgen-automata PUBLIC
-  LLVMTableGen
-  )
-set_target_properties(llvm-tblgen-automata PROPERTIES
-      PREFIX ""
-      )
-add_dependencies(llvm-tblgen-all llvm-tblgen-automata)
-
-add_llvm_library(llvm-tblgen-dfa-packetizer MODULE
-  DFAPacketizerEmitter.cpp
-
-  PARTIAL_SOURCES_INTENDED
-
-  LINK_LIBS
-  llvm-tblgen-automata
-  llvm-tblgen-callingconv
-  )
-add_dependencies(llvm-tblgen-all llvm-tblgen-dfa-packetizer)
-
-llvm_check_source_file_list()
+  DEPENDS emitter instr-docs
+  ) # add_tablegen
+set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
