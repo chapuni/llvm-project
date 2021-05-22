@@ -160,15 +160,16 @@ function(add_public_tablegen_target target)
 endfunction()
 
 function(add_tablegen_impl target)
-  set(tblgen_all "${target}-all")
-  add_custom_target(${tblgen_all})
-
   set(LLVM_LINK_COMPONENTS TableGen ${LLVM_LINK_COMPONENTS})
 
-  # CMake doesn't let compilation units depend on their dependent libraries on some generators.
-  if(NOT CMAKE_GENERATOR STREQUAL "Ninja" AND NOT XCODE)
-    # FIXME: It leaks to user, callee of add_tablegen.
-    set(LLVM_ENABLE_OBJLIB ON)
+  if(NOT XCODE)
+    # CMake doesn't let compilation units depend on their dependent libraries on some generators.
+    if(NOT CMAKE_GENERATOR STREQUAL "Ninja")
+      set(LLVM_ENABLE_OBJLIB ON)
+    endif()
+    if (NOT ${LLVM_ENABLE_TABLEGEN_MODULARIZED})
+      set(LLVM_ENABLE_OBJLIB ON)
+    endif()
   endif()
 
   cmake_parse_arguments(T
@@ -195,6 +196,8 @@ function(add_tablegen_impl target)
       ${m_args})
 
     if (NOT ${LLVM_ENABLE_TABLEGEN_MODULARIZED})
+      list(JOIN M_UNPARSED_ARGUMENTS "," m_items)
+      list(APPEND m_module_args "${m_name}=${m_items}")
       list(APPEND t_args ${M_UNPARSED_ARGUMENTS})
       continue()
     endif()
@@ -214,7 +217,7 @@ function(add_tablegen_impl target)
     set(m_deps)
     foreach(d ${M_DEPENDS})
       if(NOT TARGET "${target}-${d}")
-	message(FATAL_ERROR "${m_name}: Unknown depend: (${target}-)${d}")
+        message(FATAL_ERROR "${m_name}: Unknown depend: (${target}-)${d}")
       endif()
       list(APPEND m_deps "${target}-${d}")
     endforeach()
@@ -222,14 +225,30 @@ function(add_tablegen_impl target)
       list(APPEND m_deps LLVMTableGen)
     endif()
     target_link_libraries(${m_target} PUBLIC ${m_deps})
-    add_dependencies(${tblgen_all} ${m_target})
+    list(APPEND modules ${m_target})
   endwhile()
 
   add_llvm_executable(${target}
     DISABLE_LLVM_LINK_LLVM_DYLIB
     PARTIAL_SOURCES_INTENDED
     ${t_args})
-  add_dependencies(${tblgen_all} ${target})
+  message("<${t_args}>")
+
+  # Check and suggest deps
+  if (TARGET obj.${target} AND NOT "${m_module_args}" STREQUAL "")
+    set(tblgen_all_args
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/xxx.py
+      ${CMAKE_CURRENT_BINARY_DIR}
+      "$<JOIN:$<TARGET_OBJECTS:obj.${target}>,$<COMMA>>"
+      ${m_module_args}
+      DEPENDS obj.${target}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      )
+  endif()
+
+  set(tblgen_all "${target}-all")
+  add_custom_target(${tblgen_all} ${tblgen_all_args})
+  add_dependencies(${tblgen_all} ${target} ${modules})
 
   if(NOT ${T_PARTIAL_SOURCES_INTENDED})
     llvm_check_source_file_list()
