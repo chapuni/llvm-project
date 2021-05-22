@@ -11,17 +11,10 @@
 //===----------------------------------------------------------------------===//
 
 #include "CodeGenIntrinsics.h"
-#include "CodeGenTarget.h"
-#include "SequenceToOffsetTable.h"
-#include "TableGenBackends.h"
-#include "llvm/ADT/StringExtras.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Error.h"
 #include "llvm/TableGen/Record.h"
-#include "llvm/TableGen/StringMatcher.h"
-#include "llvm/TableGen/StringToOffsetTable.h"
 #include "llvm/TableGen/TableGenBackend.h"
-#include <algorithm>
 using namespace llvm;
 
 cl::OptionCategory GenIntrinsicCat("Options for -gen-intrinsic-enums");
