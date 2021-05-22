@@ -65,7 +65,15 @@ add_tablegen(llvm-tblgen LLVM
 
   MODULE global-isel-combiner
   GICombinerEmitter.cpp
-  $<TARGET_OBJECTS:obj.LLVMTableGenGlobalISel>
+  GlobalISel/CodeExpander.cpp
+  GlobalISel/GIMatchDag.cpp
+  GlobalISel/GIMatchDagEdge.cpp
+  GlobalISel/GIMatchDagInstr.cpp
+  GlobalISel/GIMatchDagOperands.cpp
+  GlobalISel/GIMatchDagPredicate.cpp
+  GlobalISel/GIMatchDagPredicateDependencyEdge.cpp
+  GlobalISel/GIMatchTree.cpp
+  DEPENDS callingconv
 
   MODULE instr-docs
   CodeGenDAGPatterns.cpp
