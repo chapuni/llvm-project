@@ -193,6 +193,12 @@ function(add_tablegen_impl target)
       ""
       "DEPENDS"
       ${m_args})
+
+    if (NOT ${LLVM_ENABLE_TABLEGEN_MODULARIZED})
+      list(APPEND t_args ${M_UNPARSED_ARGUMENTS})
+      continue()
+    endif()
+
     if(${M_SHARED})
       set(m_type SHARED)
     else()
