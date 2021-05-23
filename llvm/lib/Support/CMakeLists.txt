@@ -80,6 +80,7 @@ add_llvm_library(LLVMSupportLite OBJECT PARTIAL_SOURCES_INTENDED
   APFloat.cpp
   APInt.cpp
   ARMTargetParser.cpp
+  circular_raw_ostream.cpp
   CodeGenCoverage.cpp
   CommandLine.cpp
   ConvertUTF.cpp
@@ -95,6 +96,7 @@ add_llvm_library(LLVMSupportLite OBJECT PARTIAL_SOURCES_INTENDED
   InitLLVM.cpp
   IntEqClasses.cpp
   JSON.cpp
+  Locale.cpp
   MD5.cpp
   ManagedStatic.cpp
   MemAlloc.cpp
@@ -108,6 +110,7 @@ add_llvm_library(LLVMSupportLite OBJECT PARTIAL_SOURCES_INTENDED
   SmallPtrSet.cpp
   SmallVector.cpp
   SourceMgr.cpp
+  Statistic.cpp
   StringExtras.cpp
   StringMap.cpp
   StringRef.cpp
@@ -162,7 +165,6 @@ add_llvm_component_library(LLVMSupport
   BranchProbability.cpp
   BuryPointer.cpp
   CachePruning.cpp
-  circular_raw_ostream.cpp
   Chrono.cpp
   COM.cpp
   Compression.cpp
@@ -186,7 +188,6 @@ add_llvm_component_library(LLVMSupport
   KnownBits.cpp
   LEB128.cpp
   LineIterator.cpp
-  Locale.cpp
   LockFileManager.cpp
   LowLevelType.cpp
   MathExtras.cpp
@@ -201,7 +202,6 @@ add_llvm_component_library(LLVMSupport
   ScopedPrinter.cpp
   SHA1.cpp
   SpecialCaseList.cpp
-  Statistic.cpp
   SuffixTree.cpp
   SymbolRemappingReader.cpp
   SystemUtils.cpp
