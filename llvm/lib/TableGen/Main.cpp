@@ -94,8 +94,9 @@ void xxx(StringRef prefix, StringRef argv1) {
 }
 
 void ParseCommandLineOptions(int argc, char **argv) {
-  if (argc >= 2)
-    xxx("llvm-tblgen", argv[1]);
+  if (argc >= 2) {
+    xxx(llvm::sys::path::stem(argv[0]), argv[1]);
+  }
 
   cl::ParseCommandLineOptions(argc, argv);
 }

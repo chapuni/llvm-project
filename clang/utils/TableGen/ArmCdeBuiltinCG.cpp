@@ -6,7 +6,7 @@ using namespace llvm;
 using namespace clang;
 
 namespace {
-cl::opt<bool> Action("gen-oarm-cde-builtin-codegen",
+cl::opt<bool> Action("gen-arm-cde-builtin-codegen",
                      cl::desc("Generate ARM CDE builtin code-generator for clang"),
                      cl::callback([](const bool &) { TableGen::RegisterAction(EmitCdeBuiltinCG); }));
 } // end anonymous namespace

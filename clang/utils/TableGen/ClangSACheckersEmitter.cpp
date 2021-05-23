@@ -340,3 +340,9 @@ void clang::EmitClangSACheckers(RecordKeeper &Records, raw_ostream &OS) {
   OS << "#endif // GET_CHECKER_OPTIONS\n"
         "\n";
 }
+
+namespace {
+cl::opt<bool> Action("gen-clang-sa-checkers",
+                     cl::desc("Generate Clang Static Analyzer checkers"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangSACheckers); }));
+} // end anonymous namespace

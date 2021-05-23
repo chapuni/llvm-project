@@ -355,3 +355,9 @@ void ClangOpcodesEmitter::PrintTypes(raw_ostream &OS, ArrayRef<Record *> Types) 
 void clang::EmitClangOpcodes(RecordKeeper &Records, raw_ostream &OS) {
   ClangOpcodesEmitter(Records).run(OS);
 }
+
+namespace {
+cl::opt<bool> Action("gen-clang-opcodes",
+                     cl::desc("Generate Clang constexpr interpreter opcodes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangOpcodes); }));
+} // end anonymous namespace

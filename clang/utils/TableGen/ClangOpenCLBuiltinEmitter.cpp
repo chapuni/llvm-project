@@ -818,3 +818,9 @@ void clang::EmitClangOpenCLBuiltins(RecordKeeper &Records, raw_ostream &OS) {
   BuiltinNameEmitter NameChecker(Records, OS);
   NameChecker.Emit();
 }
+
+namespace {
+cl::opt<bool> Action("gen-clang-opencl-builtins",
+                     cl::desc("Generate OpenCL builtin declaration handlers"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangOpenCLBuiltins); }));
+} // end anonymous namespace
