@@ -234,3 +234,9 @@ void clang::EmitClangSyntaxNodeClasses(llvm::RecordKeeper &Records,
     OS << "};\n\n";
   });
 }
+
+namespace {
+llvm::TableGen::Action Action(clang::EmitClangSyntaxNodeList,
+                              "gen-clang-syntax-node-list",
+                              "Generate list of Clang Syntax Tree node types");
+}

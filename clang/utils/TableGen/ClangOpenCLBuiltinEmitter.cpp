@@ -229,7 +229,6 @@ private:
   // same entry (<I1, I2, I3>).
   MapVector<BuiltinIndexListTy *, BuiltinTableEntries> SignatureListMap;
 };
-} // namespace
 
 void BuiltinNameEmitter::Emit() {
   emitSourceFileHeader("OpenCL Builtin handling", OS);
@@ -814,7 +813,11 @@ static void OCL2Qual(ASTContext &Context, const OpenCLTypeStruct &Ty,
   OS << "\n} // OCL2Qual\n";
 }
 
-void clang::EmitClangOpenCLBuiltins(RecordKeeper &Records, raw_ostream &OS) {
+void EmitClangOpenCLBuiltins(RecordKeeper &Records, raw_ostream &OS) {
   BuiltinNameEmitter NameChecker(Records, OS);
   NameChecker.Emit();
 }
+
+TableGen::Action Action(EmitClangOpenCLBuiltins, "gen-clang-opencl-builtins",
+                        "Generate OpenCL builtin declaration handlers");
+} // namespace

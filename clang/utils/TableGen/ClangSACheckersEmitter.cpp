@@ -20,6 +20,8 @@
 
 using namespace llvm;
 
+namespace {
+
 //===----------------------------------------------------------------------===//
 // Static Analyzer Checkers Tables generation
 //===----------------------------------------------------------------------===//
@@ -175,7 +177,7 @@ static void printOption(llvm::raw_ostream &OS, StringRef FullName,
     OS << "true";
 }
 
-void clang::EmitClangSACheckers(RecordKeeper &Records, raw_ostream &OS) {
+void EmitClangSACheckers(RecordKeeper &Records, raw_ostream &OS) {
   std::vector<Record *> checkers = Records.getAllDerivedDefinitions("Checker");
   std::vector<Record *> packages = Records.getAllDerivedDefinitions("Package");
 
@@ -340,3 +342,7 @@ void clang::EmitClangSACheckers(RecordKeeper &Records, raw_ostream &OS) {
   OS << "#endif // GET_CHECKER_OPTIONS\n"
         "\n";
 }
+
+TableGen::Action Action(EmitClangSACheckers, "gen-clang-sa-checkers",
+                        "Generate Clang Static Analyzer checkers");
+} // namespace
