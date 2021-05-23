@@ -8,5 +8,5 @@ using namespace clang;
 namespace {
 cl::opt<bool> Action("gen-clang-attr-parsed-attr-list",
                      cl::desc("Generate a clang parsed attribute list"),
-                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitClangAttrClass); }));
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitClangAttrParsedAttrList); }));
 } // end anonymous namespace

@@ -79,7 +79,7 @@ costs = {}
 
 # .ninja_log
 basedir = os.path.relpath(os.path.join(sys.argv[1], ".."))
-ninja_log = "all.ninja_log"
+ninja_log = ".ninja_log"
 if os.path.exists(ninja_log):
     with open(ninja_log) as f:
         for line in f:

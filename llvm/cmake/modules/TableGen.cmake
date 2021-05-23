@@ -93,7 +93,7 @@ function(tablegen project ofn)
 
   if (TARGET "${${project}_TABLEGEN_EXE}" AND "${ARGN}" MATCHES "^--?gen-")
     list(GET ARGN 0 arg0)
-    string(REGEX REPLACE "^--?gen-(.+)" "llvm-tblgen-\\1" plugin_name "${arg0}")
+    string(REGEX REPLACE "^--?gen-(.+)" "${${project}_TABLEGEN_EXE}-\\1" plugin_name "${arg0}")
     if (NOT TARGET "${plugin_name}")
       set(plugin_name)
     endif()

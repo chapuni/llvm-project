@@ -53,7 +53,7 @@ int ClangTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
 int main(int argc, char **argv) {
   sys::PrintStackTraceOnErrorSignal(argv[0]);
   PrettyStackTraceProgram X(argc, argv);
-  cl::ParseCommandLineOptions(argc, argv);
+  TableGen::ParseCommandLineOptions(argc, argv);
 
   llvm_shutdown_obj Y;
 

@@ -15,3 +15,9 @@ void clang::EmitClangDataCollectors(RecordKeeper &RK, raw_ostream &OS) {
   }
   OS << "#undef DEF_ADD_DATA\n";
 }
+
+namespace {
+cl::opt<bool> Action("gen-clang-data-collectors",
+                     cl::desc("Generate data collectors for AST nodes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangDataCollectors); }));
+} // end anonymous namespace

@@ -206,3 +206,9 @@ void TypeNodeEmitter::emitUndefs() {
 void clang::EmitClangTypeNodes(RecordKeeper &records, raw_ostream &out) {
   TypeNodeEmitter(records, out).emit();
 }
+
+namespace {
+cl::opt<bool> Action("gen-clang-type-nodes",
+                     cl::desc("Generate Clang AST type nodes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangTypeNodes); }));
+} // end anonymous namespace
