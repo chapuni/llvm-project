@@ -114,8 +114,13 @@ for fn,fnset_ in defs.items():
         undefs_ |= undefs_cur
         undefs_ -= fnset
 
+def cost(x):
+    if x in costs:
+        return costs[x]
+    return 60000
+
 def sum_costs(fns):
-    return sum(map(lambda x:costs[x], fns))
+    return sum(map(cost, fns))
 
 mod_mods = {}
 mod_fns = {}
