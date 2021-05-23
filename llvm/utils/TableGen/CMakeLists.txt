@@ -18,50 +18,112 @@ add_tablegen(llvm-tblgen LLVM
   SDNodeProperties.cpp
   SHARED
 
-  MODULE automata
-  DFAEmitter.cpp
+  MODULE intrinsic-impl
+  EmitLongStrLiterals.cpp
+  IntrinsicImplEmitter.cpp
+  DEPENDS intrinsic-enums
   SHARED
 
   MODULE searchable-tables
   SearchableTableEmitter.cpp
   DEPENDS intrinsic-enums
 
-  MODULE intrinsic-impl
-  EmitLongStrLiterals.cpp
-  IntrinsicImplEmitter.cpp
+  MODULE automata
+  DFAEmitter.cpp
   SHARED
-  DEPENDS intrinsic-enums
 
-  MODULE callingconv
-  CallingConvEmitter.cpp
+  MODULE x86-EVEX2VEX-tables
   CodeGenHwModes.cpp
   CodeGenInstruction.cpp
   CodeGenRegisters.cpp
   CodeGenSchedule.cpp
   CodeGenTarget.cpp
   InfoByHwMode.cpp
-  SHARED
-  DEPENDS intrinsic-impl
-
-  MODULE pseudo-lowering
-  PseudoLoweringEmitter.cpp
-  DEPENDS callingconv
-
-  MODULE x86-EVEX2VEX-tables
   X86EVEX2VEXTablesEmitter.cpp
-  DEPENDS callingconv
+  DEPENDS intrinsic-enums
+  SHARED
 
-  MODULE compress-inst-emitter
-  RISCVCompressInstEmitter.cpp
-  DEPENDS callingconv
+  MODULE callingconv
+  CallingConvEmitter.cpp
+  DEPENDS x86-EVEX2VEX-tables
 
   MODULE x86-fold-tables
   X86FoldTablesEmitter.cpp
-  DEPENDS callingconv
+  DEPENDS x86-EVEX2VEX-tables
+
+  MODULE pseudo-lowering
+  PseudoLoweringEmitter.cpp
+  DEPENDS x86-EVEX2VEX-tables
+
+  MODULE register-bank
+  RegisterBankEmitter.cpp
+  DEPENDS x86-EVEX2VEX-tables
+
+  MODULE compress-inst-emitter
+  RISCVCompressInstEmitter.cpp
+  DEPENDS x86-EVEX2VEX-tables
 
   MODULE dfa-packetizer
   DFAPacketizerEmitter.cpp
-  DEPENDS automata callingconv
+  DEPENDS automata x86-EVEX2VEX-tables
+
+  MODULE emitter
+  CodeEmitterGen.cpp
+  SubtargetFeatureInfo.cpp
+  Types.cpp
+  DEPENDS x86-EVEX2VEX-tables
+  SHARED
+
+  MODULE subtarget
+  PredicateExpander.cpp
+  SubtargetEmitter.cpp
+  DEPENDS x86-EVEX2VEX-tables
+  SHARED
+
+  MODULE asm-writer
+  AsmWriterEmitter.cpp
+  AsmWriterInst.cpp
+  DEPENDS emitter intrinsic-impl
+
+  MODULE register-info
+  RegisterInfoEmitter.cpp
+  DEPENDS emitter intrinsic-impl
+
+  MODULE asm-matcher
+  AsmMatcherEmitter.cpp
+  DEPENDS emitter
+
+  MODULE disassembler
+  DisassemblerEmitter.cpp
+  FixedLenDecoderEmitter.cpp
+  WebAssemblyDisassemblerEmitter.cpp
+  X86DisassemblerTables.cpp
+  X86ModRMFilters.cpp
+  X86RecognizableInstr.cpp
+  DEPENDS x86-EVEX2VEX-tables
+
+  MODULE instr-docs
+  CodeGenDAGPatterns.cpp
+  InstrDocsEmitter.cpp
+  DEPENDS x86-EVEX2VEX-tables
+  SHARED
+
+  MODULE fast-isel
+  FastISelEmitter.cpp
+  DEPENDS instr-docs
+
+  MODULE instr-info
+  CodeGenMapTable.cpp
+  InstrInfoEmitter.cpp
+  DEPENDS instr-docs intrinsic-impl subtarget
+
+  MODULE dag-isel
+  DAGISelEmitter.cpp
+  DAGISelMatcher.cpp
+  DAGISelMatcherEmitter.cpp
+  DAGISelMatcherGen.cpp
+  DAGISelMatcherOpt.cpp
+  DEPENDS instr-docs
 
   MODULE global-isel-combiner
   GICombinerEmitter.cpp
@@ -73,73 +135,10 @@ add_tablegen(llvm-tblgen LLVM
   GlobalISel/GIMatchDagPredicate.cpp
   GlobalISel/GIMatchDagPredicateDependencyEdge.cpp
   GlobalISel/GIMatchTree.cpp
-  DEPENDS callingconv
-
-  MODULE instr-docs
-  CodeGenDAGPatterns.cpp
-  InstrDocsEmitter.cpp
-  SHARED
-  DEPENDS callingconv
-
-  MODULE register-bank
-  RegisterBankEmitter.cpp
-  DEPENDS callingconv
-
-  MODULE subtarget
-  PredicateExpander.cpp
-  SubtargetEmitter.cpp
-  SHARED
-  DEPENDS callingconv
-
-  MODULE disassembler
-  DisassemblerEmitter.cpp
-  FixedLenDecoderEmitter.cpp # unused Action
-  WebAssemblyDisassemblerEmitter.cpp
-  X86DisassemblerTables.cpp
-  X86ModRMFilters.cpp
-  X86RecognizableInstr.cpp
-  DEPENDS callingconv
-
-  MODULE instr-info
-  CodeGenMapTable.cpp
-  InstrInfoEmitter.cpp
-  DEPENDS instr-docs subtarget
-
-  MODULE emitter
-  CodeEmitterGen.cpp
-  SubtargetFeatureInfo.cpp
-  Types.cpp
-  SHARED
-  DEPENDS callingconv
-
-  MODULE register-info
-  RegisterInfoEmitter.cpp
-  DEPENDS emitter
-
-  MODULE asm-matcher
-  AsmMatcherEmitter.cpp
-  DEPENDS emitter
-
-  MODULE asm-writer
-  AsmWriterEmitter.cpp
-  AsmWriterInst.cpp
-  DEPENDS emitter
-
-  MODULE fast-isel
-  FastISelEmitter.cpp
-  DEPENDS emitter instr-docs subtarget
+  DEPENDS x86-EVEX2VEX-tables
 
   MODULE global-isel
   GlobalISelEmitter.cpp
-  DEPENDS emitter instr-docs subtarget
-
-  MODULE dag-isel
-  DAGISelEmitter.cpp
-  DAGISelMatcher.cpp
-  DAGISelMatcherEmitter.cpp
-  DAGISelMatcherGen.cpp
-  DAGISelMatcherOpt.cpp
-
   DEPENDS emitter instr-docs
   ) # add_tablegen
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
