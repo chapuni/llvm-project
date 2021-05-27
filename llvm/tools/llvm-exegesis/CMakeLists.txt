@@ -4,6 +4,8 @@ set(LLVM_LINK_COMPONENTS
   native
   )
 
+add_compile_options(-fmodules-ignore-macro=LLVM_EXEGESIS_INITIALIZE_NATIVE_TARGET)
+
 add_llvm_tool(llvm-exegesis
   DISABLE_LLVM_LINK_LLVM_DYLIB
   llvm-exegesis.cpp
