@@ -26,6 +26,8 @@ add_llvm_component_library(LLVMTableGen SHARED
   LLVMSupportLite
   )
 
+set_target_properties(LLVMTableGen PROPERTIES LLVM_DISABLE_MODULES TRUE)
+
 if (BUILD_SHARED_LIBS)
   target_link_libraries(LLVMTableGen INTERFACE LLVMSupport)
 endif()

@@ -8,6 +8,8 @@ add_library(DynamicLibraryLib STATIC
   )
 set_target_properties(DynamicLibraryLib PROPERTIES FOLDER "Tests")
 
+target_compile_options(DynamicLibraryLib PRIVATE -fno-modules -Wno-unused-command-line-argument)
+
 # extract_symbols.py relies on all its library arguments being in the same
 # directory, so we must set the output directory in the same way as if
 # add_llvm_library was used.
@@ -36,6 +38,8 @@ function(dynlib_add_module NAME)
     PROPERTIES PREFIX ""
     SUFFIX ${LTDL_SHLIB_EXT}
     )
+
+  target_compile_options(${NAME} PRIVATE -fno-modules -Wno-unused-command-line-argument)
 
   add_dependencies(DynamicLibraryTests ${NAME})
   

@@ -136,9 +136,12 @@ add_tablegen(llvm-tblgen LLVM
   GlobalISel/GIMatchDagPredicateDependencyEdge.cpp
   GlobalISel/GIMatchTree.cpp
   DEPENDS x86-EVEX2VEX-tables
+  SHARED
 
   MODULE global-isel
   GlobalISelEmitter.cpp
   DEPENDS emitter instr-docs
   ) # add_tablegen
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
+
+add_library(LLVMTableGenGlobalISel ALIAS llvm-tblgen-global-isel-combiner)

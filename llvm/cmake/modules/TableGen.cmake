@@ -160,6 +160,7 @@ function(add_public_tablegen_target target)
 endfunction()
 
 function(add_tablegen_impl target)
+  set(LLVM_ENABLE_MODULES OFF)
   set(LLVM_LINK_COMPONENTS TableGen ${LLVM_LINK_COMPONENTS})
 
   if(NOT XCODE)

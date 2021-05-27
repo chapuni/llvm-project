@@ -77,6 +77,10 @@ function(llvm_update_compile_flags name)
   endif()
 
   set_property(TARGET ${name} APPEND PROPERTY COMPILE_DEFINITIONS ${LLVM_COMPILE_DEFINITIONS})
+
+  if(NOT ${LLVM_ENABLE_MODULES})
+    set_target_properties(${name} PROPERTIES LLVM_DISABLE_MODULES TRUE)
+  endif()
 endfunction()
 
 function(add_llvm_symbol_exports target_name export_file)

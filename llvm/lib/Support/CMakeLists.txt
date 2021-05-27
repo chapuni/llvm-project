@@ -146,6 +146,8 @@ add_llvm_library(LLVMSupportLite OBJECT PARTIAL_SOURCES_INTENDED
   ${system_libs} ${imported_libs} ${delayload_flags}
   )
 
+set_target_properties(obj.LLVMSupportLite PROPERTIES LLVM_DISABLE_MODULES TRUE)
+
 add_llvm_component_library(LLVMSupport
   $<TARGET_OBJECTS:obj.LLVMSupportLite>
   AArch64TargetParser.cpp
