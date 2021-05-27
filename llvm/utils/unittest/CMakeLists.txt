@@ -63,6 +63,7 @@ endif()
 
 # Gtest 1.8.0 uses tr1/tuple which is deprecated on MSVC, so we force it off.
 target_compile_definitions(gtest PUBLIC GTEST_HAS_TR1_TUPLE=0)
+target_compile_options(gtest PUBLIC -fmodules-ignore-macro=GTEST_HAS_TR1_TUPLE)
 
 if (NOT LLVM_ENABLE_THREADS)
   target_compile_definitions(gtest PUBLIC GTEST_HAS_PTHREAD=0)
