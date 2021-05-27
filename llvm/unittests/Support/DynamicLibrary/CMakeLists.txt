@@ -37,9 +37,8 @@ function(dynlib_add_module NAME)
   set_target_properties(${NAME}
     PROPERTIES PREFIX ""
     SUFFIX ${LTDL_SHLIB_EXT}
+    LLVM_DISABLE_MODULES ON
     )
-
-  target_compile_options(${NAME} PRIVATE -fno-modules -Wno-unused-command-line-argument)
 
   add_dependencies(DynamicLibraryTests ${NAME})
   
