@@ -1,8 +1,3 @@
-set(LLVM_LINK_COMPONENTS
-  TableGen
-  Support
-  )
-
 set(LLVM_TARGET_DEFINITIONS Automata.td)
 
 tablegen(LLVM AutomataTables.inc -gen-searchable-tables)
@@ -14,4 +9,4 @@ add_llvm_unittest(TableGenTests
   AutomataTest.cpp
   )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../utils/TableGen)
-target_link_libraries(TableGenTests PRIVATE LLVMTableGenGlobalISel LLVMTableGen)
+target_link_libraries(TableGenTests PRIVATE LLVMTableGenGlobalISel)

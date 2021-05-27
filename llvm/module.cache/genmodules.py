@@ -15,6 +15,16 @@ module_dir = sys.argv[4]
 scandep = sys.argv[5]
 compiler_arg = ' ' + ' '.join(sys.argv[6:]) + ' '
 
+while True:
+    n=list(range(0,5))
+    compiler_arg,n[0] = re.subn(r'\$<SEMICOLON>', ' ', compiler_arg)
+    compiler_arg,n[1] = re.subn(r'\$<TARGET_PROPERTY:[^<>]+>', '', compiler_arg)
+    compiler_arg,n[2] = re.subn(r'\$<BOOL:>', '0', compiler_arg)
+    compiler_arg,n[3] = re.subn(r'\$<(COMPILE_LANGUAGE:CXX|NOT:0|AND:1,1)>', '1', compiler_arg)
+    compiler_arg,n[4] = re.subn(r'\$<1:([^$<>]+)>', r'\1', compiler_arg)
+    if sum(n)==0:
+        break
+
 compiler_arg = re.sub(r' -fmodule-file-deps ', ' ', compiler_arg)
 
 with open("m.json", "w") as fcdb:
