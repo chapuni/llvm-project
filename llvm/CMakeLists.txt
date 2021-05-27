@@ -932,9 +932,15 @@ if (LLVM_ENABLE_MODULES)
     COMMAND touch ${anchor_h})
 
   add_custom_target(anchor_all DEPENDS ${anchor_h})
-  set_target_properties(anchor_all PROPERTIES EXCLUDE_FROM_ALL ON)
+  set_target_properties(anchor_all PROPERTIES EXCLUDE_FROM_ALL ON
+    #XXXPRESCAN ON
+    )
 
   list(APPEND LLVM_COMMON_DEPENDS anchor_all)
+
+  set(CMAKE_CXX_EXPERIMENTAL_PRESCANNER
+    "/home/chapuni/llvm/install/2libcxx/bin/clang-scan-deps --mode=preprocess-minimized-sources -j=1 --reuse-filemanager --format=ninja"
+    )
 endif()
 ##############################################################################
 

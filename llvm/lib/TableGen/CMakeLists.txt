@@ -19,6 +19,8 @@ add_llvm_component_library(LLVMTableGen ${tablegen_type}
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/TableGen
   )
 
+set_target_properties(LLVMTableGen PROPERTIES LLVM_DISABLE_MODULES TRUE)
+
 if (BUILD_SHARED_LIBS)
   target_link_libraries(LLVMTableGen PUBLIC LLVMSupport)
 elseif(LLVM_ENABLE_TABLEGEN_MODULARIZED)
