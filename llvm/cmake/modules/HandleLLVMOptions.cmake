@@ -516,7 +516,10 @@ endif( LLVM_COMPILER_IS_GCC_COMPATIBLE OR CMAKE_CXX_COMPILER_ID MATCHES "XL" )
 # Modules enablement for GCC-compatible compilers:
 if ( LLVM_COMPILER_IS_GCC_COMPATIBLE AND LLVM_ENABLE_MODULES )
   set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
-  set(module_flags -fmodules -fmodules-cache-path=${PROJECT_BINARY_DIR}/module.cache)
+  set(module_flags -fmodules)
+  #list(APPEND module_flags $<$<NOT:$<BOOL:$<TARGET_PROPERTY:LLVM_USE_PREBUILT_MODULES>>>:-fmodules-cache-path=${PROJECT_BINARY_DIR}/module.cache>)
+  #list(APPEND module_flags $<$<BOOL:$<TARGET_PROPERTY:LLVM_USE_PREBUILT_MODULES>>:-fprebuilt-module-path=${PROJECT_BINARY_DIR}/module.cache>)
+  list(APPEND module_flags $<IF:$<BOOL:$<TARGET_PROPERTY:LLVM_USE_PREBUILT_MODULES>>,-fprebuilt-module-path,-fmodules-cache-path>=${PROJECT_BINARY_DIR}/module.cache)
   if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # On Darwin -fmodules does not imply -fcxx-modules.
     set(module_flags ${module_flags} -fcxx-modules)

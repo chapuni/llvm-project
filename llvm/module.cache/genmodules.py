@@ -16,12 +16,18 @@ scandep = sys.argv[5]
 compiler_arg = ' ' + ' '.join(sys.argv[6:]) + ' '
 
 while True:
-    n=list(range(0,5))
+    n=list(range(0,9))
     compiler_arg,n[0] = re.subn(r'\$<SEMICOLON>', ' ', compiler_arg)
-    compiler_arg,n[1] = re.subn(r'\$<TARGET_PROPERTY:[^<>]+>', '', compiler_arg)
-    compiler_arg,n[2] = re.subn(r'\$<BOOL:>', '0', compiler_arg)
-    compiler_arg,n[3] = re.subn(r'\$<(COMPILE_LANGUAGE:CXX|NOT:0|AND:1,1)>', '1', compiler_arg)
-    compiler_arg,n[4] = re.subn(r'\$<1:([^$<>]+)>', r'\1', compiler_arg)
+    compiler_arg,n[1] = re.subn(r'\$<TARGET_PROPERTY:LLVM_USE_PREBUILT_MODULES>', 'FALSE', compiler_arg)
+    compiler_arg,n[2] = re.subn(r'\$<TARGET_PROPERTY:[^$,:<>]+>', '', compiler_arg)
+    compiler_arg,n[3] = re.subn(r'\$<BOOL:(OFF|FALSE)?>', '0', compiler_arg)
+    compiler_arg,n[4] = re.subn(r'\$<BOOL:[^$,<>]+>', '1', compiler_arg)
+    compiler_arg,n[5] = re.subn(r'\$<(COMPILE_LANGUAGE:CXX|NOT:0|AND:1,1)>', '1', compiler_arg)
+    compiler_arg,n[6] = re.subn(r'\$<NOT:1>', '0', compiler_arg)
+    compiler_arg,n[7] = re.subn(r'\$<IF:1,([^$,:<>]+),([^$,:<>]+)>', r'\1', compiler_arg)
+    compiler_arg,n[7] = re.subn(r'\$<IF:0,([^$,:<>]+),([^$,:<>]+)>', r'\2', compiler_arg)
+    compiler_arg,n[7] = re.subn(r'\$<1:([^$,:<>]+)>', r'\1', compiler_arg)
+    compiler_arg,n[8] = re.subn(r'\$<0:([^$,:<>]+)>', '', compiler_arg)
     if sum(n)==0:
         break
 

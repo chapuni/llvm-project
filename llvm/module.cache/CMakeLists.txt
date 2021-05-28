@@ -38,4 +38,6 @@ if(NOT "${result}" STREQUAL "0")
   message(FATAL_ERROR "ERROR(${result})")
 endif()
 
+add_compile_options(-fmodules-cache-path=${PROJECT_BINARY_DIR}/module.cache)
+
 include(${cmake_to_generate})
