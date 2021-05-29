@@ -76,6 +76,9 @@ if(LLVM_INTEGRATED_CRT_ALLOC)
   endif()
 endif()
 
+set(bk_enable_modules ${LLVM_ENABLE_MODULES})
+set(LLVM_ENABLE_MODULES OFF)
+
 add_llvm_library(LLVMSupportLite OBJECT PARTIAL_SOURCES_INTENDED
   APFloat.cpp
   APInt.cpp
@@ -146,7 +149,7 @@ add_llvm_library(LLVMSupportLite OBJECT PARTIAL_SOURCES_INTENDED
   ${system_libs} ${imported_libs} ${delayload_flags}
   )
 
-set_target_properties(obj.LLVMSupportLite PROPERTIES LLVM_DISABLE_MODULES TRUE)
+set(LLVM_ENABLE_MODULES ${bk_enable_modules})
 
 add_llvm_component_library(LLVMSupport
   $<TARGET_OBJECTS:obj.LLVMSupportLite>

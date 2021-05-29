@@ -4,6 +4,8 @@ if(NOT BUILD_SHARED_LIBS)
   )
 endif()
 
+set(LLVM_ENABLE_MODULES OFF)
+
 add_llvm_component_library(LLVMTableGen SHARED
   DetailedRecordsBackend.cpp
   Error.cpp
@@ -25,8 +27,6 @@ add_llvm_component_library(LLVMTableGen SHARED
   LINK_LIBS
   LLVMSupportLite
   )
-
-set_target_properties(LLVMTableGen PROPERTIES LLVM_DISABLE_MODULES TRUE)
 
 if (BUILD_SHARED_LIBS)
   target_link_libraries(LLVMTableGen INTERFACE LLVMSupport)
