@@ -15,13 +15,21 @@ module_dir = sys.argv[4]
 scandep = sys.argv[5]
 compiler_arg = ' ' + ' '.join(sys.argv[6:]) + ' '
 
+compiler_arg = re.sub(r'\bSHELL:', '', compiler_arg)
+
 while True:
-    n=list(range(0,5))
+    n=list(range(0,9))
     compiler_arg,n[0] = re.subn(r'\$<SEMICOLON>', ' ', compiler_arg)
-    compiler_arg,n[1] = re.subn(r'\$<TARGET_PROPERTY:[^<>]+>', '', compiler_arg)
-    compiler_arg,n[2] = re.subn(r'\$<BOOL:>', '0', compiler_arg)
-    compiler_arg,n[3] = re.subn(r'\$<(COMPILE_LANGUAGE:CXX|NOT:0|AND:1,1)>', '1', compiler_arg)
-    compiler_arg,n[4] = re.subn(r'\$<1:([^$<>]+)>', r'\1', compiler_arg)
+    compiler_arg,n[1] = re.subn(r'\$<TARGET_PROPERTY:LLVM_BUILD_MODULES>', 'TRUE', compiler_arg)
+    compiler_arg,n[2] = re.subn(r'\$<TARGET_PROPERTY:[^$,:<>]+>', '', compiler_arg)
+    compiler_arg,n[3] = re.subn(r'\$<BOOL:(OFF|FALSE)?>', '0', compiler_arg)
+    compiler_arg,n[4] = re.subn(r'\$<BOOL:[^$,<>]+>', '1', compiler_arg)
+    compiler_arg,n[5] = re.subn(r'\$<(COMPILE_LANGUAGE:CXX|NOT:0|AND:1,1)>', '1', compiler_arg)
+    compiler_arg,n[6] = re.subn(r'\$<NOT:1>', '0', compiler_arg)
+    compiler_arg,n[7] = re.subn(r'\$<IF:1,([^$,:<>]+),([^$,:<>]+)>', r'\1', compiler_arg)
+    compiler_arg,n[7] = re.subn(r'\$<IF:0,([^$,:<>]+),([^$,:<>]+)>', r'\2', compiler_arg)
+    compiler_arg,n[7] = re.subn(r'\$<1:([^$,:<>]+)>', r'\1', compiler_arg)
+    compiler_arg,n[8] = re.subn(r'\$<0:([^$,:<>]+)>', '', compiler_arg)
     if sum(n)==0:
         break
 
@@ -102,7 +110,7 @@ set(moddir ${CMAKE_BINARY_DIR}/%s/%s)
 llvm_add_library(%s STATIC EXCLUDE_FROM_ALL
   %s
   )
-set_target_properties(%s PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} ADDITIONAL_CLEAN_FILES ${moddir})
+set_target_properties(%s PROPERTIES LLVM_BUILD_MODULES ON ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} ADDITIONAL_CLEAN_FILES ${moddir})
 """ % (
     len(mods), modmap,
     mn, "\n  ".join(map(fn, mods.keys())),

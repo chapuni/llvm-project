@@ -522,13 +522,15 @@ if ( LLVM_COMPILER_IS_GCC_COMPATIBLE AND LLVM_ENABLE_MODULES )
     set(module_flags ${module_flags} -fcxx-modules)
   endif()
   if (LLVM_ENABLE_LOCAL_SUBMODULE_VISIBILITY)
-    set(module_flags ${module_flags} -Xclang -fmodules-local-submodule-visibility)
+    set(module_flags ${module_flags} "SHELL:-Xclang -fmodules-local-submodule-visibility")
   endif()
   if (LLVM_ENABLE_MODULE_DEBUGGING AND
       ((uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG") OR
        (uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")))
     set(module_flags ${module_flags} -gmodules)
   endif()
+
+  list(APPEND module_flags "SHELL:-Xclang -fmodules-cache-missing=$<IF:$<BOOL:$<TARGET_PROPERTY:LLVM_BUILD_MODULES>>,build,error>")
 
   set(module_flags ${module_flags} -fmodule-file-deps)
   set(module_flags ${module_flags} -Rmodule-build)
