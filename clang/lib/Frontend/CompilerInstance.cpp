@@ -1804,6 +1804,19 @@ ModuleLoadResult CompilerInstance::findOrCompileModuleAndReadAST(
     return ModuleLoadResult::OtherUncachedFailure;
   }
 
+  const HeaderSearchOptions &HSOpts = HS.getHeaderSearchOpts();
+  switch (HSOpts.ModuleCacheMissing) {
+  case HeaderSearchOptions::CacheMissing::Build:
+    break;
+  case HeaderSearchOptions::CacheMissing::Error:
+    getDiagnostics().Report(ModuleNameLoc, diag::err_module_not_built)
+        << ModuleName << SourceRange(ImportLoc, ModuleNameLoc);
+    ModuleBuildFailed = true;
+    return ModuleLoadResult::OtherUncachedFailure;
+  case HeaderSearchOptions::CacheMissing::Include:
+    return ModuleLoadResult::OtherUncachedFailure;
+  }
+
   // Try to compile and then read the AST.
   if (!compileModuleAndReadAST(*this, ImportLoc, ModuleNameLoc, M,
                                ModuleFilename)) {
