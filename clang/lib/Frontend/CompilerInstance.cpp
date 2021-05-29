@@ -1814,7 +1814,10 @@ ModuleLoadResult CompilerInstance::findOrCompileModuleAndReadAST(
     ModuleBuildFailed = true;
     return ModuleLoadResult::OtherUncachedFailure;
   case HeaderSearchOptions::CacheMissing::Include:
-    return ModuleLoadResult::OtherUncachedFailure;
+    getDiagnostics().Report(ModuleNameLoc, diag::remark_module_build_include)
+      << ModuleName << SourceRange(ImportLoc, ModuleNameLoc);
+    blacklist.insert(ModuleName);
+    return ModuleLoadResult::MissingExpected;
   }
 
   // Try to compile and then read the AST.
@@ -1841,6 +1844,11 @@ CompilerInstance::loadModule(SourceLocation ImportLoc,
   // Determine what file we're searching from.
   StringRef ModuleName = Path[0].first->getName();
   SourceLocation ModuleNameLoc = Path[0].second;
+
+  // XXX
+  if (blacklist.find(ModuleName) != blacklist.end()) {
+    return ModuleLoadResult::MissingExpected;
+  }
 
   // If we've already handled this import, just return the cached result.
   // This one-element cache is important to eliminate redundant diagnostics
