@@ -530,10 +530,11 @@ if ( LLVM_COMPILER_IS_GCC_COMPATIBLE AND LLVM_ENABLE_MODULES )
     set(module_flags ${module_flags} -gmodules)
   endif()
 
-  list(APPEND module_flags "SHELL:-Xclang -fmodules-cache-missing=$<IF:$<BOOL:$<TARGET_PROPERTY:LLVM_BUILD_MODULES>>,build,error>")
+  list(APPEND module_flags "SHELL:-Xclang -fmodules-cache-missing=$<IF:$<BOOL:$<TARGET_PROPERTY:LLVM_BUILD_MODULES>>,build,include>")
 
   set(module_flags ${module_flags} -fmodule-file-deps)
   set(module_flags ${module_flags} -Rmodule-build)
+  set(module_flags ${module_flags} -Rmodule-import)
 
   # AddLLVM.cmake
   set(module_flags ${module_flags} -fmodules-ignore-macro=GTEST_HAS_RTTI)
