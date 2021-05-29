@@ -81,7 +81,7 @@ function(llvm_update_compile_flags name)
   if(${LLVM_ENABLE_MODULES})
     set(LLVM_COMMON_DEPENDS ${LLVM_COMMON_DEPENDS} anchor_all PARENT_SCOPE)
   else()
-    set_target_properties(${name} PROPERTIES LLVM_DISABLE_MODULES TRUE)
+    #set_target_properties(${name} PROPERTIES LLVM_DISABLE_MODULES TRUE)
   endif()
 endfunction()
 
