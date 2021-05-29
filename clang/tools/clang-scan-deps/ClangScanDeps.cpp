@@ -606,7 +606,7 @@ int main(int argc, const char **argv) {
             auto& d = MaybeFile.get();
             auto sss = d.find(".dir/");
             auto eee = d.find(".cpp.o:");
-            if (sss != d.npos && eee != d.npos && sss < eee) {
+            if (llvm::StringRef(d).startswith("module.cache/") && sss != d.npos && eee != d.npos && sss < eee) {
               sss += 5;
               std::string mod = d.substr(sss, eee - sss);
 
