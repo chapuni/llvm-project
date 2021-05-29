@@ -78,7 +78,9 @@ function(llvm_update_compile_flags name)
 
   set_property(TARGET ${name} APPEND PROPERTY COMPILE_DEFINITIONS ${LLVM_COMPILE_DEFINITIONS})
 
-  if(NOT ${LLVM_ENABLE_MODULES})
+  if(${LLVM_ENABLE_MODULES})
+    set(LLVM_COMMON_DEPENDS ${LLVM_COMMON_DEPENDS} anchor_all PARENT_SCOPE)
+  else()
     set_target_properties(${name} PROPERTIES LLVM_DISABLE_MODULES TRUE)
   endif()
 endfunction()

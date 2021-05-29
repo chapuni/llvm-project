@@ -146,7 +146,7 @@ add_llvm_library(LLVMSupportLite STATIC OBJECT PARTIAL_SOURCES_INTENDED
   ${system_libs} ${imported_libs} ${delayload_flags}
   )
 
-set_target_properties(obj.LLVMSupportLite PROPERTIES LLVM_DISABLE_MODULES TRUE)
+set(LLVM_ENABLE_MODULES ${bk_enable_modules})
 
 add_llvm_component_library(LLVMSupport
   $<TARGET_OBJECTS:obj.LLVMSupportLite>
