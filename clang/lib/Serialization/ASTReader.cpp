@@ -2804,6 +2804,8 @@ ASTReader::ReadControlBlock(ModuleFile &F,
         std::string ImportedName = ReadString(Record, Idx);
         std::string ImportedFile;
 
+	if (blacklist.find(ImportedName) != blacklist.end()) return OutOfDate;
+
         // For prebuilt and explicit modules first consult the file map for
         // an override. Note that here we don't search prebuilt module
         // directories, only the explicit name to file mappings. Also, we will

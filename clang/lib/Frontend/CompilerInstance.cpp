@@ -1816,7 +1816,7 @@ ModuleLoadResult CompilerInstance::findOrCompileModuleAndReadAST(
   case HeaderSearchOptions::CacheMissing::Include:
     getDiagnostics().Report(ModuleNameLoc, diag::remark_module_build_include)
       << ModuleName << SourceRange(ImportLoc, ModuleNameLoc);
-    blacklist.insert(ModuleName);
+    getASTReader()->blacklist.insert(ModuleName);
     return ModuleLoadResult::MissingExpected;
   }
 
@@ -1846,7 +1846,7 @@ CompilerInstance::loadModule(SourceLocation ImportLoc,
   SourceLocation ModuleNameLoc = Path[0].second;
 
   // XXX
-  if (blacklist.find(ModuleName) != blacklist.end()) {
+  if (TheASTReader && TheASTReader->blacklist.find(ModuleName) != TheASTReader->blacklist.end()) {
     return ModuleLoadResult::MissingExpected;
   }
 

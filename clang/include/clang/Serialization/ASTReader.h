@@ -397,6 +397,7 @@ public:
   using ModuleConstIterator = ModuleManager::ModuleConstIterator;
   using ModuleReverseIterator = ModuleManager::ModuleReverseIterator;
 
+  llvm::StringSet<> blacklist;
 private:
   /// The receiver of some callbacks invoked by ASTReader.
   std::unique_ptr<ASTReaderListener> Listener;
