@@ -397,6 +397,62 @@ static bool handleFullDependencyToolResult(
   return false;
 }
 
+static void printNinjaDyndep(
+                             raw_ostream& OS,
+                             const FullDependenciesResult& FullDeps,
+                             const llvm::StringSet<>& vhit,
+                             StringRef CWD,
+                             StringRef tempModuleCachePath,
+                             StringRef realModuleCacheRelPath,
+                             bool Verbose) {
+  std::vector<llvm::StringRef> optionalDeps;
+  llvm::StringRef target(FullDeps.Opts->Targets[0]);
+  llvm::SmallString<16> modName;
+  if (target.startswith("module.cache/CMakeFiles/")) {
+    auto sss = target.find(".dir/");
+    auto eee = target.find(".cpp.o");
+    if (sss != target.npos && eee != target.npos) {
+      sss += 5;
+      modName = target.substr(sss, eee - sss);
+      modName += '-';
+    }
+  }
+
+  OS << "build " << FullDeps.Opts->Targets[0] << ": dyndep |";
+  if (Verbose) OS << " $\n";
+  for (const auto& FileDep : FullDeps.FullDeps.FileDeps) {
+    llvm::StringRef d(FileDep);
+    if (d.startswith(tempModuleCachePath)) {
+      d = d.substr(tempModuleCachePath.size());
+      if (modName.size() == 0 || d.find(modName) == d.npos) // modStub.o: modName.pcm
+        optionalDeps.push_back(d);
+    } else if (d.startswith(CWD)) {
+      d = d.substr(CWD.size());
+      if (d[0] == '/')
+        d = d.substr(1);
+      if (vhit.find(d) != vhit.end()) {
+        if (Verbose)
+          OS << "  " << d << " $\n";
+        else
+          OS << " " << d;
+      } else {
+        // Possibly cmake-generated headers.
+      }
+    } else {
+      // Possibly static files
+    }
+  }
+  for (const auto& d : optionalDeps) {
+    if (Verbose) OS << " ";
+    OS << " " << realModuleCacheRelPath << d;
+    if (modName.size() == 0)
+      OS << " " << realModuleCacheRelPath << d;
+    if (Verbose) OS  << " $\n";
+  }
+
+  OS << "\n";
+}
+
 int main(int argc, const char **argv) {
   llvm::InitLLVM X(argc, argv);
   llvm::cl::HideUnrelatedOptions(DependencyScannerCategory);
@@ -414,6 +470,7 @@ int main(int argc, const char **argv) {
   }
 
   std::vector<std::string> vvv;
+  llvm::StringSet<> vhit;
 
   if (CDBX.size() > 0) {
     llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> DatabaseBuffer =
@@ -443,6 +500,7 @@ int main(int argc, const char **argv) {
               llvm::SmallString<80> tf = wd;
               llvm::sys::path::append(tf, *fs);
               vvv.emplace_back(tf);
+              vhit.insert(*fs);
             } else {
               fprintf(stderr, "fs err\n");
             }
@@ -579,7 +637,7 @@ int main(int argc, const char **argv) {
 
   for (unsigned I = 0; I < Pool.getThreadCount(); ++I) {
     Pool.async([I, &Lock, &Index, &Inputs, &HadErrors, &FD, &WorkerTools,
-                &realModuleCachePath, &tempModuleCachePath,
+                &vhit, &realModuleCachePath, &tempModuleCachePath,
                 &DependencyOS, &Errs]() {
       llvm::StringSet<> AlreadySeenModules;
       while (true) {
@@ -599,92 +657,30 @@ int main(int argc, const char **argv) {
           CWD = std::move(Cmd.Directory);
         }
         // Run the tool on it.
-        if (Format == ScanningOutputFormat::Make || Format == ScanningOutputFormat::Ninja) {
+        if (Format == ScanningOutputFormat::Make) {
           auto MaybeFile = WorkerTools[I]->getDependencyFile(*Input, CWD);
-#if 1
-          if (Format == ScanningOutputFormat::Ninja && MaybeFile) {
-            auto& d = MaybeFile.get();
-            auto sss = d.find(".dir/");
-            auto eee = d.find(".cpp.o:");
-            if (llvm::StringRef(d).startswith("module.cache/") && sss != d.npos && eee != d.npos && sss < eee) {
-              sss += 5;
-              std::string mod = d.substr(sss, eee - sss);
-
-              int i = eee;
-              while (true) {
-                auto x = d.find(mod, i);
-                if (x == d.npos) break;
-                auto s = d.rfind(' ', x);
-                s = (s == d.npos ? 0 : s + 1);
-                auto e = d.find(' ', x);
-                if (e == d.npos) {
-                  e = d.find('\n', x);
-                  if (e == d.npos) e = d.size();
-                }
-                if (memcmp(&d.c_str()[e - 4], ".pcm", 4) == 0) {
-#if 1
-                  d.erase(s, e - s);
-                  i = s;
-#else
-                  d[s + 1] = '<';
-                  d[x] = '*';
-                  d[e - 1] = '>';
-                  i = e;
-#endif
-                } else {
-                  i = e;
-                }
-              }
-            }
-            while (true) {
-              const char *px = "/home/chapuni/llvm/3m/";
-              auto m = d.find(px);
-              if (m == d.npos) break;
-              d.erase(m, strlen(px));
-            }
-            std::vector<const char*> ap =
-              {
-               "/usr/",
-               "/home/chapuni/llvm/install/",
-               "/home/chapuni/llvm/llvm-project/",
-              };
-            for (auto px : ap) {
-              while (true) {
-                auto m = d.find(px);
-                if (m == d.npos) break;
-                d.erase(m, d.find(' ', m) - m);
-              }
-            }
-#if 1
-            if (!realModuleCachePath.empty()) {
-              llvm::StringRef reldir = realModuleCachePath;
-              if (reldir.startswith(CWD)) {
-                reldir = reldir.substr(CWD.size());
-                if (reldir[0] == '/')
-                  reldir = reldir.substr(1);
-              }
-
-              int i = 0;
-              while (true) {
-                auto x = d.find(std::string(tempModuleCachePath), i);
-                if (x == d.npos) break;
-                d.erase(x, tempModuleCachePath.size());
-                d.insert(x, std::string(reldir));
-                i = x;
-              }
-            }
-#endif
-            for (auto& c : d) {
-              if (c == '\n' || c == '\\') c = ' ';
-            }
-            d.back() = '\n';
-            d.insert(d.find_first_of(':') + 1, "dyndep|");
-            d.insert(0, "build ");
-          }
-#endif
           if (handleMakeDependencyToolResult(Filename, MaybeFile, DependencyOS,
                                              Errs))
             HadErrors = true;
+        } else if (Format == ScanningOutputFormat::Ninja) {
+          auto MaybeFullDeps = WorkerTools[I]->getFullDependencies(
+              *Input, CWD, AlreadySeenModules);
+
+          llvm::StringRef realModuleCacheRelPath(realModuleCachePath);
+          if (realModuleCacheRelPath.startswith(CWD)) {
+            realModuleCacheRelPath = realModuleCacheRelPath.substr(CWD.size());
+            if (realModuleCacheRelPath[0] == '/')
+              realModuleCacheRelPath = realModuleCacheRelPath.substr(1);
+          }
+
+          DependencyOS.applyLocked([&](raw_ostream &OS) {
+                                     printNinjaDyndep(OS, *MaybeFullDeps,
+                                                      vhit,
+                                                      CWD,
+                                                      tempModuleCachePath,
+                                                      realModuleCacheRelPath,
+                                                      Verbose);
+                                   });
         } else {
           auto MaybeFullDeps = WorkerTools[I]->getFullDependencies(
               *Input, CWD, AlreadySeenModules);

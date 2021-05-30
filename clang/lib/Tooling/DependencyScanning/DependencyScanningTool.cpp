@@ -105,6 +105,8 @@ DependencyScanningTool::getFullDependencies(
 
     void handleFileDependency(const DependencyOutputOptions &Opts,
                               StringRef File) override {
+      if (!this->Opts)
+        this->Opts = std::make_unique<DependencyOutputOptions>(Opts);
       Dependencies.push_back(std::string(File));
     }
 
@@ -116,7 +118,7 @@ DependencyScanningTool::getFullDependencies(
       ContextHash = std::move(Hash);
     }
 
-    FullDependenciesResult getFullDependencies() const {
+    FullDependenciesResult getFullDependencies() {
       FullDependencies FD;
 
       FD.ContextHash = std::move(ContextHash);
@@ -140,10 +142,12 @@ DependencyScanningTool::getFullDependencies(
       }
 
       FDR.FullDeps = std::move(FD);
+      FDR.Opts = std::move(this->Opts);
       return FDR;
     }
 
   private:
+    std::unique_ptr<DependencyOutputOptions> Opts;
     std::vector<std::string> Dependencies;
     std::unordered_map<std::string, ModuleDeps> ClangModuleDeps;
     std::string ContextHash;
