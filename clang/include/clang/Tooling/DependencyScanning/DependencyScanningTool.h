@@ -72,6 +72,7 @@ struct FullDependencies {
 struct FullDependenciesResult {
   FullDependencies FullDeps;
   std::vector<ModuleDeps> DiscoveredModules;
+  std::unique_ptr<DependencyOutputOptions> Opts;
 };
 
 /// The high-level implementation of the dependency discovery tool that runs on
