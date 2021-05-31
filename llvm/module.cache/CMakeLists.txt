@@ -16,7 +16,6 @@ get_target_property(compile_flags llvm-config COMPILE_FLAGS)
 get_target_property(compile_options llvm-config COMPILE_OPTIONS)
 list(JOIN compile_options " " compile_options)
 
-set(LLVM_SCAN_DEPS /home/chapuni/llvm/install/2libcxx/bin/clang-scan-deps)
 set(cmake_to_generate ${CMAKE_CURRENT_BINARY_DIR}/modules.cmake)
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" build_type_toupper)
@@ -27,7 +26,7 @@ execute_process(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/..
   ${module_dir}
-  ${LLVM_SCAN_DEPS}
+  ${CLANG_SCAN_DEPS}
   ${LLVM_DEFINITIONS}
   ${includes}
   ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${build_type_toupper}} ${compile_flags} ${compile_options} ${CMAKE_CXX${CMAKE_CXX_STANDARD}_STANDARD_COMPILE_OPTION}
