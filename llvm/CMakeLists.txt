@@ -923,6 +923,9 @@ if( MINGW AND NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
 endif()
 
 ##############################################################################
+set(CLANG_SCAN_DEPS /home/chapuni/llvm/install/2libcxx/bin/clang-scan-deps
+  CACHE FILEPATH "clang-scan-deps")
+
 if (LLVM_ENABLE_MODULES)
   set(anchor_h ${CMAKE_BINARY_DIR}/include/stub_anchor.h)
 
@@ -937,7 +940,7 @@ if (LLVM_ENABLE_MODULES)
   #list(APPEND LLVM_COMMON_DEPENDS anchor_all)
 
   set(CMAKE_CXX_EXPERIMENTAL_PRESCANNER
-    "/home/chapuni/llvm/install/2libcxx/bin/clang-scan-deps --mode=preprocess-minimized-sources -j=1 --reuse-filemanager --format=ninja"
+    ${CLANG_SCAN_DEPS} --mode=preprocess-minimized-sources -j=1 --reuse-filemanager --format=ninja
     )
 endif()
 ##############################################################################
