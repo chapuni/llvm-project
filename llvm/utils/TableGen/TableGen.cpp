@@ -27,13 +27,6 @@ enum ActionType {
   DumpJSON,
   PrintEnums,
   PrintSets,
-  GenOptParserDefs,
-  GenOptRST,
-  GenCTags,
-  GenAttributes,
-  GenDirectivesEnumDecl,
-  GenDirectivesEnumImpl,
-  GenDirectivesEnumGen,
 };
 
 namespace {
@@ -50,18 +43,7 @@ cl::opt<ActionType> Action(
                    "Dump all records as machine-readable JSON"),
         clEnumValN(PrintEnums, "print-enums", "Print enum values for a class"),
         clEnumValN(PrintSets, "print-sets",
-                   "Print expanded sets for testing DAG exprs"),
-        clEnumValN(GenOptParserDefs, "gen-opt-parser-defs",
-                   "Generate option definitions"),
-        clEnumValN(GenOptRST, "gen-opt-rst", "Generate option RST"),
-        clEnumValN(GenCTags, "gen-ctags", "Generate ctags-compatible index"),
-        clEnumValN(GenAttributes, "gen-attrs", "Generate attributes"),
-        clEnumValN(GenDirectivesEnumDecl, "gen-directive-decl",
-                   "Generate directive related declaration code (header file)"),
-        clEnumValN(GenDirectivesEnumImpl, "gen-directive-impl",
-                   "Generate directive related implementation code"),
-        clEnumValN(GenDirectivesEnumGen, "gen-directive-gen",
-                   "Generate directive related implementation code part")));
+                   "Print expanded sets for testing DAG exprs")));
 
 cl::OptionCategory PrintEnumsCat("Options for -print-enums");
 cl::opt<std::string> Class("class", cl::desc("Print Enum list for this class"),
@@ -82,12 +64,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     break;
   case DumpJSON:
     EmitJSON(Records, OS);
-    break;
-  case GenOptParserDefs:
-    EmitOptParser(Records, OS);
-    break;
-  case GenOptRST:
-    EmitOptRST(Records, OS);
     break;
   case PrintEnums:
   {
@@ -110,21 +86,6 @@ int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
     }
     break;
   }
-  case GenCTags:
-    EmitCTags(Records, OS);
-    break;
-  case GenAttributes:
-    EmitAttributes(Records, OS);
-    break;
-  case GenDirectivesEnumDecl:
-    EmitDirectivesDecl(Records, OS);
-    break;
-  case GenDirectivesEnumImpl:
-    EmitDirectivesImpl(Records, OS);
-    break;
-  case GenDirectivesEnumGen:
-    EmitDirectivesGen(Records, OS);
-    break;
   }
 
   return 0;
