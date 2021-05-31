@@ -5,7 +5,9 @@ set(LLVM_OPTIONAL_SOURCES PluginsTest.cpp TestPlugin.cpp)
 # reconfiguring with plugins disabled will leave behind a stale executable.
 if (LLVM_ENABLE_PLUGINS)
   add_definitions(-DLLVM_ENABLE_PLUGINS)
-  add_compile_options(-fmodules-ignore-macro=LLVM_ENABLE_PLUGINS)
+  if (LLVM_ENABLE_MODULES)
+    add_compile_options(-fmodules-ignore-macro=LLVM_ENABLE_PLUGINS)
+  endif()
 endif()
 
 # The plugin expects to not link against the Support and Core libraries,
