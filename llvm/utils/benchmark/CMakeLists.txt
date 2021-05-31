@@ -33,7 +33,9 @@ option(BENCHMARK_DOWNLOAD_DEPENDENCIES "Allow the downloading and in-tree buildi
 # in cases where it is not possible to build or find a valid version of gtest.
 option(BENCHMARK_ENABLE_GTEST_TESTS "Enable building the unit tests which depend on gtest" OFF)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-modules -Wno-unused-command-line-argument")
+if (LLVM_ENABLE_MODULES)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-modules -Wno-unused-command-line-argument")
+endif()
 
 set(ENABLE_ASSEMBLY_TESTS_DEFAULT OFF)
 function(should_enable_assembly_tests)

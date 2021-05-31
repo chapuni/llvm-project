@@ -937,7 +937,7 @@ if (LLVM_ENABLE_MODULES)
   #list(APPEND LLVM_COMMON_DEPENDS anchor_all)
 
   set(CMAKE_CXX_EXPERIMENTAL_PRESCANNER
-    "/home/chapuni/llvm/install/2libcxx/bin/clang-scan-deps --mode=preprocess-minimized-sources -j=1 --reuse-filemanager --format=ninja"
+    "/home/admin/llvm/install/2libcxx/bin/clang-scan-deps --mode=preprocess-minimized-sources -j=1 --reuse-filemanager --format=ninja"
     )
 endif()
 ##############################################################################
