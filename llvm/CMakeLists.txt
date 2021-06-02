@@ -33,6 +33,22 @@ if ((CMAKE_GENERATOR MATCHES "Visual Studio") AND (CMAKE_GENERATOR_TOOLSET STREQ
                   "host compiler, pass -Thost=x64 on the CMake command line.")
 endif()
 
+set(CMAKE_FLAGS_RELEASE "-Wall")
+message("CMAKE_FLAGS<${CMAKE_FLAGS}>")
+set(xxx ${CMAKE_FLAGS_${CMAKE_BUILD_TYPE}})
+message("CMAKE_FLAGS_CFG<${xxx}>")
+set(xxx ${CMAKE_FLAGS_${CMAKE_BUILD_TYPE}_INIT})
+message("CMAKE_FLAGS_CFG_INIT<${xxx}>")
+message("CMAKE_CXX_FLAGS<${CMAKE_CXX_FLAGS}>")
+set(xxx ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}})
+message("CMAKE_CXX_FLAGS_CFG<${xxx}>")
+set(xxx ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}_INIT})
+message("CMAKE_CXX_FLAGS_CFG_INIT<${xxx}>")
+get_directory_property(xxx COMPILE_DEFINITIONS)
+message("COMPILE_DEFINITIONS<${xxx}>")
+get_directory_property(xxx COMPILE_OPTIONS)
+message("COMPILE_OPTIONS<${xxx}>")
+
 if (CMAKE_GENERATOR STREQUAL "Xcode" AND NOT CMAKE_OSX_ARCHITECTURES)
   # Some CMake features like object libraries get confused if you don't
   # explicitly specify an architecture setting with the Xcode generator.
@@ -131,6 +147,12 @@ if (LLVM_ENABLE_PROJECTS_USED OR NOT LLVM_ENABLE_PROJECTS STREQUAL "")
   endforeach()
 endif()
 unset(SHOULD_ENABLE_PROJECT)
+
+if (LLVM_TOOL_LIBCXX_BUILD AND LLVM_TOOL_LIBCXXABI_BUILD)
+  option(LLVM_BUILD_WITH_HOST_RUNTIME "INTREE LIBCXX" ON)
+else()
+  set(LLVM_BUILD_WITH_HOST_RUNTIME OFF)
+endif()
 
 # Build llvm with ccache if the package is present
 set(LLVM_CCACHE_BUILD OFF CACHE BOOL "Set to ON for a ccache enabled build")
@@ -667,6 +689,30 @@ set(LLVM_ENABLE_PER_TARGET_RUNTIME_DIR OFF CACHE BOOL
 
 set(LLVM_PROFDATA_FILE "" CACHE FILEPATH
   "Profiling data file to use when compiling in order to improve runtime performance.")
+
+# INTREE_CXX
+if (LLVM_BUILD_WITH_HOST_RUNTIME)
+  #add_subdirectory(${LLVM_EXTERNAL_COMPILER_RT_SOURCE_DIR} compiler-rt)
+  #add_subdirectory(${LLVM_EXTERNAL_LIBCXXABI_SOURCE_DIR} libcxxabi)
+  #add_subdirectory(${LLVM_EXTERNAL_LIBCXX_SOURCE_DIR} libcxx)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-nostdinc++>)
+  include_directories(
+    ${CMAKE_BINARY_DIR}/projects/libcxx/include
+    ${LLVM_EXTERNAL_LIBCXX_SOURCE_DIR}/include
+    )
+  add_link_options(-nostdlib++ -L${CMAKE_BINARY_DIR}/lib)
+
+  # target_link_libraries() may not available.
+  add_custom_target(llvm_host_runtime_targets)
+  add_dependencies(llvm_host_runtime_targets
+    cxx_shared
+    cxxabi_shared
+    )
+  set(LLVM_HOST_RUNTIME_LIBS
+    -lc++
+    -lc++abi
+    )
+endif()
 
 # All options referred to from HandleLLVMOptions have to be specified
 # BEFORE this include, otherwise options will not be correctly set on
