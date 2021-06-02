@@ -651,6 +651,11 @@ function(llvm_add_library name)
       ${llvm_libs}
       )
 
+  if (LLVM_BUILD_WITH_HOST_RUNTIME)
+    target_link_libraries(${name} ${libtype} ${LLVM_HOST_RUNTIME_LIBS})
+    add_dependencies(${name} llvm_host_runtime_targets)
+  endif()
+
   if(LLVM_COMMON_DEPENDS)
     add_dependencies(${name} ${LLVM_COMMON_DEPENDS})
     # Add dependencies also to objlibs.
@@ -912,6 +917,12 @@ macro(add_llvm_executable name)
   set(EXCLUDE_FROM_ALL OFF)
   set_output_directory(${name} BINARY_DIR ${LLVM_RUNTIME_OUTPUT_INTDIR} LIBRARY_DIR ${LLVM_LIBRARY_OUTPUT_INTDIR})
   llvm_config( ${name} ${USE_SHARED} ${LLVM_LINK_COMPONENTS} )
+
+  if (LLVM_BUILD_WITH_HOST_RUNTIME)
+    target_link_libraries(${name} PRIVATE ${LLVM_HOST_RUNTIME_LIBS})
+    add_dependencies(${name} llvm_host_runtime_targets)
+  endif()
+
   if( LLVM_COMMON_DEPENDS )
     add_dependencies( ${name} ${LLVM_COMMON_DEPENDS} )
   endif( LLVM_COMMON_DEPENDS )
