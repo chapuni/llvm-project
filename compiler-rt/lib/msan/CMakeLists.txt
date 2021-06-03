@@ -33,9 +33,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
   append_list_if(COMPILER_RT_HAS_FTLS_MODEL_INITIAL_EXEC -ftls-model=initial-exec MSAN_RTL_CFLAGS)
 endif()
 append_rtti_flag(OFF MSAN_RTL_CFLAGS)
-if(NOT CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
-  append_list_if(COMPILER_RT_HAS_FPIE_FLAG -fPIE MSAN_RTL_CFLAGS)
-endif()
 # Prevent clang from generating libc calls.
 append_list_if(COMPILER_RT_HAS_FFREESTANDING_FLAG -ffreestanding MSAN_RTL_CFLAGS)
 
@@ -58,6 +55,9 @@ foreach(arch ${MSAN_SUPPORTED_ARCH})
     ADDITIONAL_HEADERS ${MSAN_RTL_HEADERS}
     CFLAGS ${MSAN_RTL_CFLAGS}
     PARENT_TARGET msan)
+  if(NOT CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+    set_target_properties(clang_rt.msan-${arch} PROPERTIES LLVM_PIE ${COMPILER_RT_HAS_FPIE_FLAG})
+  endif()
   add_compiler_rt_runtime(clang_rt.msan_cxx
     STATIC
     ARCHS ${arch}

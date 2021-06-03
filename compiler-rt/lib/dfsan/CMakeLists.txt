@@ -23,7 +23,6 @@ add_compiler_rt_component(dfsan)
 
 foreach(arch ${DFSAN_SUPPORTED_ARCH})
   set(DFSAN_CFLAGS ${DFSAN_COMMON_CFLAGS})
-  append_list_if(COMPILER_RT_HAS_FPIE_FLAG -fPIE DFSAN_CFLAGS)
   add_compiler_rt_runtime(clang_rt.dfsan
     STATIC
     ARCHS ${arch}
@@ -35,6 +34,7 @@ foreach(arch ${DFSAN_SUPPORTED_ARCH})
     ADDITIONAL_HEADERS ${DFSAN_RTL_HEADERS}
     CFLAGS ${DFSAN_CFLAGS}
     PARENT_TARGET dfsan)
+  set_target_properties(clang_rt.dfsan-${arch} PROPERTIES LLVM_PIE ${COMPILER_RT_HAS_FPIE_FLAG})
   add_sanitizer_rt_symbols(clang_rt.dfsan
     ARCHS ${arch}
     EXTRA dfsan.syms.extra)

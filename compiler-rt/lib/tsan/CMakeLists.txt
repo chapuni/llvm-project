@@ -6,9 +6,6 @@ set(TSAN_CFLAGS ${SANITIZER_COMMON_CFLAGS})
 # SANITIZER_COMMON_CFLAGS contains -fPIC, but it's performance-critical for
 # TSan runtime to be built with -fPIE to reduce the number of register spills.
 # On FreeBSD however it provokes linkage issue thus we disable it.
-if(NOT CMAKE_SYSTEM MATCHES "FreeBSD")
-  append_list_if(COMPILER_RT_HAS_FPIE_FLAG -fPIE TSAN_CFLAGS)
-endif()
 append_rtti_flag(OFF TSAN_CFLAGS)
 
 if(COMPILER_RT_TSAN_DEBUG_OUTPUT)
@@ -215,6 +212,9 @@ else()
       ADDITIONAL_HEADERS ${TSAN_HEADERS}
       CFLAGS ${TSAN_RTL_CFLAGS}
       PARENT_TARGET tsan)
+    if(NOT CMAKE_SYSTEM MATCHES "FreeBSD")
+      set_target_properties(clang_rt.tsan-${arch} PROPERTIES LLVM_PIE ${COMPILER_RT_HAS_FPIE_FLAG})
+    endif()
     add_compiler_rt_runtime(clang_rt.tsan_cxx
       STATIC
       ARCHS ${arch}

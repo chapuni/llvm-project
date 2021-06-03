@@ -24,6 +24,25 @@ else()
   set(CMAKE_CFG_RESOLVED_INTDIR "")
 endif()
 
+set_directory_properties(PROPERTIES
+  COMPILE_DEFINITIONS ""
+  COMPILE_OPTIONS ""
+  INCLUDE_DIRECTORIES ""
+  LINK_OPTIONS ""
+  )
+
+set(CMAKE_C_FLAGS)
+set(CMAKE_CXX_FLAGS)
+set(CMAKE_EXE_LINKER_FLAGS)
+set(CMAKE_SHARED_LINKER_FLAGS)
+
+add_compile_options(
+  $<IF:$<BOOL:$<TARGET_PROPERTY:LLVM_PIE>>,-fPIE,-fPIC>
+  -ffunction-sections
+  -fdata-sections
+  $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>
+  )
+
 include(base-config-ix)
 include(CompilerRTUtils)
 
