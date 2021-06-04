@@ -547,6 +547,13 @@ option(LLVM_BUILD_EXAMPLES
   "Build the LLVM example programs. If OFF, just generate build targets." OFF)
 option(LLVM_INCLUDE_EXAMPLES "Generate build targets for the LLVM examples" ON)
 
+# INTREE
+if (TRUE)
+  option(LLVM_BUILD_WITH_HOST_RUNTIME "INTREE LIBCXX" ON)
+else()
+  set(LLVM_BUILD_WITH_HOST_RUNTIME OFF)
+endif()
+
 if(LLVM_BUILD_EXAMPLES)
   add_definitions(-DBUILD_EXAMPLES)
 endif(LLVM_BUILD_EXAMPLES)
@@ -663,6 +670,18 @@ set(LLVM_ENABLE_PER_TARGET_RUNTIME_DIR OFF CACHE BOOL
 
 set(LLVM_PROFDATA_FILE "" CACHE FILEPATH
   "Profiling data file to use when compiling in order to improve runtime performance.")
+
+# INTREE_RUNTIME
+if (LLVM_BUILD_WITH_HOST_RUNTIME)
+  # target_link_libraries() may not available.
+  add_custom_target(llvm_host_runtime_targets)
+
+  # compiler-rt
+  add_link_options(-resource-dir ${LLVM_LIBRARY_OUTPUT_INTDIR}/clang/${CMAKE_PROJECT_VERSION})
+  add_dependencies(llvm_host_runtime_targets
+    clang_rt.profile-x86_64
+    )
+endif()
 
 # All options referred to from HandleLLVMOptions have to be specified
 # BEFORE this include, otherwise options will not be correctly set on
