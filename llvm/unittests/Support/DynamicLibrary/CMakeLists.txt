@@ -39,6 +39,11 @@ function(dynlib_add_module NAME)
 
   add_dependencies(DynamicLibraryTests ${NAME})
   
+  if (LLVM_BUILD_WITH_HOST_RUNTIME)
+    target_link_libraries(${NAME} ${libtype} ${LLVM_HOST_RUNTIME_LIBS})
+    add_dependencies(${NAME} llvm_host_runtime_targets)
+  endif()
+
   if(LLVM_INTEGRATED_CRT_ALLOC)
     # We need to link in the Support lib for the Memory allocator override,
     # otherwise the DynamicLibrary.Shutdown test will fail, because it would

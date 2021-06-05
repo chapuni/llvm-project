@@ -676,11 +676,40 @@ if (LLVM_BUILD_WITH_HOST_RUNTIME)
   # target_link_libraries() may not available.
   add_custom_target(llvm_host_runtime_targets)
 
-  # compiler-rt
+  # profile
+  add_compile_options(-resource-dir ${LLVM_EXTERNAL_CLANG_SOURCE_DIR}/lib/Headers)
   add_link_options(-resource-dir ${LLVM_LIBRARY_OUTPUT_INTDIR}/clang/${CMAKE_PROJECT_VERSION})
-  add_dependencies(llvm_host_runtime_targets
-    clang_rt.profile-x86_64
+  execute_process(
+    COMMAND
+    ${CMAKE_AR} cu 
+    ${LLVM_LIBRARY_OUTPUT_INTDIR}/clang/${CMAKE_PROJECT_VERSION}/lib/linux/libclang_rt.profile-x86_64.a
     )
+  
+  # compiler-rt
+  if (LLVM_TOOL_COMPILER_RT_BUILD)
+    add_dependencies(llvm_host_runtime_targets
+      clang_rt.profile-x86_64
+      )
+  endif()
+
+  # libcxx
+  if (LLVM_TOOL_LIBCXX_BUILD)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-nostdinc++>)
+    include_directories(
+      ${CMAKE_BINARY_DIR}/projects/libcxx/include
+      ${LLVM_EXTERNAL_LIBCXX_SOURCE_DIR}/include
+      )
+    add_link_options(-nostdlib++ -L${CMAKE_BINARY_DIR}/lib)
+    add_dependencies(llvm_host_runtime_targets
+      cxx_static
+      cxxabi_static
+      )
+    list(APPEND LLVM_HOST_RUNTIME_LIBS
+      -lc++
+      -lc++abi
+      -lpthread
+      )
+  endif()
 endif()
 
 # All options referred to from HandleLLVMOptions have to be specified

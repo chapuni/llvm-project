@@ -19,6 +19,15 @@ set(CMAKE_MODULE_PATH
 
 set(CMAKE_FOLDER "libc++")
 
+set_directory_properties(PROPERTIES
+  INCLUDE_DIRECTORIES ""
+  )
+
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fno-profile-generate")
+# string(REGEX REPLACE "-fprofile-generate=\\\".*\\\"" "-fno-profile-generate" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+# string(REGEX REPLACE "-fprofile-generate=\\\".*\\\"" "-fno-profile-generate" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+# string(REGEX REPLACE "-fprofile-generate=\\\".*\\\"" "-fno-profile-generate" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+
 set(LIBCXXABI_SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIBCXXABI_BINARY_DIR  ${CMAKE_CURRENT_BINARY_DIR})
 set(LIBCXXABI_LIBCXX_PATH "${CMAKE_CURRENT_LIST_DIR}/../libcxx" CACHE PATH

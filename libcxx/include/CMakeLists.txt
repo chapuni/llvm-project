@@ -193,6 +193,22 @@ configure_file("__config_site.in"
 
 # Generate a custom __config header. The new header is created
 # by prepending __config_site to the current __config header.
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} ${LIBCXX_SOURCE_DIR}/utils/cat_files.py
+    ${LIBCXX_BINARY_DIR}/__config_site
+    ${LIBCXX_SOURCE_DIR}/include/__config
+    -o ${LIBCXX_BINARY_DIR}/include/__config_generated
+  OUTPUT_FILE ${LIBCXX_BINARY_DIR}/include/__config_generated
+  )
+
+configure_file(
+  ${LIBCXX_BINARY_DIR}/include/__config_generated
+  ${LIBCXX_BINARY_DIR}/include/__config
+  COPYONLY
+  )
+
+# Generate a custom __config header. The new header is created
+# by prepending __config_site to the current __config header.
 add_custom_command(OUTPUT ${LIBCXX_BINARY_DIR}/__generated_config
   COMMAND ${Python3_EXECUTABLE} ${LIBCXX_SOURCE_DIR}/utils/cat_files.py
     ${LIBCXX_BINARY_DIR}/__config_site

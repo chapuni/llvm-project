@@ -1,4 +1,4 @@
-add_subdirectory(Headers)
+add_subdirectory(Headers/include)
 add_subdirectory(Basic)
 add_subdirectory(APINotes)
 add_subdirectory(Lex)

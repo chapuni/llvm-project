@@ -70,6 +70,7 @@ if (APPLE)
 else()
   if (LIBCXXABI_ENABLE_THREADS)
     add_library_flags_if(LIBCXXABI_HAS_PTHREAD_LIB pthread)
+    list(APPEND LIBCXXABI_LIBRARIES -lpthread)
   endif()
 
   add_library_flags_if(LIBCXXABI_HAS_C_LIB c)
