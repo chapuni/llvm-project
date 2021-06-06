@@ -686,6 +686,18 @@ int main(int argc, const char **argv) {
               realModuleCacheRelPath = realModuleCacheRelPath.substr(1);
           }
 
+          if (!MaybeFullDeps) {
+            llvm::handleAllErrors(
+                                  MaybeFullDeps.takeError(), [&Input, &Errs](llvm::StringError &Err) {
+                                                               Errs.applyLocked([&](raw_ostream &OS) {
+                                                                                  OS << "Error while scanning dependencies for " << Input << ":\n";
+                                                                                  OS << Err.getMessage();
+                                                                                });
+                                                             });
+            HadErrors = true;
+            continue;
+          }
+
           DependencyOS.applyLocked([&](raw_ostream &OS) {
                                      printNinjaDyndep(OS, *MaybeFullDeps,
                                                       vhit,

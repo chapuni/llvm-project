@@ -705,8 +705,8 @@ if (LLVM_BUILD_WITH_HOST_RUNTIME)
   # target_link_libraries() may not available.
   add_custom_target(llvm_host_runtime_targets)
   add_dependencies(llvm_host_runtime_targets
-    cxx_shared
-    cxxabi_shared
+    cxx_static
+    cxxabi_static
     )
   set(LLVM_HOST_RUNTIME_LIBS
     -lc++
