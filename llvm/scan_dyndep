@@ -1,0 +1,108 @@
+#! /usr/bin/env python3
+
+import os
+import re
+import sys
+
+flags = {}
+includes = []
+targets = {}
+vfiles = set()
+
+visited = set()
+deps = {}
+
+def scan(fn):
+    visited.add(fn)
+
+    if fn in deps:
+        return deps[fn]
+
+    lincludes = includes.copy()
+    lincludes.insert(0, os.path.dirname(fn))
+
+    ldeps = set()
+    ldeps.add(fn)
+
+    with open(fn) as f:
+        for line in f:
+            m = re.match(r'\s*#s*include\s*"([^"]*)', line)
+            if not m:
+                continue
+            inc = m.group(1)
+
+            for dir in lincludes:
+                ifn = os.path.join(dir, inc)
+                if ifn in vfiles or os.path.exists(ifn):
+                    break
+                ifn = None
+
+            if ifn is None:
+                print("NOTFOUND<%s> in %s" % (inc, fn))
+                continue
+
+            if ifn in vfiles:
+                #print("VFILES<%s> cur=%s" % (ifn, fn))
+                ldeps.add(ifn)
+                continue
+
+            if ifn in visited and ifn not in deps:
+                #print("visited %s" % ifn)
+                continue
+
+            ldeps |= scan(ifn)
+
+    deps[fn] = ldeps
+    return ldeps
+
+args = sys.argv[1:]
+
+while args:
+    a = args.pop(0)
+    m = re.match(r'^-([Idfo])(.*)$', a)
+    if m:
+        f = m.group(1)
+        d = m.group(2)
+        if d == '':
+            d = args.pop(0)
+        if f == 'I':
+            includes.append(d)
+        elif f == 'f':
+            vfiles.add(d)
+        else:
+            flags[f] = d;
+        continue
+
+    targets[args.pop(0)] = a
+
+#includes.insert(0, os.path.dirname(sys.argv[1]))
+
+dd = open(flags["o"], "w")
+assert dd, str(flags)
+
+dd.write("ninja_dyndep_version=1\n")
+
+for t in targets.keys():
+    vdeps = set()
+    for fn in scan(targets[t]):
+        if fn in vfiles:
+            vdeps.add(fn)
+
+    if True or vdeps:
+        dd.write("\nbuild %s: dyndep | %s\n"
+        % (
+            t,
+            ' '.join(sorted(vdeps))
+        ))
+
+dd.close()
+
+fd = open(flags["d"], "w")
+assert fd, str(flags)
+fd.write("%s:\t\\\n" % flags["o"])
+for d in sorted(visited):
+    fd.write("\t%s\t\\\n" % d)
+fd.write("\n")
+fd.close()
+
+# EOF
