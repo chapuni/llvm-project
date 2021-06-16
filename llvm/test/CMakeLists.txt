@@ -128,6 +128,10 @@ set(LLVM_TEST_DEPENDS
           yaml2obj
         )
 
+if (TARGET llvm-tblgen-ctags)
+  list(APPEND LLVM_TEST_DEPENDS llvm-tblgen-ctags)
+endif()
+
 if(TARGET llvm-lto)
   set(LLVM_TEST_DEPENDS ${LLVM_TEST_DEPENDS} llvm-lto)
 endif()
