@@ -155,6 +155,10 @@ llvm::cl::opt<std::string>
          llvm::cl::desc("Extended Compilation database"),
          llvm::cl::cat(DependencyScannerCategory));
 
+llvm::cl::opt<bool> EnumModulesMode(
+    "enum-modules",
+    llvm::cl::desc("Enumerate available modules"));
+
 llvm::cl::opt<bool> ReuseFileManager(
     "reuse-filemanager",
     llvm::cl::desc("Reuse the file manager and its cache between invocations."),
@@ -167,10 +171,6 @@ llvm::cl::opt<bool> SkipExcludedPPRanges(
         "bumping the buffer pointer in the lexer instead of lexing the tokens  "
         "until reaching the end directive."),
     llvm::cl::init(true), llvm::cl::cat(DependencyScannerCategory));
-
-llvm::cl::opt<bool> EnumModulesMode(
-    "enum-modules",
-    llvm::cl::desc("Enumerate available modules"));
 
 llvm::cl::opt<bool> Verbose("v", llvm::cl::Optional,
                             llvm::cl::desc("Use verbose output."),
@@ -517,20 +517,20 @@ int main(int argc, const char **argv) {
         fprintf(stderr, "cdbx err\n");
       }
     }
-
   }
 
   llvm::cl::PrintOptionValues();
 
   if (EnumModulesMode) {
     auto r = EnumModules(*Compilations);
+    fprintf(stderr, "r=%d\n", r);
     return !r;
   }
 
   llvm::SmallString<32> realModuleCachePath;
   llvm::SmallString<32> tempModuleCachePath;
 
-  if (ScanMode == ScanningMode::MinimizedSourcePreprocessing) {
+  if (!EnumModulesMode && ScanMode == ScanningMode::MinimizedSourcePreprocessing) {
     llvm::sys::fs::createUniqueDirectory("clang-scan-deps", tempModuleCachePath);
   }
 
@@ -623,6 +623,7 @@ int main(int argc, const char **argv) {
 
   DependencyScanningService Service(ScanMode, Format, ReuseFileManager,
                                     SkipExcludedPPRanges, std::move(vvv));
+
   llvm::ThreadPool Pool(llvm::hardware_concurrency(NumThreads));
   std::vector<std::unique_ptr<DependencyScanningTool>> WorkerTools;
   for (unsigned I = 0; I < Pool.getThreadCount(); ++I)
