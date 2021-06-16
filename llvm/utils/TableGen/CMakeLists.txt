@@ -162,9 +162,10 @@ add_tablegen(llvm-tblgen LLVM
   GlobalISel/GIMatchDagPredicateDependencyEdge.cpp
   GlobalISel/GIMatchTree.cpp
   DEPENDS callingconv
+  SHARED
   ) # add_tablegen
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
 
-if (LLVM_ENABLE_TABLEGEN_MODULARAIZED)
+if (TARGET llvm-tblgen-global-isel-combiner)
   add_library(LLVMTableGenGlobalISel ALIAS llvm-tblgen-global-isel-combiner)
 endif()
