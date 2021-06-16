@@ -115,6 +115,7 @@ public:
 
     switch (Format) {
     case ScanningOutputFormat::Make:
+    case ScanningOutputFormat::Ninja:
       Compiler.addDependencyCollector(
           std::make_shared<DependencyConsumerForwarder>(std::move(Opts),
                                                         Consumer));
@@ -130,7 +131,7 @@ public:
     //
     // TODO: Implement diagnostic bucketing and header search pruning to reduce
     // the impact of strict context hashing.
-    Compiler.getHeaderSearchOpts().ModulesStrictContextHash = true;
+    // Compiler.getHeaderSearchOpts().ModulesStrictContextHash = true;
 
     auto Action = std::make_unique<PreprocessOnlyAction>();
     const bool Result = Compiler.ExecuteAction(*Action);
@@ -155,6 +156,20 @@ DependencyScanningWorker::DependencyScanningWorker(
   DiagOpts = new DiagnosticOptions();
   PCHContainerOps = std::make_shared<PCHContainerOperations>();
   RealFS = llvm::vfs::createPhysicalFileSystem();
+
+  if (Service.getStubFiles().size() > 0) {
+    auto overlay = new llvm::vfs::OverlayFileSystem(RealFS);
+    StubFS = new llvm::vfs::InMemoryFileSystem();
+    overlay->pushOverlay(StubFS);
+
+    for (const std::string &files : Service.getStubFiles()) {
+      StubFS->addFile(files, 0, llvm::MemoryBuffer::getMemBuffer(""));
+    }
+
+    OverriddenRealFS = RealFS;
+    RealFS = overlay;
+  }
+
   if (Service.canSkipExcludedPPRanges())
     PPSkipMappings =
         std::make_unique<ExcludedPreprocessorDirectiveSkipMapping>();

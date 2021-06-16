@@ -79,3 +79,10 @@ void clang::EmitClangCommentHTMLNamedCharacterReferences(RecordKeeper &Records,
   OS << "  return StringRef();\n"
      << "}\n\n";
 }
+
+namespace {
+cl::opt<bool> Action("gen-clang-comment-html-named-character-references",
+                     cl::desc("Generate function to translate named character "
+                              "references to UTF-8 sequences"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangCommentHTMLNamedCharacterReferences); }));
+} // end anonymous namespace

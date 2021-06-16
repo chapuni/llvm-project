@@ -10,7 +10,9 @@
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/SmallString.h"
 #include "llvm/ADT/Twine.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include "llvm/TableGen/TableGenBackend.h"
 #include <cctype>
@@ -486,3 +488,9 @@ void EmitOptParser(RecordKeeper &Records, raw_ostream &OS) {
   OS << "#endif // OPTTABLE_ARG_INIT\n";
 }
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-opt-parser-defs",
+                     cl::desc("Generate option definitions"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitOptParser); }));
+} // end anonymous namespace

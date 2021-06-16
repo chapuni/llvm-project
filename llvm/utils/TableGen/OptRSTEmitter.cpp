@@ -11,7 +11,9 @@
 #include "llvm/ADT/SmallString.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/Twine.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Error.h"
+#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include "llvm/TableGen/TableGenBackend.h"
 #include <cctype>
@@ -85,3 +87,9 @@ void EmitOptRST(RecordKeeper &Records, raw_ostream &OS) {
   }
 }
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-opt-rst",
+                     cl::desc("Generate option RST"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitOptRST); }));
+} // end anonymous namespace

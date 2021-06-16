@@ -6,6 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "EnumModules.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/DependencyScanning/DependencyScanningService.h"
@@ -124,6 +125,8 @@ static llvm::cl::opt<ScanningOutputFormat> Format(
     "format", llvm::cl::desc("The output format for the dependencies"),
     llvm::cl::values(clEnumValN(ScanningOutputFormat::Make, "make",
                                 "Makefile compatible dep file"),
+                     clEnumValN(ScanningOutputFormat::Ninja, "ninja",
+                                "Ninja-build dyndep"),
                      clEnumValN(ScanningOutputFormat::Full, "experimental-full",
                                 "Full dependency graph suitable"
                                 " for explicitly building modules. This format "
@@ -140,12 +143,17 @@ llvm::cl::opt<unsigned>
     NumThreads("j", llvm::cl::Optional,
                llvm::cl::desc("Number of worker threads to use (default: use "
                               "all concurrent threads)"),
-               llvm::cl::init(0), llvm::cl::cat(DependencyScannerCategory));
+               llvm::cl::init(1), llvm::cl::cat(DependencyScannerCategory));
 
 llvm::cl::opt<std::string>
     CompilationDB("compilation-database",
                   llvm::cl::desc("Compilation database"), llvm::cl::Required,
                   llvm::cl::cat(DependencyScannerCategory));
+
+llvm::cl::opt<std::string>
+    CDBX("cdbx",
+         llvm::cl::desc("Extended Compilation database"),
+         llvm::cl::cat(DependencyScannerCategory));
 
 llvm::cl::opt<bool> ReuseFileManager(
     "reuse-filemanager",
@@ -159,6 +167,10 @@ llvm::cl::opt<bool> SkipExcludedPPRanges(
         "bumping the buffer pointer in the lexer instead of lexing the tokens  "
         "until reaching the end directive."),
     llvm::cl::init(true), llvm::cl::cat(DependencyScannerCategory));
+
+llvm::cl::opt<bool> EnumModulesMode(
+    "enum-modules",
+    llvm::cl::desc("Enumerate available modules"));
 
 llvm::cl::opt<bool> Verbose("v", llvm::cl::Optional,
                             llvm::cl::desc("Use verbose output."),
@@ -390,6 +402,62 @@ static bool handleFullDependencyToolResult(
   return false;
 }
 
+static void printNinjaDyndep(
+                             raw_ostream& OS,
+                             const FullDependenciesResult& FullDeps,
+                             const llvm::StringSet<>& vhit,
+                             StringRef CWD,
+                             StringRef tempModuleCachePath,
+                             StringRef realModuleCacheRelPath,
+                             bool Verbose) {
+  std::vector<llvm::StringRef> optionalDeps;
+  llvm::StringRef target(FullDeps.Opts->Targets[0]);
+  llvm::SmallString<16> modName;
+  if (target.startswith("module.cache/CMakeFiles/")) {
+    auto sss = target.find(".dir/");
+    auto eee = target.find(".cpp.o");
+    if (sss != target.npos && eee != target.npos) {
+      sss += 5;
+      modName = target.substr(sss, eee - sss);
+      modName += '-';
+    }
+  }
+
+  OS << "build " << FullDeps.Opts->Targets[0] << ": dyndep |";
+  if (Verbose) OS << " $\n";
+  for (const auto& FileDep : FullDeps.FullDeps.FileDeps) {
+    llvm::StringRef d(FileDep);
+    if (d.startswith(tempModuleCachePath)) {
+      d = d.substr(tempModuleCachePath.size());
+      if (modName.size() == 0 || d.find(modName) == d.npos) // modStub.o: modName.pcm
+        optionalDeps.push_back(d);
+    } else if (d.startswith(CWD)) {
+      d = d.substr(CWD.size());
+      if (d[0] == '/')
+        d = d.substr(1);
+      if (vhit.find(d) != vhit.end()) {
+        if (Verbose)
+          OS << "  " << d << " $\n";
+        else
+          OS << " " << d;
+      } else {
+        // Possibly cmake-generated headers.
+      }
+    } else {
+      // Possibly static files
+    }
+  }
+  for (const auto& d : optionalDeps) {
+    if (Verbose) OS << " ";
+    OS << " " << realModuleCacheRelPath << d;
+    if (modName.size() == 0)
+      OS << " " << realModuleCacheRelPath << d;
+    if (Verbose) OS  << " $\n";
+  }
+
+  OS << "\n";
+}
+
 int main(int argc, const char **argv) {
   llvm::InitLLVM X(argc, argv);
   llvm::cl::HideUnrelatedOptions(DependencyScannerCategory);
@@ -406,7 +474,65 @@ int main(int argc, const char **argv) {
     return 1;
   }
 
+  std::vector<std::string> vvv;
+  llvm::StringSet<> vhit;
+
+  if (CDBX.size() > 0) {
+    llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> DatabaseBuffer =
+      llvm::MemoryBuffer::getFile(CDBX,
+                                  /*FileSize=*/-1,
+                                  /*RequiresNullTerminator=*/true,
+                                  /*IsVolatile=*/true);
+    if (std::error_code Result = DatabaseBuffer.getError()) {
+      ErrorMessage = "Error while opening JSON database: " + Result.message();
+    } else {
+      auto cdbx = llvm::json::parse((*DatabaseBuffer)->getBuffer());
+      if (cdbx) {
+        auto cdbo = cdbx->getAsObject();
+
+        llvm::SmallString<80> wd;
+        if (auto r = cdbo->getString("build_root")) {
+          wd = llvm::StringRef(CDBX);
+          llvm::sys::path::remove_filename(wd);
+          llvm::sys::fs::make_absolute(wd);
+          llvm::sys::path::append(wd, std::string(*r));
+          llvm::sys::path::remove_dots(wd, true);
+        }
+
+        if (auto vfiles = cdbo->getArray("vfiles")) {
+          for (const auto& f : *vfiles) {
+            if (auto fs = f.getAsString()) {
+              llvm::SmallString<80> tf = wd;
+              llvm::sys::path::append(tf, *fs);
+              vvv.emplace_back(tf);
+              vhit.insert(*fs);
+            } else {
+              fprintf(stderr, "fs err\n");
+            }
+          }
+        } else {
+          fprintf(stderr, "cdbo err\n");
+        }
+      } else {
+        fprintf(stderr, "cdbx err\n");
+      }
+    }
+
+  }
+
   llvm::cl::PrintOptionValues();
+
+  if (EnumModulesMode) {
+    auto r = EnumModules(*Compilations);
+    return !r;
+  }
+
+  llvm::SmallString<32> realModuleCachePath;
+  llvm::SmallString<32> tempModuleCachePath;
+
+  if (ScanMode == ScanningMode::MinimizedSourcePreprocessing) {
+    llvm::sys::fs::createUniqueDirectory("clang-scan-deps", tempModuleCachePath);
+  }
 
   // The command options are rewritten to run Clang in preprocessor only mode.
   auto AdjustingCompilations =
@@ -414,7 +540,9 @@ int main(int argc, const char **argv) {
           std::move(Compilations));
   ResourceDirectoryCache ResourceDirCache;
   AdjustingCompilations->appendArgumentsAdjuster(
-      [&ResourceDirCache](const tooling::CommandLineArguments &Args,
+                                                 [&ResourceDirCache,
+                                                  &realModuleCachePath,
+                                                  &tempModuleCachePath](const tooling::CommandLineArguments &Args,
                           StringRef FileName) {
         std::string LastO = "";
         bool HasMT = false;
@@ -440,6 +568,9 @@ int main(int argc, const char **argv) {
               HasMD = true;
             if (Arg == "-resource-dir")
               HasResourceDir = true;
+            if (Arg.startswith("-fmodules-cache-path=")) {
+              realModuleCachePath = llvm::StringRef(Arg).substr(strlen("-fmodules-cache-path="));
+            }
             --Idx;
           }
         }
@@ -467,6 +598,12 @@ int main(int argc, const char **argv) {
         AdjustedArgs.push_back("-sys-header-deps");
         AdjustedArgs.push_back("-Wno-error");
 
+        if (!tempModuleCachePath.empty()) {
+          AdjustedArgs.push_back(std::string("-fmodules-cache-path=") + std::string(tempModuleCachePath));
+          AdjustedArgs.push_back("-Xclang");
+          AdjustedArgs.push_back("-fmodules-cache-missing=build");
+        }
+
         if (!HasResourceDir) {
           StringRef ResourceDir =
               ResourceDirCache.findResourceDir(Args);
@@ -485,7 +622,7 @@ int main(int argc, const char **argv) {
   SharedStream DependencyOS(llvm::outs());
 
   DependencyScanningService Service(ScanMode, Format, ReuseFileManager,
-                                    SkipExcludedPPRanges);
+                                    SkipExcludedPPRanges, std::move(vvv));
   llvm::ThreadPool Pool(llvm::hardware_concurrency(NumThreads));
   std::vector<std::unique_ptr<DependencyScanningTool>> WorkerTools;
   for (unsigned I = 0; I < Pool.getThreadCount(); ++I)
@@ -505,8 +642,14 @@ int main(int argc, const char **argv) {
     llvm::outs() << "Running clang-scan-deps on " << Inputs.size()
                  << " files using " << Pool.getThreadCount() << " workers\n";
   }
+
+  if (Format == ScanningOutputFormat::Ninja) {
+    llvm::outs() << "ninja_dyndep_version=1\n";
+  }
+
   for (unsigned I = 0; I < Pool.getThreadCount(); ++I) {
     Pool.async([I, &Lock, &Index, &Inputs, &HadErrors, &FD, &WorkerTools,
+                &vhit, &realModuleCachePath, &tempModuleCachePath,
                 &DependencyOS, &Errs]() {
       llvm::StringSet<> AlreadySeenModules;
       while (true) {
@@ -531,6 +674,25 @@ int main(int argc, const char **argv) {
           if (handleMakeDependencyToolResult(Filename, MaybeFile, DependencyOS,
                                              Errs))
             HadErrors = true;
+        } else if (Format == ScanningOutputFormat::Ninja) {
+          auto MaybeFullDeps = WorkerTools[I]->getFullDependencies(
+              *Input, CWD, AlreadySeenModules);
+
+          llvm::StringRef realModuleCacheRelPath(realModuleCachePath);
+          if (realModuleCacheRelPath.startswith(CWD)) {
+            realModuleCacheRelPath = realModuleCacheRelPath.substr(CWD.size());
+            if (realModuleCacheRelPath[0] == '/')
+              realModuleCacheRelPath = realModuleCacheRelPath.substr(1);
+          }
+
+          DependencyOS.applyLocked([&](raw_ostream &OS) {
+                                     printNinjaDyndep(OS, *MaybeFullDeps,
+                                                      vhit,
+                                                      CWD,
+                                                      tempModuleCachePath,
+                                                      realModuleCacheRelPath,
+                                                      Verbose);
+                                   });
         } else {
           auto MaybeFullDeps = WorkerTools[I]->getFullDependencies(
               *Input, CWD, AlreadySeenModules);
@@ -545,6 +707,9 @@ int main(int argc, const char **argv) {
 
   if (Format == ScanningOutputFormat::Full)
     FD.printFullOutput(llvm::outs());
+
+  if (!tempModuleCachePath.empty())
+    llvm::sys::fs::remove_directories(tempModuleCachePath);
 
   return HadErrors;
 }

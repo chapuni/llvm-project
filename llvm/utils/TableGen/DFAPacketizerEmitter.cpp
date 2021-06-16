@@ -362,3 +362,9 @@ void EmitDFAPacketizer(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-dfa-packetizer",
+                     cl::desc("Generate DFA Packetizer for VLIW targets"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitDFAPacketizer); }));
+} // end anonymous namespace

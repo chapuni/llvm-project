@@ -891,3 +891,9 @@ void EmitCompressInst(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-compress-inst-emitter",
+                     cl::desc("Generate RISCV compressed instructions."),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitCompressInst); }));
+} // end anonymous namespace

@@ -300,3 +300,9 @@ void EmitCallingConv(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // End llvm namespace
+
+namespace {
+cl::opt<bool> Action("gen-callingconv",
+                     cl::desc("Generate calling convention descriptions"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitCallingConv); }));
+} // end anonymous namespace

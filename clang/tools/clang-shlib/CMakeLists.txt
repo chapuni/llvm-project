@@ -27,7 +27,7 @@ foreach (lib ${clang_libs})
   # FIXME: We could use list(FILTER) with cmake >= 3.6
   # FIXME: With cmake >= 3.15 we could use the generator expression
   # $<FILTER:list,INCLUDE|EXCLUDE,regex>
-  get_target_property(interface ${lib} LINK_LIBRARIES)
+  get_target_property(interface ${lib} INTERFACE_LINK_LIBRARIES)
   if (interface)
     foreach(lib ${interface})
       if (NOT ${lib} MATCHES "^clang")

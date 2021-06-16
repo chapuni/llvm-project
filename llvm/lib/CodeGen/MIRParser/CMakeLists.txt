@@ -16,5 +16,4 @@ add_llvm_component_library(LLVMMIRParser
   Core
   MC
   Support
-  Target
   )

@@ -76,14 +76,82 @@ if(LLVM_INTEGRATED_CRT_ALLOC)
   endif()
 endif()
 
-add_llvm_component_library(LLVMSupport
-  AArch64TargetParser.cpp
-  ABIBreak.cpp
-  ARMTargetParser.cpp
-  AMDGPUMetadata.cpp
-  APFixedPoint.cpp
+add_llvm_library(LLVMSupportLite OBJECT PARTIAL_SOURCES_INTENDED
   APFloat.cpp
   APInt.cpp
+  ARMTargetParser.cpp
+  circular_raw_ostream.cpp
+  CodeGenCoverage.cpp
+  CommandLine.cpp
+  ConvertUTF.cpp
+  ConvertUTFWrapper.cpp
+  CrashRecoveryContext.cpp
+  Debug.cpp
+  Error.cpp
+  ErrorHandling.cpp
+  FoldingSet.cpp
+  FormattedStream.cpp
+  FormatVariadic.cpp
+  Hashing.cpp
+  InitLLVM.cpp
+  IntEqClasses.cpp
+  JSON.cpp
+  Locale.cpp
+  MD5.cpp
+  ManagedStatic.cpp
+  MemAlloc.cpp
+  MemoryBuffer.cpp
+  NativeFormatting.cpp
+  Optional.cpp
+  PrettyStackTrace.cpp
+  Program.cpp
+  Regex.cpp
+  Signposts.cpp
+  SmallPtrSet.cpp
+  SmallVector.cpp
+  SourceMgr.cpp
+  Statistic.cpp
+  StringExtras.cpp
+  StringMap.cpp
+  StringRef.cpp
+  StringSaver.cpp
+  Timer.cpp
+  ToolOutputFile.cpp
+  Triple.cpp
+  Twine.cpp
+  Unicode.cpp
+  VirtualFileSystem.cpp
+  WithColor.cpp
+  YAMLParser.cpp
+  raw_ostream.cpp
+  regcomp.c
+  regerror.c
+  regexec.c
+  regfree.c
+  regstrlcpy.c
+
+  # System
+  Atomic.cpp
+  DynamicLibrary.cpp
+  Errno.cpp
+  Host.cpp
+  Path.cpp
+  Process.cpp
+  Signals.cpp
+  Threading.cpp
+  ThreadLocal.cpp
+  Watchdog.cpp
+
+  LINK_LIBS
+  ${system_libs} ${imported_libs} ${delayload_flags}
+  )
+
+add_llvm_component_library(LLVMSupport
+  $<TARGET_OBJECTS:obj.LLVMSupportLite>
+  AArch64TargetParser.cpp
+  ABIBreak.cpp
+  AMDGPUMetadata.cpp
+  APFixedPoint.cpp
   APSInt.cpp
   ARMBuildAttrs.cpp
   ARMAttributeParser.cpp
@@ -97,77 +165,43 @@ add_llvm_component_library(LLVMSupport
   BranchProbability.cpp
   BuryPointer.cpp
   CachePruning.cpp
-  circular_raw_ostream.cpp
   Chrono.cpp
   COM.cpp
-  CodeGenCoverage.cpp
-  CommandLine.cpp
   Compression.cpp
   CRC.cpp
-  ConvertUTF.cpp
-  ConvertUTFWrapper.cpp
-  CrashRecoveryContext.cpp
   DataExtractor.cpp
-  Debug.cpp
   DebugCounter.cpp
   DeltaAlgorithm.cpp
   DAGDeltaAlgorithm.cpp
   DJB.cpp
   ELFAttributeParser.cpp
   ELFAttributes.cpp
-  Error.cpp
-  ErrorHandling.cpp
   ExtensibleRTTI.cpp
   FileCollector.cpp
   FileUtilities.cpp
   FileOutputBuffer.cpp
-  FoldingSet.cpp
-  FormattedStream.cpp
-  FormatVariadic.cpp
   GlobPattern.cpp
   GraphWriter.cpp
-  Hashing.cpp
-  InitLLVM.cpp
   InstructionCost.cpp
-  IntEqClasses.cpp
   IntervalMap.cpp
   ItaniumManglingCanonicalizer.cpp
-  JSON.cpp
   KnownBits.cpp
   LEB128.cpp
   LineIterator.cpp
-  Locale.cpp
   LockFileManager.cpp
   LowLevelType.cpp
-  ManagedStatic.cpp
   MathExtras.cpp
-  MemAlloc.cpp
-  MemoryBuffer.cpp
   MemoryBufferRef.cpp
-  MD5.cpp
-  NativeFormatting.cpp
   OptimizedStructLayout.cpp
-  Optional.cpp
   Parallel.cpp
   PluginLoader.cpp
-  PrettyStackTrace.cpp
   RandomNumberGenerator.cpp
-  Regex.cpp
   RISCVAttributes.cpp
   RISCVAttributeParser.cpp
   ScaledNumber.cpp
   ScopedPrinter.cpp
   SHA1.cpp
-  Signposts.cpp
-  SmallPtrSet.cpp
-  SmallVector.cpp
-  SourceMgr.cpp
   SpecialCaseList.cpp
-  Statistic.cpp
-  StringExtras.cpp
-  StringMap.cpp
-  StringSaver.cpp
-  StringRef.cpp
   SuffixTree.cpp
   SymbolRemappingReader.cpp
   SystemUtils.cpp
@@ -175,47 +209,22 @@ add_llvm_component_library(LLVMSupport
   TargetParser.cpp
   ThreadPool.cpp
   TimeProfiler.cpp
-  Timer.cpp
-  ToolOutputFile.cpp
   TrigramIndex.cpp
-  Triple.cpp
-  Twine.cpp
-  Unicode.cpp
   UnicodeCaseFold.cpp
   VersionTuple.cpp
-  VirtualFileSystem.cpp
-  WithColor.cpp
   X86TargetParser.cpp
-  YAMLParser.cpp
   YAMLTraits.cpp
   raw_os_ostream.cpp
-  raw_ostream.cpp
-  regcomp.c
-  regerror.c
-  regexec.c
-  regfree.c
-  regstrlcpy.c
   xxhash.cpp
   Z3Solver.cpp
 
   ${ALLOCATOR_FILES}
 
 # System
-  Atomic.cpp
-  DynamicLibrary.cpp
-  Errno.cpp
-  Host.cpp
   Memory.cpp
-  Path.cpp
-  Process.cpp
-  Program.cpp
   RWMutex.cpp
-  Signals.cpp
   TargetRegistry.cpp
-  ThreadLocal.cpp
-  Threading.cpp
   Valgrind.cpp
-  Watchdog.cpp
 
   ADDITIONAL_HEADER_DIRS
   Unix

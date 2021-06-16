@@ -14,6 +14,8 @@ using namespace dependencies;
 
 DependencyScanningService::DependencyScanningService(
     ScanningMode Mode, ScanningOutputFormat Format, bool ReuseFileManager,
-    bool SkipExcludedPPRanges)
+    bool SkipExcludedPPRanges,
+    std::vector<std::string> &&stubs)
     : Mode(Mode), Format(Format), ReuseFileManager(ReuseFileManager),
-      SkipExcludedPPRanges(SkipExcludedPPRanges) {}
+      SkipExcludedPPRanges(SkipExcludedPPRanges),
+      StubFiles(std::move(stubs)) {}

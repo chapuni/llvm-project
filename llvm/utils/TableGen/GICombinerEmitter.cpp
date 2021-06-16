@@ -1054,3 +1054,9 @@ void EmitGICombiner(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-global-isel-combiner",
+                     cl::desc("Generate GlobalISel combiner"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitGICombiner); }));
+} // end anonymous namespace

@@ -1964,3 +1964,9 @@ void EmitSubtarget(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-subtarget",
+                     cl::desc("Generate subtarget enumerations"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitSubtarget); }));
+} // end anonymous namespace
