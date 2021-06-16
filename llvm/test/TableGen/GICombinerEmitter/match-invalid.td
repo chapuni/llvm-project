@@ -1,4 +1,4 @@
-// RUN: not llvm-tblgen -I %p/../../../include -gen-global-isel-combiner \
+// RUN: not llvm-tblgen -gen-global-isel-combiner -I %p/../../../include \
 // RUN:     -combiners=MyCombiner %s 2>&1 | \
 // RUN:     FileCheck -implicit-check-not=error %s
 
