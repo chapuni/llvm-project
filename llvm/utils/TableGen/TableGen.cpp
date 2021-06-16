@@ -20,7 +20,6 @@
 using namespace llvm;
 
 enum ActionType {
-  NullAction = 0,
   PrintRecords,
   PrintDetailedRecords,
   NullBackend,
@@ -52,8 +51,6 @@ cl::opt<std::string> Class("class", cl::desc("Print Enum list for this class"),
 
 int LLVMTableGenMain(raw_ostream &OS, RecordKeeper &Records) {
   switch (Action) {
-  case NullAction:
-    return 1;
   case PrintRecords:
     OS << Records;              // No argument, dump all contents
     break;
