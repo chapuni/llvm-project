@@ -590,8 +590,6 @@ int main(int argc, const char **argv) {
 
         if (!tempModuleCachePath.empty()) {
           AdjustedArgs.push_back(std::string("-fmodules-cache-path=") + std::string(tempModuleCachePath));
-          AdjustedArgs.push_back("-Xclang");
-          AdjustedArgs.push_back("-fmodules-cache-missing=build");
         }
 
         if (!HasResourceDir) {
