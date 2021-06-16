@@ -6,8 +6,8 @@ add_llvm_component_library(LLVMBPFDesc
   BPFELFObjectWriter.cpp
 
   LINK_COMPONENTS
-  MC
   BPFInfo
+  MC
   Support
 
   ADD_TO_COMPONENT

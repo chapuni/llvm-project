@@ -146,25 +146,25 @@ add_llvm_target(AMDGPUCodeGen
   SIModeRegister.cpp
 
   LINK_COMPONENTS
-  Analysis
-  AsmPrinter
-  CodeGen
-  Core
-  IPO
-  MC
-  Passes
   AMDGPUDesc
   AMDGPUInfo
   AMDGPUUtils
+  Analysis
+  AsmPrinter
+  BinaryFormat
+  CodeGen
+  Core
+  GlobalISel
+  IPO
+  MC
+  MIRParser
+  Passes
   Scalar
   SelectionDAG
   Support
   Target
   TransformUtils
   Vectorize
-  GlobalISel
-  BinaryFormat
-  MIRParser
 
   ADD_TO_COMPONENT
   AMDGPU

@@ -23,6 +23,7 @@
 #include "CodeGenTarget.h"
 #include "TableGenBackends.h"
 #include "llvm/TableGen/Record.h"
+#include "llvm/TableGen/TableGenBackend.h"
 #include <string>
 #include <vector>
 
@@ -233,3 +234,9 @@ void EmitInstrDocs(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-instr-docs",
+                     cl::desc("Generate instruction documentation"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitInstrDocs); }));
+} // end anonymous namespace

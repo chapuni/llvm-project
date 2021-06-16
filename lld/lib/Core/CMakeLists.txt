@@ -13,7 +13,6 @@ add_lld_library(lldCore
 
   LINK_COMPONENTS
     BinaryFormat
-    MC
     Support
 
   LINK_LIBS

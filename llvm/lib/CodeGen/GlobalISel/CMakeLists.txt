@@ -32,11 +32,10 @@ add_llvm_component_library(LLVMGlobalISel
 
   LINK_COMPONENTS
   Analysis
-  CodeGen
   Core
+  CodeGen
   MC
   SelectionDAG
   Support
   Target
-  TransformUtils
   )

@@ -144,10 +144,10 @@ add_llvm_component_library(LLVMDebugInfoPDB
 
   LINK_COMPONENTS
   BinaryFormat
-  Object
-  Support
   DebugInfoCodeView
   DebugInfoMSF
+  Object
+  Support
   )
 
 target_link_libraries(LLVMDebugInfoPDB INTERFACE "${LIBPDB_ADDITIONAL_LIBRARIES}")

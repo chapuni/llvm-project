@@ -6,7 +6,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "llvm/Support/CommandLine.h"
 #include "llvm/Support/MemoryBuffer.h"
+#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include <algorithm>
 #include <string>
@@ -106,5 +108,11 @@ namespace llvm {
 void EmitAttributes(RecordKeeper &RK, raw_ostream &OS) {
   Attributes(RK).emit(OS);
 }
+
+namespace {
+cl::opt<bool> Action("gen-attrs",
+                     cl::desc("Generate attributes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitAttributes); }));
+} // end anonymous namespace
 
 } // End llvm namespace.

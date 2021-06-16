@@ -20,8 +20,6 @@ add_lld_library(lldWasm
   LINK_COMPONENTS
   ${LLVM_TARGETS_TO_BUILD}
   BinaryFormat
-  Core
-  Demangle
   LTO
   MC
   Object

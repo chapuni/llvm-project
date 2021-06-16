@@ -337,3 +337,9 @@ void EmitRegisterBank(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-register-bank",
+                     cl::desc("Generate registers bank descriptions"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitRegisterBank); }));
+} // end anonymous namespace

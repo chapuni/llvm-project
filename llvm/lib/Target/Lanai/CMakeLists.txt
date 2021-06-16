@@ -35,14 +35,12 @@ add_llvm_target(LanaiCodeGen
   AsmPrinter
   CodeGen
   Core
-  LanaiAsmParser
   LanaiDesc
   LanaiInfo
   MC
   SelectionDAG
   Support
   Target
-  TransformUtils
 
   ADD_TO_COMPONENT
   Lanai

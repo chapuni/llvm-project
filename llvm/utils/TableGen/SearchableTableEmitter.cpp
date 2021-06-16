@@ -21,6 +21,7 @@
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/TableGen/Error.h"
 #include "llvm/TableGen/Record.h"
+#include "llvm/TableGen/TableGenBackend.h"
 #include <algorithm>
 #include <set>
 #include <string>
@@ -841,3 +842,9 @@ void EmitSearchableTables(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // End llvm namespace.
+
+namespace {
+cl::opt<bool> Action("gen-searchable-tables",
+                     cl::desc("Generate generic binary-searchable table"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitSearchableTables); }));
+} // end anonymous namespace

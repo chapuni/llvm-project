@@ -1,3 +1,7 @@
+set(LLVM_TARGET_DEFINITIONS ${CMAKE_SOURCE_DIR}/include/llvm/IR/Intrinsics.td)
+tablegen(LLVM IntrinsicImpl.inc -gen-intrinsic-impl)
+add_public_tablegen_target(intrinsics_impl_gen)
+
 add_llvm_component_library(LLVMCore
   AbstractCallSite.cpp
   AsmWriter.cpp

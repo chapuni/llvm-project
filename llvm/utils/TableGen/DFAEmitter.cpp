@@ -394,3 +394,9 @@ void EmitAutomata(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-automata",
+                     cl::desc("Generate generic automata"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitAutomata); }));
+} // end anonymous namespace

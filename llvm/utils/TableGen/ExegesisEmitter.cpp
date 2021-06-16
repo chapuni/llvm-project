@@ -213,3 +213,9 @@ void EmitExegesis(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-exegesis",
+                     cl::desc("Generate llvm-exegesis tables"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitExegesis); }));
+} // end anonymous namespace

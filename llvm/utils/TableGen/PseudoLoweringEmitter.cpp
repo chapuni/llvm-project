@@ -315,3 +315,9 @@ void EmitPseudoLowering(RecordKeeper &RK, raw_ostream &OS) {
 }
 
 } // End llvm namespace
+
+namespace {
+cl::opt<bool> Action("gen-pseudo-lowering",
+                     cl::desc("Generate pseudo instruction lowering"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitPseudoLowering); }));
+} // end anonymous namespace
