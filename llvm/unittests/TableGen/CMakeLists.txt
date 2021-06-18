@@ -1,6 +1,5 @@
 set(LLVM_LINK_COMPONENTS
   TableGen
-  Support
   )
 
 set(LLVM_TARGET_DEFINITIONS Automata.td)
