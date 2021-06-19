@@ -176,8 +176,8 @@ static void printOption(llvm::raw_ostream &OS, StringRef FullName,
 }
 
 void clang::EmitClangSACheckers(RecordKeeper &Records, raw_ostream &OS) {
-  std::vector<Record*> checkers = Records.getAllDerivedDefinitions("Checker");
-  std::vector<Record*> packages = Records.getAllDerivedDefinitions("Package");
+  std::vector<Record *> checkers = Records.getAllDerivedDefinitions("Checker");
+  std::vector<Record *> packages = Records.getAllDerivedDefinitions("Package");
 
   using SortedRecords = llvm::StringMap<const Record *>;
 
