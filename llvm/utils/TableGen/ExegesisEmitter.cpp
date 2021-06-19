@@ -176,7 +176,7 @@ void ExegesisEmitter::emitPfmCounters(raw_ostream &OS) const {
     emitPfmCountersInfo(*Def, IssueCountersTableOffset, OS);
 
   OS << "\n";
-} // namespace
+}
 
 void ExegesisEmitter::emitPfmCountersLookupTable(raw_ostream &OS) const {
   std::vector<Record *> Bindings =
