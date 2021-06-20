@@ -1,8 +1,12 @@
-if(LLVM_ENABLE_TABLEGEN_MODULARIZED)
-  set(tablegen_type SHARED)
+if(NOT BUILD_SHARED_LIBS)
+  set(tablegen_objs
+    $<TARGET_OBJECTS:obj.LLVMSupportLite>
+  )
 endif()
 
-add_llvm_component_library(LLVMTableGen ${tablegen_type}
+set(LLVM_ENABLE_MODULES OFF)
+
+add_llvm_component_library(LLVMTableGen SHARED
   DetailedRecordsBackend.cpp
   Error.cpp
   JSONBackend.cpp
@@ -15,15 +19,15 @@ add_llvm_component_library(LLVMTableGen ${tablegen_type}
   TGLexer.cpp
   TGParser.cpp
 
+  ${tablegen_objs}
+
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/TableGen
+
+  LINK_LIBS
+  LLVMSupportLite
   )
 
 if (BUILD_SHARED_LIBS)
-  target_link_libraries(LLVMTableGen PUBLIC LLVMSupport)
-elseif(LLVM_ENABLE_TABLEGEN_MODULARIZED)
-  target_sources(LLVMTableGen PRIVATE $<TARGET_OBJECTS:obj.LLVMSupportLite>)
-  target_link_libraries(LLVMTableGen PRIVATE LLVMSupportLite)
-else()
-  target_link_libraries(LLVMTableGen INTERFACE LLVMSupportLite)
+  target_link_libraries(LLVMTableGen INTERFACE LLVMSupport)
 endif()

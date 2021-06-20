@@ -968,8 +968,6 @@ if( MINGW AND NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
   llvm_replace_compiler_option(CMAKE_CXX_FLAGS_RELEASE "-O3" "-O2")
 endif()
 
-set(LLVM_ENABLE_TABLEGEN_MODULARIZED OFF)
-
 ##############################################################################
 set(CLANG_SCAN_DEPS /home/chapuni/llvm/install/2libcxx/bin/clang-scan-deps
   CACHE FILEPATH "clang-scan-deps")
@@ -997,7 +995,6 @@ endif()
 add_subdirectory(lib/Demangle)
 add_subdirectory(lib/Support)
 add_subdirectory(lib/TableGen)
-add_subdirectory(utils/TableGen/GlobalISel)
 
 add_subdirectory(utils/TableGen)
 

@@ -76,7 +76,10 @@ if(LLVM_INTEGRATED_CRT_ALLOC)
   endif()
 endif()
 
-add_llvm_library(LLVMSupportLite STATIC OBJECT PARTIAL_SOURCES_INTENDED
+set(bk_enable_modules ${LLVM_ENABLE_MODULES})
+set(LLVM_ENABLE_MODULES OFF)
+
+add_llvm_library(LLVMSupportLite OBJECT PARTIAL_SOURCES_INTENDED
   APFloat.cpp
   APInt.cpp
   ARMTargetParser.cpp
