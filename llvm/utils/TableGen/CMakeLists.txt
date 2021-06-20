@@ -1,3 +1,5 @@
+set(LLVM_ENABLE_TABLEGEN_MODULARIZED ON)
+
 add_tablegen(llvm-tblgen LLVM
   TableGen.cpp
 
@@ -151,12 +153,18 @@ add_tablegen(llvm-tblgen LLVM
 
   MODULE global-isel-combiner
   GICombinerEmitter.cpp
-  $<TARGET_OBJECTS:obj.LLVMTableGenGlobalISel>
+  GlobalISel/CodeExpander.cpp
+  GlobalISel/GIMatchDag.cpp
+  GlobalISel/GIMatchDagEdge.cpp
+  GlobalISel/GIMatchDagInstr.cpp
+  GlobalISel/GIMatchDagOperands.cpp
+  GlobalISel/GIMatchDagPredicate.cpp
+  GlobalISel/GIMatchDagPredicateDependencyEdge.cpp
+  GlobalISel/GIMatchTree.cpp
   DEPENDS callingconv
-  SHARED
   ) # add_tablegen
 set_target_properties(llvm-tblgen PROPERTIES FOLDER "Tablegenning")
 
-if (TARGET llvm-tblgen-global-isel-combiner)
+if (LLVM_ENABLE_TABLEGEN_MODULARAIZED)
   add_library(LLVMTableGenGlobalISel ALIAS llvm-tblgen-global-isel-combiner)
 endif()

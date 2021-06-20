@@ -136,6 +136,7 @@ public:
 
   void run(raw_ostream &o);
 };
+} // End anonymous namespace.
 
 bool RISCVCompressInstEmitter::validateRegister(Record *Reg, Record *RegClass) {
   assert(Reg->isSubClassOf("Register") && "Reg record should be a Register");
@@ -883,8 +884,16 @@ void RISCVCompressInstEmitter::run(raw_ostream &o) {
   emitCompressInstEmitter(o, EmitterType::CheckCompress);
 }
 
-TableGen::EmitterAction<RISCVCompressInstEmitter>
-    Action("gen-compress-inst-emitter",
-           "Generate RISCV compressed instructions.");
+namespace llvm {
 
-} // namespace
+void EmitCompressInst(RecordKeeper &RK, raw_ostream &OS) {
+  RISCVCompressInstEmitter(RK).run(OS);
+}
+
+} // namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-compress-inst-emitter",
+                     cl::desc("Generate RISCV compressed instructions."),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitCompressInst); }));
+} // end anonymous namespace

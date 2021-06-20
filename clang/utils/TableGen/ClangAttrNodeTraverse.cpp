@@ -1,10 +1,12 @@
 #include "TableGenBackends.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Main.h"
 
 using namespace llvm;
+using namespace clang;
 
 namespace {
-TableGen::Action Action(clang::EmitClangAttrNodeTraverse,
-                        "gen-clang-attr-node-traverse",
-                        "Generate clang attribute traverser");
-}
+cl::opt<bool> Action("gen-clang-attr-node-traverse",
+                     cl::desc("Generate clang attribute traverser"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitClangAttrNodeTraverse); }));
+} // end anonymous namespace

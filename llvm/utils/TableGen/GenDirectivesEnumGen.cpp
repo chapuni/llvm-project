@@ -5,8 +5,7 @@
 using namespace llvm;
 
 namespace {
-
-TableGen::Action Action(EmitDirectivesGen, "gen-directive-gen",
-                        "Generate directive related implementation code part");
-
-}
+cl::opt<bool> Action("gen-directive-gen",
+                     cl::desc("Generate directive related implementation code part"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitDirectivesGen); }));
+} // end anonymous namespace

@@ -33,6 +33,8 @@
 #include "llvm/TableGen/Record.h"
 #include "llvm/TableGen/TableGenBackend.h"
 
+using namespace llvm;
+
 namespace {
 using llvm::formatv;
 
@@ -236,7 +238,7 @@ void clang::EmitClangSyntaxNodeClasses(llvm::RecordKeeper &Records,
 }
 
 namespace {
-llvm::TableGen::Action Action(clang::EmitClangSyntaxNodeList,
-                              "gen-clang-syntax-node-list",
-                              "Generate list of Clang Syntax Tree node types");
-}
+cl::opt<bool> Action("gen-clang-syntax-node-list",
+                     cl::desc("Generate list of Clang Syntax Tree node types"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangSyntaxNodeList); }));
+} // end anonymous namespace

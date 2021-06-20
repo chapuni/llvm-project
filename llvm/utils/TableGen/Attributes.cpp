@@ -6,6 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "llvm/Support/CommandLine.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
@@ -21,7 +22,7 @@ namespace {
 class Attributes {
 public:
   Attributes(RecordKeeper &R) : Records(R) {}
-  void run(raw_ostream &OS);
+  void emit(raw_ostream &OS);
 
 private:
   void emitTargetIndependentNames(raw_ostream &OS);
@@ -29,6 +30,8 @@ private:
 
   RecordKeeper &Records;
 };
+
+} // End anonymous namespace.
 
 void Attributes::emitTargetIndependentNames(raw_ostream &OS) {
   OS << "#ifdef GET_ATTR_NAMES\n";
@@ -95,11 +98,21 @@ void Attributes::emitFnAttrCompatCheck(raw_ostream &OS, bool IsStringAttr) {
   OS << "#endif\n";
 }
 
-void Attributes::run(raw_ostream &OS) {
+void Attributes::emit(raw_ostream &OS) {
   emitTargetIndependentNames(OS);
   emitFnAttrCompatCheck(OS, false);
 }
 
-TableGen::EmitterAction<Attributes> Action("gen-attrs", "Generate attributes");
+namespace llvm {
 
-} // namespace
+void EmitAttributes(RecordKeeper &RK, raw_ostream &OS) {
+  Attributes(RK).emit(OS);
+}
+
+namespace {
+cl::opt<bool> Action("gen-attrs",
+                     cl::desc("Generate attributes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitAttributes); }));
+} // end anonymous namespace
+
+} // End llvm namespace.

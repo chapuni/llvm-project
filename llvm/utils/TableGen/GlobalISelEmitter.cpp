@@ -6157,9 +6157,18 @@ void SwitchMatcher::emit(MatchTable &Table) {
 
 unsigned OperandMatcher::getInsnVarID() const { return Insn.getInsnVarID(); }
 
+} // end anonymous namespace
+
 //===----------------------------------------------------------------------===//
 
-TableGen::EmitterAction<GlobalISelEmitter>
-    Action("gen-global-isel", "Generate GlobalISel selector");
+namespace llvm {
+void EmitGlobalISel(RecordKeeper &RK, raw_ostream &OS) {
+  GlobalISelEmitter(RK).run(OS);
+}
+} // End llvm namespace
 
-} // namespace
+namespace {
+cl::opt<bool> Action("gen-global-isel",
+                     cl::desc("Generate GlobalISel selector"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitGlobalISel); }));
+} // end anonymous namespace

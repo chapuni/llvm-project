@@ -44,14 +44,14 @@
 
 using namespace llvm;
 
-namespace {
-
 cl::OptionCategory RegisterInfoCat("Options for -gen-register-info");
 
 static cl::opt<bool>
     RegisterInfoDebug("register-info-debug", cl::init(false),
                       cl::desc("Dump register information to help debugging"),
                       cl::cat(RegisterInfoCat));
+
+namespace {
 
 class RegisterInfoEmitter {
   CodeGenTarget Target;
@@ -95,6 +95,8 @@ private:
   void emitComposeSubRegIndexLaneMask(raw_ostream &OS, CodeGenRegBank &RegBank,
                                       const std::string &ClassName);
 };
+
+} // end anonymous namespace
 
 // runEnums - Print out enum values for all of the registers.
 void RegisterInfoEmitter::runEnums(raw_ostream &OS,
@@ -1687,7 +1689,16 @@ void RegisterInfoEmitter::debugDump(raw_ostream &OS) {
   }
 }
 
-TableGen::EmitterAction<RegisterInfoEmitter>
-    Action("gen-register-info", "Generate registers and register classes info");
+namespace llvm {
 
-} // namespace
+void EmitRegisterInfo(RecordKeeper &RK, raw_ostream &OS) {
+  RegisterInfoEmitter(RK).run(OS);
+}
+
+} // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-register-info",
+                     cl::desc("Generate registers and register classes info"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitRegisterInfo); }));
+} // end anonymous namespace

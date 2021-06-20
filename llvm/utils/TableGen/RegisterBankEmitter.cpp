@@ -118,6 +118,8 @@ public:
   void run(raw_ostream &OS);
 };
 
+} // end anonymous namespace
+
 /// Emit code to declare the ID enumeration and external global instance
 /// variables.
 void RegisterBankEmitter::emitHeader(raw_ostream &OS,
@@ -328,7 +330,16 @@ void RegisterBankEmitter::run(raw_ostream &OS) {
   OS << "#endif // GET_TARGET_REGBANK_IMPL\n";
 }
 
-TableGen::EmitterAction<RegisterBankEmitter>
-    Action("gen-register-bank", "Generate registers bank descriptions");
+namespace llvm {
 
-} // namespace
+void EmitRegisterBank(RecordKeeper &RK, raw_ostream &OS) {
+  RegisterBankEmitter(RK).run(OS);
+}
+
+} // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-register-bank",
+                     cl::desc("Generate registers bank descriptions"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitRegisterBank); }));
+} // end anonymous namespace

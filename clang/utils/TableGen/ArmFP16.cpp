@@ -1,9 +1,12 @@
 #include "TableGenBackends.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Main.h"
 
 using namespace llvm;
+using namespace clang;
 
 namespace {
-TableGen::Action Action(clang::EmitFP16, "gen-arm-fp16",
-                        "Generate arm_fp16.h for clang");
-}
+cl::opt<bool> Action("gen-arm-fp16",
+                     cl::desc("Generate arm_fp16.h for clang"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitFP16); }));
+} // end anonymous namespace

@@ -1,9 +1,12 @@
 #include "TableGenBackends.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Main.h"
 
 using namespace llvm;
+using namespace clang;
 
 namespace {
-TableGen::Action Action(clang::EmitNeonSema, "gen-arm-neon-sema",
-                        "Generate ARM NEON sema support for clang");
-}
+cl::opt<bool> Action("gen-arm-neon-sema",
+                     cl::desc("Generate ARM NEON sema support for clang"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitNeonSema); }));
+} // end anonymous namespace

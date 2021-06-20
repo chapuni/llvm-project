@@ -1033,8 +1033,11 @@ void GICombinerEmitter::run(raw_ostream &OS) {
      << "#endif // ifdef " << Name.upper() << "_GENCOMBINERHELPER_CPP\n";
 }
 
+} // end anonymous namespace
+
 //===----------------------------------------------------------------------===//
 
+namespace llvm {
 void EmitGICombiner(RecordKeeper &RK, raw_ostream &OS) {
   CodeGenTarget Target(RK);
   emitSourceFileHeader("Global Combiner", OS);
@@ -1050,7 +1053,10 @@ void EmitGICombiner(RecordKeeper &RK, raw_ostream &OS) {
   NumPatternTotalStatistic = NumPatternTotal;
 }
 
-TableGen::Action Action(EmitGICombiner, "gen-global-isel-combiner",
-                        "Generate GlobalISel combiner");
+} // namespace llvm
 
-} // namespace
+namespace {
+cl::opt<bool> Action("gen-global-isel-combiner",
+                     cl::desc("Generate GlobalISel combiner"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitGICombiner); }));
+} // end anonymous namespace

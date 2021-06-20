@@ -18,7 +18,7 @@
 
 #include "CodeGenHwModes.h"
 #include "CodeGenInstruction.h"
-#include "CodeGenIntrinsics.h"
+#include "CodeGenIntrinsics.h" // llvm::getValueType()
 #include "CodeGenRegisters.h"
 #include "InfoByHwMode.h"
 #include "SDNodeProperties.h"

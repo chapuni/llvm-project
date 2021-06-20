@@ -1,5 +1,6 @@
-#include "ASTTableGen.h"
 #include "TableGenBackends.h"
+#include "ASTTableGen.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Main.h"
 
 using namespace llvm;
@@ -10,6 +11,7 @@ void EmitClangStmtNodes(RecordKeeper &Records, raw_ostream &OS) {
   EmitClangASTNodes(Records, OS, StmtNodeClassName, "");
 }
 
-TableGen::Action Action(EmitClangStmtNodes, "gen-clang-stmt-nodes",
-                        "Generate Clang AST statement nodes");
-} // namespace
+cl::opt<bool> Action("gen-clang-stmt-nodes",
+                     cl::desc("Generate Clang AST statement nodes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitClangStmtNodes); }));
+} // end anonymous namespace

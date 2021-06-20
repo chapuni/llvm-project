@@ -452,6 +452,8 @@ private:
   }
 };
 
+} // end anonymous namespace
+
 void X86FoldTablesEmitter::addEntryWithFlags(FoldTable &Table,
                                              const CodeGenInstruction *RegInstr,
                                              const CodeGenInstruction *MemInstr,
@@ -669,7 +671,16 @@ void X86FoldTablesEmitter::run(formatted_raw_ostream &OS) {
   printTable(Table4, "Table4", OS);
 }
 
-TableGen::EmitterAction<X86FoldTablesEmitter>
-    Action("gen-x86-fold-tables", "Generate X86 fold tables");
+namespace llvm {
 
-} // namespace
+void EmitX86FoldTables(RecordKeeper &RK, raw_ostream &o) {
+  formatted_raw_ostream OS(o);
+  X86FoldTablesEmitter(RK).run(OS);
+}
+} // namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-x86-fold-tables",
+                     cl::desc("Generate X86 fold tables"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitX86FoldTables); }));
+} // end anonymous namespace

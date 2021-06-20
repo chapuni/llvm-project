@@ -92,6 +92,8 @@ private:
   std::vector<std::string> GetOperandInfo(const CodeGenInstruction &Inst);
 };
 
+} // end anonymous namespace
+
 static void PrintDefList(const std::vector<Record*> &Uses,
                          unsigned Num, raw_ostream &OS) {
   OS << "static const MCPhysReg ImplicitList" << Num << "[] = { ";
@@ -874,6 +876,8 @@ void InstrInfoEmitter::emitEnums(raw_ostream &OS) {
   OS << "#endif // GET_INSTRINFO_SCHED_ENUM\n\n";
 }
 
+namespace llvm {
+
 void EmitInstrInfo(RecordKeeper &RK, raw_ostream &OS) {
   RK.startTimer("Analyze DAG patterns");
   InstrInfoEmitter(RK).run(OS);
@@ -881,7 +885,10 @@ void EmitInstrInfo(RecordKeeper &RK, raw_ostream &OS) {
   EmitMapTable(RK, OS);
 }
 
-TableGen::Action Action(EmitInstrInfo, "gen-instr-info",
-                        "Generate instruction descriptions");
+} // end namespace llvm
 
-} // namespace
+namespace {
+cl::opt<bool> Action("gen-instr-info",
+                     cl::desc("Generate instruction descriptions"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitInstrInfo); }));
+} // end anonymous namespace

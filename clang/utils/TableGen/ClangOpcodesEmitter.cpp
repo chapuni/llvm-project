@@ -83,6 +83,8 @@ void Enumerate(const Record *R,
   Rec(0, N);
 }
 
+} // namespace
+
 void ClangOpcodesEmitter::run(raw_ostream &OS) {
   for (auto *Opcode : Records.getAllDerivedDefinitions(Root.getName())) {
     // The name is the record name, unless overriden.
@@ -350,6 +352,12 @@ void ClangOpcodesEmitter::PrintTypes(raw_ostream &OS, ArrayRef<Record *> Types) 
   OS << ">";
 }
 
-TableGen::EmitterAction<ClangOpcodesEmitter>
-    Action("gen-clang-opcodes", "Generate Clang constexpr interpreter opcodes");
-} // namespace
+void clang::EmitClangOpcodes(RecordKeeper &Records, raw_ostream &OS) {
+  ClangOpcodesEmitter(Records).run(OS);
+}
+
+namespace {
+cl::opt<bool> Action("gen-clang-opcodes",
+                     cl::desc("Generate Clang constexpr interpreter opcodes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangOpcodes); }));
+} // end anonymous namespace

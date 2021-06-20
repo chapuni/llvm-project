@@ -1,9 +1,12 @@
 #include "TableGenBackends.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Main.h"
 
 using namespace llvm;
+using namespace clang;
 
 namespace {
-TableGen::Action Action(clang::EmitClangBasicReader, "gen-clang-basic-reader",
-                        "Generate Clang BasicReader classes");
-}
+cl::opt<bool> Action("gen-clang-basic-reader",
+                     cl::desc("Generate Clang BasicReader classes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitClangBasicReader); }));
+} // end anonymous namespace

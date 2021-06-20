@@ -98,6 +98,7 @@ private:
   void addMacroToUndef(StringRef macroName);
   void emitUndefs();
 };
+}
 
 void TypeNodeEmitter::emit() {
   if (Types.empty())
@@ -202,10 +203,12 @@ void TypeNodeEmitter::emitUndefs() {
   }
 }
 
-void EmitClangTypeNodes(RecordKeeper &records, raw_ostream &out) {
+void clang::EmitClangTypeNodes(RecordKeeper &records, raw_ostream &out) {
   TypeNodeEmitter(records, out).emit();
 }
 
-TableGen::Action Action(EmitClangTypeNodes, "gen-clang-type-nodes",
-                        "Generate Clang AST type nodes");
-} // namespace
+namespace {
+cl::opt<bool> Action("gen-clang-type-nodes",
+                     cl::desc("Generate Clang AST type nodes"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(clang::EmitClangTypeNodes); }));
+} // end anonymous namespace

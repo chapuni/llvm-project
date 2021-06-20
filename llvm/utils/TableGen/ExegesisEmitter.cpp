@@ -176,7 +176,7 @@ void ExegesisEmitter::emitPfmCounters(raw_ostream &OS) const {
     emitPfmCountersInfo(*Def, IssueCountersTableOffset, OS);
 
   OS << "\n";
-}
+} // namespace
 
 void ExegesisEmitter::emitPfmCountersLookupTable(raw_ostream &OS) const {
   std::vector<Record *> Bindings =
@@ -204,7 +204,18 @@ void ExegesisEmitter::run(raw_ostream &OS) const {
   emitPfmCountersLookupTable(OS);
 }
 
-TableGen::EmitterAction<ExegesisEmitter>
-    Action("gen-exegesis", "Generate llvm-exegesis tables");
+} // end anonymous namespace
 
-} // namespace
+namespace llvm {
+
+void EmitExegesis(RecordKeeper &RK, raw_ostream &OS) {
+  ExegesisEmitter(RK).run(OS);
+}
+
+} // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-exegesis",
+                     cl::desc("Generate llvm-exegesis tables"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitExegesis); }));
+} // end anonymous namespace

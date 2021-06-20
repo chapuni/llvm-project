@@ -1,9 +1,12 @@
 #include "TableGenBackends.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Main.h"
 
 using namespace llvm;
+using namespace clang;
 
 namespace {
-TableGen::Action Action(clang::EmitClangAttrImpl, "gen-clang-attr-impl",
-                        "Generate clang attribute implementations");
-}
+cl::opt<bool> Action("gen-clang-attr-impl",
+                     cl::desc("Generate clang attribute implementations"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitClangAttrImpl); }));
+} // end anonymous namespace

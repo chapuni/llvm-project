@@ -23,6 +23,14 @@
 #include <algorithm>
 using namespace llvm;
 
+#if 0
+cl::OptionCategory GenIntrinsicCat("Options for -gen-intrinsic-enums");
+cl::opt<std::string>
+    IntrinsicPrefix("intrinsic-prefix",
+                    cl::desc("Generate intrinsics with this target prefix"),
+                    cl::value_desc("target prefix"), cl::cat(GenIntrinsicCat));
+#endif
+
 namespace {
 class IntrinsicEmitter {
   RecordKeeper &Records;
@@ -42,6 +50,7 @@ public:
   void EmitIntrinsicToBuiltinMap(const CodeGenIntrinsicTable &Ints, bool IsGCC,
                                  raw_ostream &OS);
 };
+} // End anonymous namespace
 
 //===----------------------------------------------------------------------===//
 // IntrinsicEmitter Implementation
@@ -504,6 +513,7 @@ void IntrinsicEmitter::EmitGenerator(const CodeGenIntrinsicTable &Ints,
   OS << "#endif\n\n";  // End of GET_INTRINSIC_GENERATOR_GLOBAL
 }
 
+namespace {
 struct AttributeComparator {
   bool operator()(const CodeGenIntrinsic *L, const CodeGenIntrinsic *R) const {
     // Sort throwing intrinsics after non-throwing intrinsics.
@@ -546,6 +556,7 @@ struct AttributeComparator {
     return (L->ArgumentAttributes < R->ArgumentAttributes);
   }
 };
+} // End anonymous namespace
 
 /// EmitAttributes - This emits the Intrinsic::getAttributes method.
 void IntrinsicEmitter::EmitAttributes(const CodeGenIntrinsicTable &Ints,
@@ -934,7 +945,14 @@ void IntrinsicEmitter::EmitIntrinsicToBuiltinMap(
   OS << "#endif\n\n";
 }
 
-TableGen::EmitterAction<IntrinsicEmitter>
-    Action("gen-intrinsic-impl", "Generate intrinsic information");
+namespace llvm {
+void EmitIntrinsicImpl(RecordKeeper &RK, raw_ostream &OS) {
+  IntrinsicEmitter(RK).run(OS);
+}
+} // end namespace llvm
 
-} // namespace
+namespace {
+cl::opt<bool> Action("gen-intrinsic-impl",
+                     cl::desc("Generate intrinsic information"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitIntrinsicImpl); }));
+} // end anonymous namespace

@@ -29,6 +29,7 @@ public:
   explicit DAGISelEmitter(RecordKeeper &R) : Records(R), CGP(R) {}
   void run(raw_ostream &OS);
 };
+} // End anonymous namespace
 
 //===----------------------------------------------------------------------===//
 // DAGISelEmitter Helper methods
@@ -70,6 +71,7 @@ static unsigned getResultPatternSize(TreePatternNode *P,
   return Cost;
 }
 
+namespace {
 // PatternSortingPredicate - return true if we prefer to match LHS before RHS.
 // In particular, we want to match maximal patterns first and lowest cost within
 // a particular complexity first.
@@ -116,6 +118,8 @@ struct PatternSortingPredicate {
     return LHS->ID < RHS->ID;
   }
 };
+} // End anonymous namespace
+
 
 void DAGISelEmitter::run(raw_ostream &OS) {
   emitSourceFileHeader("DAG Instruction Selector for the " +
@@ -181,7 +185,17 @@ void DAGISelEmitter::run(raw_ostream &OS) {
   EmitMatcherTable(TheMatcher.get(), CGP, OS);
 }
 
-TableGen::EmitterAction<DAGISelEmitter>
-    Action("gen-dag-isel", "Generate a DAG instruction selector");
+namespace llvm {
 
-} // namespace
+void EmitDAGISel(RecordKeeper &RK, raw_ostream &OS) {
+  RK.startTimer("Parse patterns");
+  DAGISelEmitter(RK).run(OS);
+}
+
+} // End llvm namespace
+
+namespace {
+cl::opt<bool> Action("gen-dag-isel",
+                     cl::desc("Generate a DAG instruction selector"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitDAGISel); }));
+} // end anonymous namespace

@@ -1,10 +1,12 @@
 #include "TableGenBackends.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Main.h"
 
 using namespace llvm;
+using namespace clang;
 
 namespace {
-TableGen::Action
-    Action(clang::EmitClangSyntaxNodeClasses, "gen-clang-syntax-node-classes",
-           "Generate definitions of Clang Syntax Tree node clasess");
-}
+cl::opt<bool> Action("gen-clang-syntax-node-classes",
+                     cl::desc("Generate definitions of Clang Syntax Tree node clasess"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitClangSyntaxNodeClasses); }));
+} // end anonymous namespace

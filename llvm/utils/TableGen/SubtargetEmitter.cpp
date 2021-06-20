@@ -133,6 +133,8 @@ public:
   void run(raw_ostream &o);
 };
 
+} // end anonymous namespace
+
 //
 // Enumeration - Emit the specified class as an enumeration.
 //
@@ -1954,12 +1956,17 @@ void SubtargetEmitter::run(raw_ostream &OS) {
   EmitMCInstrAnalysisPredicateFunctions(OS);
 }
 
+namespace llvm {
+
 void EmitSubtarget(RecordKeeper &RK, raw_ostream &OS) {
   CodeGenTarget CGTarget(RK);
   SubtargetEmitter(RK, CGTarget).run(OS);
 }
 
-TableGen::Action Action(EmitSubtarget, "gen-subtarget",
-                        "Generate subtarget enumerations");
+} // end namespace llvm
 
-} // namespace
+namespace {
+cl::opt<bool> Action("gen-subtarget",
+                     cl::desc("Generate subtarget enumerations"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitSubtarget); }));
+} // end anonymous namespace

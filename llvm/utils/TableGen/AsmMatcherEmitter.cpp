@@ -794,6 +794,8 @@ public:
   }
 };
 
+} // end anonymous namespace
+
 #if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
 LLVM_DUMP_METHOD void MatchableInfo::dump() const {
   errs() << TheDef->getName() << " -- " << "flattened:\"" << AsmString <<"\"\n";
@@ -3975,7 +3977,17 @@ void AsmMatcherEmitter::run(raw_ostream &OS) {
   OS << "#endif // GET_MNEMONIC_CHECKER\n\n";
 }
 
-TableGen::EmitterAction<AsmMatcherEmitter>
-    Action("gen-asm-matcher", "Generate assembly instruction matcher");
+namespace llvm {
 
-} // namespace
+void EmitAsmMatcher(RecordKeeper &RK, raw_ostream &OS) {
+  emitSourceFileHeader("Assembly Matcher Source Fragment", OS);
+  AsmMatcherEmitter(RK).run(OS);
+}
+
+} // end namespace llvm
+
+namespace {
+cl::opt<bool> Action("gen-asm-matcher",
+                     cl::desc("Generate assembly instruction matcher"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitAsmMatcher); }));
+} // end anonymous namespace

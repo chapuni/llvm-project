@@ -1,10 +1,12 @@
 #include "TableGenBackends.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/TableGen/Main.h"
 
 using namespace llvm;
+using namespace clang;
 
 namespace {
-TableGen::Action Action(clang::EmitClangAttrTemplateInstantiate,
-                        "gen-clang-attr-template-instantiate",
-                        "Generate a clang template instantiate code");
-}
+cl::opt<bool> Action("gen-clang-attr-template-instantiate",
+                     cl::desc("Generate a clang template instantiate code"),
+                     cl::callback([](const bool &) { TableGen::RegisterAction(EmitClangAttrTemplateInstantiate); }));
+} // end anonymous namespace
