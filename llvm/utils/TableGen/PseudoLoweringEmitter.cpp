@@ -63,7 +63,6 @@ public:
   /// run - Output the pseudo-lowerings.
   void run(raw_ostream &o);
 };
-} // End anonymous namespace
 
 // FIXME: This pass currently can only expand a pseudo to a single instruction.
 //        The pseudo expansion really should take a list of dags, not just
@@ -308,10 +307,7 @@ void PseudoLoweringEmitter::run(raw_ostream &o) {
   emitLoweringEmitter(o);
 }
 
-namespace llvm {
+TableGen::EmitterAction<PseudoLoweringEmitter>
+    Action("gen-pseudo-lowering", "Generate pseudo instruction lowering");
 
-void EmitPseudoLowering(RecordKeeper &RK, raw_ostream &OS) {
-  PseudoLoweringEmitter(RK).run(OS);
-}
-
-} // End llvm namespace
+} // namespace

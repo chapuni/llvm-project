@@ -228,10 +228,9 @@ void X86EVEX2VEXTablesEmitter::run(raw_ostream &OS) {
   printTable(EVEX2VEX128, OS);
   printTable(EVEX2VEX256, OS);
 }
-}
 
-namespace llvm {
-void EmitX86EVEX2VEXTables(RecordKeeper &RK, raw_ostream &OS) {
-  X86EVEX2VEXTablesEmitter(RK).run(OS);
-}
-}
+TableGen::EmitterAction<X86EVEX2VEXTablesEmitter>
+    Action("gen-x86-EVEX2VEX-tables",
+           "Generate X86 EVEX to VEX compress tables");
+
+} // namespace

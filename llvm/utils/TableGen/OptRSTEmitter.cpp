@@ -20,9 +20,10 @@
 
 using namespace llvm;
 
+namespace {
+
 /// OptParserEmitter - This tablegen backend takes an input .td file
 /// describing a list of options and emits a RST man page.
-namespace llvm {
 void EmitOptRST(RecordKeeper &Records, raw_ostream &OS) {
   llvm::StringMap<std::vector<Record *>> OptionsByGroup;
   std::vector<Record *> OptionsWithoutGroup;
@@ -84,4 +85,7 @@ void EmitOptRST(RecordKeeper &Records, raw_ostream &OS) {
     }
   }
 }
-} // end namespace llvm
+
+TableGen::Action Action(EmitOptRST, "gen-opt-rst", "Generate option RST");
+
+} // namespace

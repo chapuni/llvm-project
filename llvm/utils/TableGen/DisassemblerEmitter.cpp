@@ -7,6 +7,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "CodeGenTarget.h"
+#include "FixedLenDecoderEmitter.h"
 #include "WebAssemblyDisassemblerEmitter.h"
 #include "X86DisassemblerTables.h"
 #include "X86RecognizableInstr.h"
@@ -93,14 +94,7 @@ using namespace llvm::X86Disassembler;
 /// X86RecognizableInstr.cpp contains the implementation for a single
 ///   instruction.
 
-namespace llvm {
-
-extern void EmitFixedLenDecoder(RecordKeeper &RK, raw_ostream &OS,
-                                const std::string &PredicateNamespace,
-                                const std::string &GPrefix,
-                                const std::string &GPostfix,
-                                const std::string &ROK,
-                                const std::string &RFail, const std::string &L);
+namespace {
 
 void EmitDisassembler(RecordKeeper &Records, raw_ostream &OS) {
   CodeGenTarget Target(Records);
@@ -153,4 +147,7 @@ void EmitDisassembler(RecordKeeper &Records, raw_ostream &OS) {
                       "MCDisassembler::Fail", "");
 }
 
-} // end namespace llvm
+TableGen::Action Action(EmitDisassembler, "gen-disassembler",
+                        "Generate disassembler");
+
+} // namespace

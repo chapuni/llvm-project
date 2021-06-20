@@ -89,10 +89,8 @@ add_llvm_component_library(LLVMScalarOpts
   Scalar
 
   LINK_COMPONENTS
-  AggressiveInstCombine
   Analysis
   Core
-  InstCombine
   Support
   TransformUtils
   )

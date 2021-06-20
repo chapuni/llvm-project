@@ -10,3 +10,5 @@ add_llvm_library(gtest_main
   # This library is not meant to be in the install tree, only the build tree.
   BUILDTREE_ONLY
   )
+
+target_link_libraries(gtest_main PUBLIC gtest)

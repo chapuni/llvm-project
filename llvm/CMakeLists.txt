@@ -2,6 +2,10 @@
 
 cmake_minimum_required(VERSION 3.13.4)
 
+if(NOT CMAKE_VERSION VERSION_LESS 3.20)
+  cmake_policy(SET CMP0116 OLD)
+endif()
+
 set(CMAKE_BUILD_WITH_INSTALL_NAME_DIR ON)
 
 if(NOT DEFINED LLVM_VERSION_MAJOR)
@@ -918,10 +922,13 @@ if( MINGW AND NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
   llvm_replace_compiler_option(CMAKE_CXX_FLAGS_RELEASE "-O3" "-O2")
 endif()
 
+set(LLVM_ENABLE_TABLEGEN_MODULARIZED OFF)
+
 # Put this before tblgen. Else we have a circular dependence.
 add_subdirectory(lib/Demangle)
 add_subdirectory(lib/Support)
 add_subdirectory(lib/TableGen)
+add_subdirectory(utils/TableGen/GlobalISel)
 
 add_subdirectory(utils/TableGen)
 

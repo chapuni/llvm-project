@@ -132,6 +132,10 @@ if( NOT CLANG_BUILT_STANDALONE )
   if(TARGET llvm-lto)
     list(APPEND CLANG_TEST_DEPS llvm-lto)
   endif()
+
+  if(TARGET clang-tblgen-clang-test-pragma-attribute-supported-attributes)
+    list(APPEND CLANG_TEST_DEPS clang-tblgen-clang-test-pragma-attribute-supported-attributes)
+  endif()
 endif()
 
 if (CLANG_ENABLE_STATIC_ANALYZER)

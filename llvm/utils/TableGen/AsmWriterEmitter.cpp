@@ -82,8 +82,6 @@ private:
                                  bool PassSubtarget) const;
 };
 
-} // end anonymous namespace
-
 static void PrintCases(std::vector<std::pair<std::string,
                        AsmWriterOperand>> &OpsToPrint, raw_ostream &O,
                        bool PassSubtarget) {
@@ -660,8 +658,6 @@ void AsmWriterEmitter::EmitGetRegisterName(raw_ostream &O) {
   O << "}\n";
 }
 
-namespace {
-
 // IAPrinter - Holds information about an InstAlias. Two InstAliases match if
 // they both have the same conditionals. In which case, we cannot print out the
 // alias for that pattern.
@@ -772,13 +768,9 @@ public:
   }
 };
 
-} // end anonymous namespace
-
 static unsigned CountNumOperands(StringRef AsmString, unsigned Variant) {
   return AsmString.count(' ') + AsmString.count('\t');
 }
-
-namespace {
 
 struct AliasPriorityComparator {
   typedef std::pair<CodeGenInstAlias, int> ValueType;
@@ -793,8 +785,6 @@ struct AliasPriorityComparator {
     return LHS.second > RHS.second;
   }
 };
-
-} // end anonymous namespace
 
 void AsmWriterEmitter::EmitPrintAliasInstruction(raw_ostream &O) {
   Record *AsmWriter = Target.getAsmWriter();
@@ -1296,11 +1286,7 @@ void AsmWriterEmitter::run(raw_ostream &O) {
   EmitPrintAliasInstruction(O);
 }
 
-namespace llvm {
+TableGen::EmitterAction<AsmWriterEmitter> Action("gen-asm-writer",
+                                                 "Generate assembly writer");
 
-void EmitAsmWriter(RecordKeeper &RK, raw_ostream &OS) {
-  emitSourceFileHeader("Assembly Writer Source Fragment", OS);
-  AsmWriterEmitter(RK).run(OS);
-}
-
-} // end namespace llvm
+} // namespace

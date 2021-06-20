@@ -15,6 +15,7 @@
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/TableGen/Error.h"
+#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include <algorithm>
 #include <string>
@@ -54,8 +55,6 @@ private:
   static SMLoc locate(const Record *R);
 };
 
-} // End anonymous namespace.
-
 SMLoc CTagsEmitter::locate(const Record *R) {
   ArrayRef<SMLoc> Locs = R->getLoc();
   return !Locs.empty() ? Locs.front() : SMLoc();
@@ -79,8 +78,7 @@ void CTagsEmitter::run(raw_ostream &OS) {
     T.emit(OS);
 }
 
-namespace llvm {
+TableGen::EmitterAction<CTagsEmitter> Action("gen-ctags",
+                                             "Generate ctags-compatible index");
 
-void EmitCTags(RecordKeeper &RK, raw_ostream &OS) { CTagsEmitter(RK).run(OS); }
-
-} // End llvm namespace.
+} // namespace

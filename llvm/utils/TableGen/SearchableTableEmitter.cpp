@@ -20,6 +20,7 @@
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/TableGen/Error.h"
+#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include <algorithm>
 #include <set>
@@ -201,8 +202,6 @@ private:
   void collectTableEntries(GenericTable &Table,
                            const std::vector<Record *> &Items);
 };
-
-} // End anonymous namespace.
 
 // For search indices that consists of a single field whose numeric value is
 // known, return that numeric value.
@@ -834,10 +833,7 @@ void SearchableTableEmitter::run(raw_ostream &OS) {
     OS << "#undef " << Guard << "\n";
 }
 
-namespace llvm {
+TableGen::EmitterAction<SearchableTableEmitter>
+    Action("gen-searchable-tables", "Generate generic binary-searchable table");
 
-void EmitSearchableTables(RecordKeeper &RK, raw_ostream &OS) {
-  SearchableTableEmitter(RK).run(OS);
-}
-
-} // End llvm namespace.
+} // namespace

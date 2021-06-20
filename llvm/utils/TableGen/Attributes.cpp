@@ -7,6 +7,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "llvm/Support/MemoryBuffer.h"
+#include "llvm/TableGen/Main.h"
 #include "llvm/TableGen/Record.h"
 #include <algorithm>
 #include <string>
@@ -20,7 +21,7 @@ namespace {
 class Attributes {
 public:
   Attributes(RecordKeeper &R) : Records(R) {}
-  void emit(raw_ostream &OS);
+  void run(raw_ostream &OS);
 
 private:
   void emitTargetIndependentNames(raw_ostream &OS);
@@ -28,8 +29,6 @@ private:
 
   RecordKeeper &Records;
 };
-
-} // End anonymous namespace.
 
 void Attributes::emitTargetIndependentNames(raw_ostream &OS) {
   OS << "#ifdef GET_ATTR_NAMES\n";
@@ -96,15 +95,11 @@ void Attributes::emitFnAttrCompatCheck(raw_ostream &OS, bool IsStringAttr) {
   OS << "#endif\n";
 }
 
-void Attributes::emit(raw_ostream &OS) {
+void Attributes::run(raw_ostream &OS) {
   emitTargetIndependentNames(OS);
   emitFnAttrCompatCheck(OS, false);
 }
 
-namespace llvm {
+TableGen::EmitterAction<Attributes> Action("gen-attrs", "Generate attributes");
 
-void EmitAttributes(RecordKeeper &RK, raw_ostream &OS) {
-  Attributes(RK).emit(OS);
-}
-
-} // End llvm namespace.
+} // namespace

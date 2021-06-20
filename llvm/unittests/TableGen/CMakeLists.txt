@@ -1,6 +1,5 @@
 set(LLVM_LINK_COMPONENTS
   TableGen
-  Support
   )
 
 set(LLVM_TARGET_DEFINITIONS Automata.td)
@@ -15,3 +14,9 @@ add_llvm_unittest(TableGenTests
   )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../utils/TableGen)
 target_link_libraries(TableGenTests PRIVATE LLVMTableGenGlobalISel LLVMTableGen)
+
+# Prepend LLVMTableGen
+# FIXME: Tweak link_libs when other issues would happen.
+if(TARGET llvm-tblgen-automata)
+  target_link_options(TableGenTests PRIVATE "$<TARGET_LINKER_FILE:LLVMTableGen>")
+endif()

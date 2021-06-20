@@ -37,10 +37,10 @@ add_llvm_component_library(LLVMObject
   llvm_vcsrevision_h
 
   LINK_COMPONENTS
+  BinaryFormat
   BitReader
   Core
   MC
-  BinaryFormat
   MCParser
   Support
   TextAPI

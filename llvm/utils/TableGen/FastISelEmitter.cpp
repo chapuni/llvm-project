@@ -49,11 +49,9 @@ struct InstructionMemo {
   InstructionMemo(const InstructionMemo &Other) = delete;
   InstructionMemo(InstructionMemo &&Other) = default;
 };
-} // End anonymous namespace
 
 /// ImmPredicateSet - This uniques predicates (represented as a string) and
 /// gives them unique (small) integer ID's that start at 0.
-namespace {
 class ImmPredicateSet {
   DenseMap<TreePattern *, unsigned> ImmIDs;
   std::vector<TreePredicateFn> PredsByName;
@@ -78,12 +76,10 @@ public:
   iterator end() const { return PredsByName.end(); }
 
 };
-} // End anonymous namespace
 
 /// OperandsSignature - This class holds a description of a list of operand
 /// types. It has utility methods for emitting text based on the operands.
 ///
-namespace {
 struct OperandsSignature {
   class OpKind {
     enum { OK_Reg, OK_FP, OK_Imm, OK_Invalid = -1 };
@@ -369,9 +365,7 @@ struct OperandsSignature {
       Operands[i].printManglingSuffix(OS, ImmPredicates, StripImmCodes);
   }
 };
-} // End anonymous namespace
 
-namespace {
 class FastISelMap {
   // A multimap is needed instead of a "plain" map because the key is
   // the instruction's complexity (an int) and they are not unique.
@@ -411,7 +405,6 @@ private:
                            const PredMap &PM,
                            const std::string &RetVTName);
 };
-} // End anonymous namespace
 
 static std::string getOpcodeName(Record *Op, CodeGenDAGPatterns &CGP) {
   return std::string(CGP.getSDNodeInfo(Op).getEnumName());
@@ -872,8 +865,6 @@ void FastISelMap::printFunctionDefinitions(raw_ostream &OS) {
   // TODO: SignaturesWithConstantForms should be empty here.
 }
 
-namespace llvm {
-
 void EmitFastISel(RecordKeeper &RK, raw_ostream &OS) {
   CodeGenDAGPatterns CGP(RK);
   const CodeGenTarget &Target = CGP.getTargetInfo();
@@ -890,4 +881,7 @@ void EmitFastISel(RecordKeeper &RK, raw_ostream &OS) {
   F.printFunctionDefinitions(OS);
 }
 
-} // End llvm namespace
+TableGen::Action Action(EmitFastISel, "gen-fast-isel",
+                        "Generate a \"fast\" instruction selector");
+
+} // namespace

@@ -376,9 +376,7 @@ void emitDocumentation(int Depth, const Documentation &Doc,
     emitGroup(Depth, G, DocInfo, OS);
 }
 
-}  // namespace
-
-void clang::EmitClangOptDocs(RecordKeeper &Records, raw_ostream &OS) {
+void EmitClangOptDocs(RecordKeeper &Records, raw_ostream &OS) {
   const Record *DocInfo = Records.getDef("GlobalDocumentation");
   if (!DocInfo) {
     PrintFatalError("The GlobalDocumentation top-level definition is missing, "
@@ -390,3 +388,7 @@ void clang::EmitClangOptDocs(RecordKeeper &Records, raw_ostream &OS) {
 
   emitDocumentation(0, extractDocumentation(Records), DocInfo, OS);
 }
+
+TableGen::Action Action(EmitClangOptDocs, "gen-opt-docs",
+                        "Generate option documentation");
+} // namespace

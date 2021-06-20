@@ -22,6 +22,8 @@
 
 using namespace llvm;
 
+namespace {
+
 /// Convert a code point to the corresponding UTF-8 sequence represented
 /// as a C string literal.
 ///
@@ -46,8 +48,8 @@ static bool translateCodePointToUTF8(unsigned CodePoint,
   return true;
 }
 
-void clang::EmitClangCommentHTMLNamedCharacterReferences(RecordKeeper &Records,
-                                                         raw_ostream &OS) {
+void EmitClangCommentHTMLNamedCharacterReferences(RecordKeeper &Records,
+                                                  raw_ostream &OS) {
   std::vector<Record *> Tags = Records.getAllDerivedDefinitions("NCR");
   std::vector<StringMatcher::StringPair> NameToUTF8;
   SmallString<32> CLiteral;
@@ -79,3 +81,9 @@ void clang::EmitClangCommentHTMLNamedCharacterReferences(RecordKeeper &Records,
   OS << "  return StringRef();\n"
      << "}\n\n";
 }
+
+TableGen::Action Action(EmitClangCommentHTMLNamedCharacterReferences,
+                        "gen-clang-comment-html-named-character-references",
+                        "Generate function to translate named character "
+                        "references to UTF-8 sequences");
+} // namespace

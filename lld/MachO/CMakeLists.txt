@@ -27,7 +27,6 @@ add_lld_library(lldMachO2
   LINK_COMPONENTS
   ${LLVM_TARGETS_TO_BUILD}
   BinaryFormat
-  Core
   DebugInfoDWARF
   LTO
   MC
@@ -44,5 +43,5 @@ add_lld_library(lldMachO2
 
   DEPENDS
   MachOOptionsTableGen
-  ${tablegen_deps}
+  intrinsics_gen
   )

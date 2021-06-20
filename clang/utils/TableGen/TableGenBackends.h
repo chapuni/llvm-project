@@ -29,7 +29,6 @@ void EmitClangASTNodes(llvm::RecordKeeper &RK, llvm::raw_ostream &OS,
                        const std::string &N, const std::string &S);
 void EmitClangBasicReader(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 void EmitClangBasicWriter(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
-void EmitClangTypeNodes(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 void EmitClangTypeReader(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 void EmitClangTypeWriter(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 void EmitClangAttrParserStringSwitches(llvm::RecordKeeper &Records,
@@ -68,20 +67,8 @@ void EmitClangDiagGroups(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 void EmitClangDiagsIndexName(llvm::RecordKeeper &Records,
                              llvm::raw_ostream &OS);
 
-void EmitClangSACheckers(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
-
-void EmitClangCommentHTMLTags(llvm::RecordKeeper &Records,
-                              llvm::raw_ostream &OS);
-void EmitClangCommentHTMLTagsProperties(llvm::RecordKeeper &Records,
-                                        llvm::raw_ostream &OS);
-void EmitClangCommentHTMLNamedCharacterReferences(llvm::RecordKeeper &Records,
-                                                  llvm::raw_ostream &OS);
-
 void EmitClangCommentCommandInfo(llvm::RecordKeeper &Records,
                                  llvm::raw_ostream &OS);
-void EmitClangCommentCommandList(llvm::RecordKeeper &Records,
-                                 llvm::raw_ostream &OS);
-void EmitClangOpcodes(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 
 void EmitClangSyntaxNodeList(llvm::RecordKeeper &Records,
                              llvm::raw_ostream &OS);
@@ -114,13 +101,6 @@ void EmitCdeBuiltinAliases(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 
 void EmitClangAttrDocs(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
 void EmitClangDiagDocs(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
-void EmitClangOptDocs(llvm::RecordKeeper &Records, llvm::raw_ostream &OS);
-
-void EmitClangOpenCLBuiltins(llvm::RecordKeeper &Records,
-                             llvm::raw_ostream &OS);
-
-void EmitClangDataCollectors(llvm::RecordKeeper &Records,
-                             llvm::raw_ostream &OS);
 
 void EmitTestPragmaAttributeSupportedAttributes(llvm::RecordKeeper &Records,
                                                 llvm::raw_ostream &OS);

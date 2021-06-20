@@ -18,6 +18,7 @@
 
 #include "CodeGenHwModes.h"
 #include "CodeGenInstruction.h"
+#include "CodeGenIntrinsics.h"
 #include "CodeGenRegisters.h"
 #include "InfoByHwMode.h"
 #include "SDNodeProperties.h"
@@ -30,10 +31,6 @@ namespace llvm {
 struct CodeGenRegister;
 class CodeGenSchedModels;
 class CodeGenTarget;
-
-/// getValueType - Return the MVT::SimpleValueType that the specified TableGen
-/// record corresponds to.
-MVT::SimpleValueType getValueType(Record *Rec);
 
 StringRef getName(MVT::SimpleValueType T);
 StringRef getEnumName(MVT::SimpleValueType T);
