@@ -1804,6 +1804,22 @@ ModuleLoadResult CompilerInstance::findOrCompileModuleAndReadAST(
     return ModuleLoadResult::OtherUncachedFailure;
   }
 
+  const HeaderSearchOptions &HSOpts = HS.getHeaderSearchOpts();
+  switch (HSOpts.ModuleCacheMissing) {
+  case HeaderSearchOptions::CacheMissing::Build:
+    break;
+  case HeaderSearchOptions::CacheMissing::Error:
+    getDiagnostics().Report(ModuleNameLoc, diag::err_module_not_built)
+        << ModuleName << SourceRange(ImportLoc, ModuleNameLoc);
+    ModuleBuildFailed = true;
+    return ModuleLoadResult::OtherUncachedFailure;
+  case HeaderSearchOptions::CacheMissing::Include:
+    getDiagnostics().Report(ModuleNameLoc, diag::remark_module_build_include)
+      << ModuleName << SourceRange(ImportLoc, ModuleNameLoc);
+    getASTReader()->blacklist.insert(ModuleName);
+    return ModuleLoadResult::MissingExpected;
+  }
+
   // Try to compile and then read the AST.
   if (!compileModuleAndReadAST(*this, ImportLoc, ModuleNameLoc, M,
                                ModuleFilename)) {
@@ -1828,6 +1844,11 @@ CompilerInstance::loadModule(SourceLocation ImportLoc,
   // Determine what file we're searching from.
   StringRef ModuleName = Path[0].first->getName();
   SourceLocation ModuleNameLoc = Path[0].second;
+
+  // XXX
+  if (TheASTReader && TheASTReader->blacklist.find(ModuleName) != TheASTReader->blacklist.end()) {
+    return ModuleLoadResult::MissingExpected;
+  }
 
   // If we've already handled this import, just return the cached result.
   // This one-element cache is important to eliminate redundant diagnostics

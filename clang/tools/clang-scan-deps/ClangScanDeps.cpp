@@ -6,6 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "EnumModules.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/DependencyScanning/DependencyScanningService.h"
@@ -166,6 +167,10 @@ llvm::cl::opt<bool> SkipExcludedPPRanges(
         "bumping the buffer pointer in the lexer instead of lexing the tokens  "
         "until reaching the end directive."),
     llvm::cl::init(true), llvm::cl::cat(DependencyScannerCategory));
+
+llvm::cl::opt<bool> EnumModulesMode(
+    "enum-modules",
+    llvm::cl::desc("Enumerate available modules"));
 
 llvm::cl::opt<bool> Verbose("v", llvm::cl::Optional,
                             llvm::cl::desc("Use verbose output."),
@@ -517,6 +522,11 @@ int main(int argc, const char **argv) {
 
   llvm::cl::PrintOptionValues();
 
+  if (EnumModulesMode) {
+    auto r = EnumModules(*Compilations);
+    return !r;
+  }
+
   llvm::SmallString<32> realModuleCachePath;
   llvm::SmallString<32> tempModuleCachePath;
 
@@ -590,6 +600,8 @@ int main(int argc, const char **argv) {
 
         if (!tempModuleCachePath.empty()) {
           AdjustedArgs.push_back(std::string("-fmodules-cache-path=") + std::string(tempModuleCachePath));
+          AdjustedArgs.push_back("-Xclang");
+          AdjustedArgs.push_back("-fmodules-cache-missing=build");
         }
 
         if (!HasResourceDir) {

@@ -164,6 +164,13 @@ public:
   /// regenerated often.
   unsigned ModuleCachePruneAfter = 31 * 24 * 60 * 60;
 
+  /// WIP
+  enum class CacheMissing {
+    Build = 0,
+    Error,
+    Include,
+  } ModuleCacheMissing = CacheMissing::Build;
+
   /// The time in seconds when the build session started.
   ///
   /// This time is used by other optimizations in header search and module
