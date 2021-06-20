@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-global-isel-combiner -I %p/../../../include \
+// RUN: llvm-tblgen -I %p/../../../include -gen-global-isel-combiner \
 // RUN:     -combiners=MyCombinerHelper -gicombiner-stop-after-build %s \
 // RUN:     -o %t.inc | FileCheck %s
 
