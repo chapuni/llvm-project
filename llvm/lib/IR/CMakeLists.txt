@@ -68,11 +68,10 @@ add_llvm_component_library(LLVMCore
   LINK_LIBS
   ${LLVM_PTHREAD_LIB}
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   BinaryFormat
   Remarks
   Support
   )
+
+target_link_libraries(LLVMCore PUBLIC intrinsics_gen)

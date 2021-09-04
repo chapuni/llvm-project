@@ -19,4 +19,44 @@ tablegen(LLVM IntrinsicsWebAssembly.h -gen-intrinsic-enums -intrinsic-prefix=was
 tablegen(LLVM IntrinsicsX86.h -gen-intrinsic-enums -intrinsic-prefix=x86)
 tablegen(LLVM IntrinsicsXCore.h -gen-intrinsic-enums -intrinsic-prefix=xcore)
 tablegen(LLVM IntrinsicsVE.h -gen-intrinsic-enums -intrinsic-prefix=ve)
-add_public_tablegen_target(intrinsics_gen)
+
+#add_public_tablegen_target(intrinsics_gen)
+
+add_library(intrinsics_gen INTERFACE
+  Attributes.inc
+  IntrinsicImpl.inc
+  IntrinsicEnums.inc
+  IntrinsicsAArch64.h
+  IntrinsicsAMDGPU.h
+  IntrinsicsARM.h
+  IntrinsicsBPF.h
+  IntrinsicsHexagon.h
+  IntrinsicsMips.h
+  IntrinsicsNVPTX.h
+  IntrinsicsPowerPC.h
+  IntrinsicsR600.h
+  IntrinsicsRISCV.h
+  IntrinsicsS390.h
+  IntrinsicsWebAssembly.h
+  IntrinsicsX86.h
+  IntrinsicsXCore.h
+  IntrinsicsVE.h
+  )
+
+set_target_properties(intrinsics_gen
+  PROPERTIES HEADER_FILE_ONLY ON
+  )
+
+# export(TARGETS intrinsics_gen
+#   FILE xxx.cmake
+#   )
+
+# install(EXPORT xxx.cmake DESTINATION XXX)
+
+install(TARGETS intrinsics_gen
+  EXPORT LLVMExports
+  DESTINATION bin
+  COMPONENT intrinsics_gen
+  )
+
+set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS intrinsics_gen)
