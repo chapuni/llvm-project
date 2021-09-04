@@ -5,7 +5,4 @@ set(LLVM_LINK_COMPONENTS
 
 add_llvm_tool(sanstats
   sanstats.cpp
-
-  DEPENDS
-  intrinsics_gen
   )

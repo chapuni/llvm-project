@@ -18,6 +18,5 @@ add_llvm_library(LLVMExegesisX86
   X86Counter.cpp
 
   DEPENDS
-  intrinsics_gen
   X86CommonTableGen
   )

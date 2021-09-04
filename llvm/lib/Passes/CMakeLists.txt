@@ -8,9 +8,6 @@ add_llvm_component_library(LLVMPasses
   ${LLVM_MAIN_INCLUDE_DIR}/llvm
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Passes
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   AggressiveInstCombine
   Analysis

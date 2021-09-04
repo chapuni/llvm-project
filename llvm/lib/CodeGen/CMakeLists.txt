@@ -202,9 +202,6 @@ add_llvm_component_library(LLVMCodeGen
 
   LINK_LIBS ${LLVM_PTHREAD_LIB}
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   Analysis
   BitReader

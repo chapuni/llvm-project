@@ -16,6 +16,5 @@ add_llvm_library(LLVMExegesisAArch64
   Target.cpp
 
   DEPENDS
-  intrinsics_gen
   AArch64CommonTableGen
   )

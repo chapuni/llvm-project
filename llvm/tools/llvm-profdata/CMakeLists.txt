@@ -6,7 +6,4 @@ set(LLVM_LINK_COMPONENTS
 
 add_llvm_tool(llvm-profdata
   llvm-profdata.cpp
-
-  DEPENDS
-  intrinsics_gen
   )

@@ -16,9 +16,6 @@ add_llvm_component_library(LLVMVectorize
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms/Vectorize
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   Analysis
   Core

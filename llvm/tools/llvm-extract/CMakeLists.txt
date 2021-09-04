@@ -8,7 +8,4 @@ set(LLVM_LINK_COMPONENTS
 
 add_llvm_tool(llvm-extract
   llvm-extract.cpp
-
-  DEPENDS
-  intrinsics_gen
   )

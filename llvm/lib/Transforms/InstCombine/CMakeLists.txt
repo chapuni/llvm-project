@@ -19,9 +19,6 @@ add_llvm_component_library(LLVMInstCombine
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms/InstCombine
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   Analysis
   Core

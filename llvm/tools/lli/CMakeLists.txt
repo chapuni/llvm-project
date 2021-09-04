@@ -52,9 +52,6 @@ endif( LLVM_USE_PERF )
 add_llvm_tool(lli
   lli.cpp
   ExecutionUtils.cpp
-
-  DEPENDS
-  intrinsics_gen
   )
 
 export_executable_symbols(lli)

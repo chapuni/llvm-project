@@ -48,7 +48,6 @@ add_llvm_component_library(LLVMipo
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms/IPO
 
   DEPENDS
-  intrinsics_gen
   omp_gen
 
   COMPONENT_NAME

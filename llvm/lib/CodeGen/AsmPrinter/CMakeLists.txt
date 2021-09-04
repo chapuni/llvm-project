@@ -27,9 +27,6 @@ add_llvm_component_library(LLVMAsmPrinter
   CodeViewDebug.cpp
   WasmException.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   Analysis
   BinaryFormat

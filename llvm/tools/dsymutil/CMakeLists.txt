@@ -30,7 +30,6 @@ add_llvm_tool(dsymutil
   SymbolMap.cpp
 
   DEPENDS
-  intrinsics_gen
   ${tablegen_deps}
   )
 

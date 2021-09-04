@@ -6,9 +6,6 @@ add_llvm_component_library(LLVMAggressiveInstCombine
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms/AggressiveInstCombine
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   Analysis
   Core

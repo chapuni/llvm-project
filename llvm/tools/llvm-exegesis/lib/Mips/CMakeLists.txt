@@ -16,6 +16,5 @@ add_llvm_library(LLVMExegesisMips
   Target.cpp
 
   DEPENDS
-  intrinsics_gen
   MipsCommonTableGen
   )

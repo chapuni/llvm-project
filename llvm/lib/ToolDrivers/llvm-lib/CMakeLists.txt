@@ -13,9 +13,6 @@ add_public_tablegen_target(LibOptionsTableGen)
 add_llvm_component_library(LLVMLibDriver
   LibDriver.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   BinaryFormat
   BitReader

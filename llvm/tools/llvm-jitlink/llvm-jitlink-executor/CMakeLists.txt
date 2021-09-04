@@ -6,9 +6,6 @@ set(LLVM_LINK_COMPONENTS
 
 add_llvm_utility(llvm-jitlink-executor
   llvm-jitlink-executor.cpp
-
-  DEPENDS
-  intrinsics_gen
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Haiku")

@@ -25,9 +25,6 @@ add_llvm_component_library(LLVMSelectionDAG
   StatepointLowering.cpp
   TargetLowering.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   Analysis
   CodeGen

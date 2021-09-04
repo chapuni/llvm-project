@@ -29,9 +29,6 @@ add_llvm_target(AVRCodeGen
   AVRTargetMachine.cpp
   AVRTargetObjectFile.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   AsmPrinter
   CodeGen

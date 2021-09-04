@@ -11,9 +11,6 @@ add_llvm_component_library(LLVMInterpreter
   ExternalFunctions.cpp
   Interpreter.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   CodeGen
   Core

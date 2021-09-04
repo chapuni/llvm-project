@@ -9,7 +9,4 @@ add_llvm_example_library(ExampleIRTransforms
   SimplifyCFG.cpp
 
   ADDITIONAL_HEADER_DIRS
-
-  DEPENDS
-  intrinsics_gen
   )
