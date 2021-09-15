@@ -566,6 +566,10 @@ if ( LLVM_COMPILER_IS_GCC_COMPATIBLE AND LLVM_ENABLE_MODULES )
   if (LLVM_ENABLE_LOCAL_SUBMODULE_VISIBILITY)
     set(module_flags "${module_flags} -Xclang -fmodules-local-submodule-visibility")
   endif()
+  option(LLVM_ENABLE_MODULES_LOCK_FREE "Use -fno-implicit-modules-use-lock" OFF)
+  if (LLVM_ENABLE_MODULES_LOCK_FREE)
+    set(module_flags "${module_flags} -Xclang -fno-implicit-modules-use-lock")
+  endif()
   if (LLVM_ENABLE_MODULE_DEBUGGING AND
       ((uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG") OR
        (uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")))
