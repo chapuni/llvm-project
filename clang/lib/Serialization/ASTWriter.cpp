@@ -1855,6 +1855,17 @@ void ASTWriter::WriteHeaderSearch(const HeaderSearch &HS) {
   if (FilesByUID.size() > HS.header_file_size())
     FilesByUID.resize(HS.header_file_size());
 
+#if 1
+  std::sort(FilesByUID.begin(), FilesByUID.end(), [](const FileEntry *a, const FileEntry *b) {
+						    if (!b) return false;
+						    if (!a) return true;
+						    //return std::tie(a->getName(), a->getUID()) < std::tie(b->getName(), b->getUID());
+						    if (a->getName() < b->getName()) return true;
+						    if (a->getName() > b->getName()) return false;
+						    return a->getUID() < b->getUID();
+						  });
+#endif
+
   for (unsigned UID = 0, LastUID = FilesByUID.size(); UID != LastUID; ++UID) {
     const FileEntry *File = FilesByUID[UID];
     if (!File)
