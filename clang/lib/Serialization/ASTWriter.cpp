@@ -1207,6 +1207,40 @@ void ASTWriter::WriteControlBlock(Preprocessor &PP, ASTContext &Context,
     serialization::ModuleManager &Mgr = Chain->getModuleManager();
     Record.clear();
 
+#if 1
+    std::vector<ModuleFile *> xxx;
+    for (ModuleFile &M : Mgr) {
+      xxx.push_back(&M);
+    }
+
+    std::sort(xxx.begin(), xxx.end(), [](const ModuleFile *a, const ModuleFile *b) {
+					return std::tie(a->ModuleName, a->FileName) < std::tie(b->ModuleName, b->FileName);
+				      });
+
+    for (ModuleFile *p : xxx) {
+      ModuleFile &M = *p;
+
+      // Skip modules that weren't directly imported.
+      if (!M.isDirectlyImported())
+        continue;
+
+      Record.push_back((unsigned)M.Kind); // FIXME: Stable encoding
+      AddSourceLocation(M.ImportLoc, Record);
+
+      // If we have calculated signature, there is no need to store
+      // the size or timestamp.
+      Record.push_back(M.Signature ? 0 : M.File->getSize());
+      Record.push_back(M.Signature ? 0 : getTimestampForOutput(M.File));
+
+      for (auto I : M.Signature)
+        Record.push_back(I);
+
+      AddString(M.ModuleName, Record);
+      AddPath(M.FileName, Record);
+    }
+    Stream.EmitRecord(IMPORTS, Record);
+  }
+#else
     for (ModuleFile &M : Mgr) {
       // Skip modules that weren't directly imported.
       if (!M.isDirectlyImported())
@@ -1228,6 +1262,7 @@ void ASTWriter::WriteControlBlock(Preprocessor &PP, ASTContext &Context,
     }
     Stream.EmitRecord(IMPORTS, Record);
   }
+#endif
 
   // Write the options block.
   Stream.EnterSubblock(OPTIONS_BLOCK_ID, 4);
