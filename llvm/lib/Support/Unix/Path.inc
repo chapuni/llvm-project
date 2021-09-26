@@ -565,8 +565,56 @@ std::error_code rename(const Twine &from, const Twine &to) {
   StringRef f = from.toNullTerminatedStringRef(from_storage);
   StringRef t = to.toNullTerminatedStringRef(to_storage);
 
-  if (::rename(f.begin(), t.begin()) == -1)
+#if 1
+  char xxx[1024];
+  if (t.endswith(".pcm")) {
+    char ttt[1024];
+    strcpy(ttt, t.begin());
+    char *p = strrchr(ttt, '/');
+    *p = 0;
+    auto vvv = ::getenv("XXXDIR");
+    if (vvv) {
+      auto v1 = strrchr(vvv, '/');
+      if (v1) vvv = v1 + 1;
+      sprintf(xxx, "%s/%s", ttt, vvv);
+    } else {
+      sprintf(xxx, "%s/pcm.%d", ttt, ::getpid());
+    }
+    char *q = strrchr(ttt, '/');
+    if (::mkdir(q + 1, 0777) == 0) {
+#if 0
+      fprintf(stderr, "mkdir <%s>\n", q + 1);
+#endif
+    }
+    if (::mkdir(xxx, 0777) == 0) {
+#if 0
+      fprintf(stderr, "mkdir <%s>\n", xxx);
+#endif
+    }
+#if 1
+    strcat(xxx, "/");
+    strcat(xxx, p + 1);
+    if (::link(f.begin(), xxx) < 0) {
+#if 0
+      fprintf(stderr, "link err <%s>\n", xxx);
+#endif
+    }
+#endif
+  }
+#endif
+
+  if (::rename(f.begin(), t.begin()) == -1) {
+#if 0
+    if (t.endswith(".pcm")) {
+      fprintf(stderr, "****rename err <%s>\n", std::string(f).c_str());
+    }
+#endif
     return std::error_code(errno, std::generic_category());
+  }
+
+#if 0
+  ::unlink(xxx);
+#endif
 
   return std::error_code();
 }

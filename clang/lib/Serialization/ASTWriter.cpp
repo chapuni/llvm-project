@@ -4219,6 +4219,12 @@ bool ASTWriter::PreparePathForOutput(SmallVectorImpl<char> &Path) {
   bool Changed =
       cleanPathForOutput(Context->getSourceManager().getFileManager(), Path);
 
+#if 0
+    StringRef xxx(Path.begin(), Path.size());
+    if (Changed && xxx.endswith(">"))
+      fprintf(stderr, "****%s****\n", xxx.str().c_str());
+#endif
+
   // Remove a prefix to make the path relative, if relevant.
   const char *PathBegin = Path.data();
   const char *PathPtr =
@@ -4226,6 +4232,11 @@ bool ASTWriter::PreparePathForOutput(SmallVectorImpl<char> &Path) {
   if (PathPtr != PathBegin) {
     Path.erase(Path.begin(), Path.begin() + (PathPtr - PathBegin));
     Changed = true;
+#if 0
+    StringRef xxx(Path.begin(), Path.size());
+    if (xxx.endswith(">"))
+      fprintf(stderr, "****%s****\n", xxx.str().c_str());
+#endif
   }
 
   return Changed;

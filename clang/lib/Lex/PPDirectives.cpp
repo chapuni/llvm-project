@@ -2098,9 +2098,15 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
       // actual module containing it exists (because the umbrella header is
       // incomplete).  Treat this as a textual inclusion.
       SuggestedModule = ModuleMap::KnownHeader();
+#if 1
+      fprintf(stderr, "****missing<%s>\n", LookupFilename.str().c_str());
+#endif
     } else if (Imported.isConfigMismatch()) {
       // On a configuration mismatch, enter the header textually. We still know
       // that it's part of the corresponding module.
+#if 1
+      fprintf(stderr, "****mismatch<%s>\n", LookupFilename.str().c_str());
+#endif
     } else {
       // We hit an error processing the import. Bail out.
       if (hadModuleLoaderFatalFailure()) {
@@ -2113,6 +2119,10 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
       }
       return {ImportAction::None};
     }
+#if 0
+  } else {
+    fprintf(stderr, "****others<%s>\n", LookupFilename.str().c_str());
+#endif
   }
 
   // The #included file will be considered to be a system header if either it is
