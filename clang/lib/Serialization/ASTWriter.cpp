@@ -2141,7 +2141,17 @@ void ASTWriter::WriteSourceManagerBlock(SourceManager &SourceMgr,
       for (auto &LE : L.second) {
         if (FilenameMap.insert(std::make_pair(LE.FilenameID,
                                               FilenameMap.size() - 1)).second)
+#if 1
+	  {
+	    StringRef xxx = LineTable.getFilename(LE.FilenameID);
+	    if (xxx.startswith("<"))
+	      AddString(xxx, Record);
+	    else
+	      AddPath(xxx, Record);
+	  }
+#else
           AddPath(LineTable.getFilename(LE.FilenameID), Record);
+#endif
       }
     }
     Record.push_back(0);
