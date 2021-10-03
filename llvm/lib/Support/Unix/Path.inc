@@ -591,7 +591,7 @@ std::error_code rename(const Twine &from, const Twine &to) {
       fprintf(stderr, "mkdir <%s>\n", xxx);
 #endif
     }
-#if 1
+#if 0
     strcat(xxx, "/");
     strcat(xxx, p + 1);
     if (::link(f.begin(), xxx) < 0) {
