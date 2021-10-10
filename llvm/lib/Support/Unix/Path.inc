@@ -1136,9 +1136,14 @@ std::error_code openFileForRead(const Twine &Name, int &ResultFD,
     char ProcPath[64];
     snprintf(ProcPath, sizeof(ProcPath), "/proc/self/fd/%d", ResultFD);
     ssize_t CharCount = ::readlink(ProcPath, Buffer, sizeof(Buffer));
-    if (CharCount > 0)
-      RealPath->append(Buffer, Buffer + CharCount);
-  } else {
+    if (CharCount > 0) {
+      Buffer[CharCount] = 0;
+      if (::access(Buffer, R_OK) == 0) {
+        RealPath->append(Buffer, Buffer + CharCount);
+      }
+    }
+  }
+  if (RealPath->empty()) {
     SmallString<128> Storage;
     StringRef P = Name.toNullTerminatedStringRef(Storage);
 
