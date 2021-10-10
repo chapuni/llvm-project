@@ -201,7 +201,7 @@ FileManager::getFile(StringRef Filename, bool openFile, bool CacheFailure) {
 }
 
 llvm::Expected<FileEntryRef>
-FileManager::getFileRef(StringRef Filename, bool openFile, bool CacheFailure) {
+FileManager::getFileRef(StringRef Filename, bool openFile, bool CacheFailure, bool isVolatile) {
   ++NumFileLookups;
 
   // See if there is already an entry in the map.
@@ -268,7 +268,7 @@ FileManager::getFileRef(StringRef Filename, bool openFile, bool CacheFailure) {
 
   // It exists.  See if we have already opened a file with the same inode.
   // This occurs when one dir is symlinked to another, for example.
-  FileEntry &UFE = UniqueRealFiles[Status.getUniqueID()];
+  FileEntry &UFE = (isVolatile ? VolatileRealFiles[Filename] : UniqueRealFiles[Status.getUniqueID()]);
 
   if (Status.getName() == Filename) {
     // The name matches. Set the FileEntry.

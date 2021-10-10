@@ -469,7 +469,8 @@ bool ModuleManager::lookupModuleFile(StringRef FileName, off_t ExpectedSize,
   // opening the file.
   Optional<FileEntryRef> FileOrErr =
       expectedToOptional(FileMgr.getFileRef(FileName, /*OpenFile=*/true,
-                                            /*CacheFailure=*/false));
+                                            /*CacheFailure=*/false,
+                                            /*isVolatile*/true));
   if (!FileOrErr)
     return false;
 

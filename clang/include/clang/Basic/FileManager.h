@@ -60,6 +60,8 @@ class FileManager : public RefCountedBase<FileManager> {
   /// Cache for existing real files.
   std::map<llvm::sys::fs::UniqueID, FileEntry> UniqueRealFiles;
 
+  llvm::StringMap<FileEntry> VolatileRealFiles;
+
   /// The virtual directories that we have allocated.
   ///
   /// For each virtual file (e.g. foo/bar/baz.cpp), we add all of its parent
@@ -218,7 +220,8 @@ public:
   /// the failure to find this file.
   llvm::Expected<FileEntryRef> getFileRef(StringRef Filename,
                                           bool OpenFile = false,
-                                          bool CacheFailure = true);
+                                          bool CacheFailure = true,
+                                          bool isVolatile = false);
 
   /// Get the FileEntryRef for stdin, returning an error if stdin cannot be
   /// read.
