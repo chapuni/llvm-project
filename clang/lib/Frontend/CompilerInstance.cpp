@@ -702,8 +702,6 @@ void CompilerInstance::createSema(TranslationUnitKind TUKind,
 
 // Output Files
 
-#include <unistd.h>
-
 void CompilerInstance::clearOutputFiles(bool EraseFiles) {
   // Ignore errors that occur when trying to discard the temp file.
   for (OutputFile &OF : OutputFiles) {
@@ -728,7 +726,6 @@ void CompilerInstance::clearOutputFiles(bool EraseFiles) {
     SmallString<128> NewOutFile(OF.Filename);
     FileMgr->FixupRelativePath(NewOutFile);
 
-    ::fsync(OF.File->FD);
     llvm::Error E = OF.File->keep(NewOutFile);
     if (!E)
       continue;

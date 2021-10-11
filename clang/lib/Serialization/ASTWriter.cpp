@@ -1075,11 +1075,6 @@ ASTFileSignature ASTWriter::writeUnhashedControlBlock(Preprocessor &PP,
     Record.append(Signature.begin(), Signature.end());
     Stream.EmitRecord(SIGNATURE, Record);
     Record.clear();
-#if 1
-    fprintf(stderr, "<%016lX><%s>\n",
-	    *(uint64_t*)Signature.begin(),
-	    WritingModule->getFullModuleName().c_str());
-#endif
   }
 
   // Diagnostic options.
@@ -1212,7 +1207,7 @@ void ASTWriter::WriteControlBlock(Preprocessor &PP, ASTContext &Context,
     serialization::ModuleManager &Mgr = Chain->getModuleManager();
     Record.clear();
 
-#if 0
+#if 1
     std::vector<ModuleFile *> xxx;
     for (ModuleFile &M : Mgr) {
       xxx.push_back(&M);
@@ -1247,11 +1242,9 @@ void ASTWriter::WriteControlBlock(Preprocessor &PP, ASTContext &Context,
   }
 #else
     for (ModuleFile &M : Mgr) {
-#if 0
       // Skip modules that weren't directly imported.
       if (!M.isDirectlyImported())
         continue;
-#endif
 
       Record.push_back((unsigned)M.Kind); // FIXME: Stable encoding
       AddSourceLocation(M.ImportLoc, Record);

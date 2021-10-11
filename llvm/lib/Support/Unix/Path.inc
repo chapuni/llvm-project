@@ -565,17 +565,13 @@ std::error_code rename(const Twine &from, const Twine &to) {
   StringRef f = from.toNullTerminatedStringRef(from_storage);
   StringRef t = to.toNullTerminatedStringRef(to_storage);
 
-#if 0
+#if 1
   char xxx[1024];
   if (t.endswith(".pcm")) {
     char ttt[1024];
     strcpy(ttt, t.begin());
     char *p = strrchr(ttt, '/');
     *p = 0;
-#if 1
-    char *p1 = strrchr(ttt, '/');
-    *p1 = 0;
-#endif
     auto vvv = ::getenv("XXXDIR");
     if (vvv) {
       auto v1 = strrchr(vvv, '/');
@@ -584,20 +580,18 @@ std::error_code rename(const Twine &from, const Twine &to) {
     } else {
       sprintf(xxx, "%s/pcm.%d", ttt, ::getpid());
     }
-#if 0
     char *q = strrchr(ttt, '/');
     if (::mkdir(q + 1, 0777) == 0) {
 #if 0
       fprintf(stderr, "mkdir <%s>\n", q + 1);
 #endif
     }
-#endif
     if (::mkdir(xxx, 0777) == 0) {
 #if 0
       fprintf(stderr, "mkdir <%s>\n", xxx);
 #endif
     }
-#if 1
+#if 0
     strcat(xxx, "/");
     strcat(xxx, p + 1);
     if (::link(f.begin(), xxx) < 0) {
@@ -1179,10 +1173,6 @@ std::error_code openFileForRead(const Twine &Name, int &ResultFD,
       Buffer[CharCount] = 0;
       if (::access(Buffer, R_OK) == 0) {
         RealPath->append(Buffer, Buffer + CharCount);
-      } else {
-        SmallString<128> Storage;
-        StringRef P = Name.toNullTerminatedStringRef(Storage);
-        fprintf(stderr, "XXX <%s><%s>\n", P.begin(), Buffer);
       }
     }
   }
@@ -1191,12 +1181,8 @@ std::error_code openFileForRead(const Twine &Name, int &ResultFD,
     StringRef P = Name.toNullTerminatedStringRef(Storage);
 
     // Use ::realpath to get the real path name
-    if (::realpath(P.begin(), Buffer) != nullptr) {
-      fprintf(stderr, "YYY <%s><%s>\n", P.begin(), Buffer);
+    if (::realpath(P.begin(), Buffer) != nullptr)
       RealPath->append(Buffer, Buffer + strlen(Buffer));
-    } else {
-      fprintf(stderr, "ZZZ <%s>\n", P.begin());
-    }
   }
 #endif
   return std::error_code();
