@@ -41,6 +41,8 @@ public:
       // Make sure it hits disk now.
       *OS << Buffer->Data;
       OS->flush();
+      OS.reset(new llvm::raw_null_ostream);
+      fprintf(stderr, "***FLUSH***(%ld)\n", Buffer->Data.size());
     }
     // Free the space of the temporary buffer.
     llvm::SmallVector<char, 0> Empty;

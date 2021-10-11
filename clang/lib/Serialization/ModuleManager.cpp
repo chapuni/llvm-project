@@ -99,6 +99,11 @@ static void updateModuleImports(ModuleFile &MF, ModuleFile *ImportedBy,
   }
 }
 
+static StringRef rrr(StringRef a) {
+  auto i = a.rfind('/');
+  return i == a.npos ? a : a.substr(i + 1);
+}
+
 ModuleManager::AddModuleResult
 ModuleManager::addModule(StringRef FileName, ModuleKind Type,
                          SourceLocation ImportLoc, ModuleFile *ImportedBy,
@@ -150,15 +155,46 @@ ModuleManager::addModule(StringRef FileName, ModuleKind Type,
                                      const FileEntry *Entry) -> bool {
     if (Kind != MK_ImplicitModule)
       return true;
+#if 1
+    fprintf(stderr, "\tIMP(%d)<%s><%s>\n\t\t%s\n\t\t%s\n",
+	    (Entry->getName() == MF->FileName),
+	    std::string(rrr(Entry->getName())).c_str(),
+	    std::string(rrr(MF->FileName)).c_str(),
+	    std::string(Entry->getName()).c_str(),
+	    MF->FileName.c_str());
+#endif
+    return (std::string(Entry->getName()) == std::string(MF->FileName));
     return Entry->getName() == MF->FileName;
   };
 
+  fprintf(stderr, "%d:<%s>\n", __LINE__, std::string(rrr(Entry->getName())).c_str());
   // Check whether we already loaded this module, before
   if (ModuleFile *ModuleEntry = Modules.lookup(Entry)) {
+    fprintf(stderr, "%d:<%s><%s>\n", __LINE__,
+	    std::string(rrr(Entry->getName())).c_str(),
+	    std::string(rrr(ModuleEntry->FileName)).c_str());
     if (implicitModuleNamesMatch(Type, ModuleEntry, Entry)) {
       // Check the stored signature.
-      if (checkSignature(ModuleEntry->Signature, ExpectedSignature, ErrorStr))
+      fprintf(stderr, "%d:<%s><%s>\n", __LINE__,
+	      std::string(rrr(Entry->getName())).c_str(),
+	      std::string(rrr(ModuleEntry->FileName)).c_str());
+      if (checkSignature(ModuleEntry->Signature, ExpectedSignature, ErrorStr)) {
+#if 1
+	const char *p = strrchr(std::string(FileName).c_str(), '/');
+	p = (p ? p + 1 : std::string(FileName).c_str());
+	fprintf(stderr, "<%016lX>%s:%s:(%d:%d)%d<%s>%s<%016lX>\n",
+		*(uint64_t*)ModuleEntry->Signature.begin(),
+		ModuleEntry->ModuleName.c_str(),
+		ModuleEntry->FileName.c_str(),
+		implicitModuleNamesMatch(Type, ModuleEntry, Entry),
+		(Entry->getName() == ModuleEntry->FileName),
+		Type,
+		std::string(Entry->getName()).c_str(),
+		p,
+		*(uint64_t*)ExpectedSignature.begin());
+#endif
         return OutOfDate;
+      }
 
       Module = ModuleEntry;
       updateModuleImports(*ModuleEntry, ImportedBy, ImportLoc);

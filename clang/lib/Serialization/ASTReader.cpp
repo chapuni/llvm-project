@@ -4242,6 +4242,9 @@ ASTReader::ASTReadResult ASTReader::ReadAST(StringRef FileName,
   unsigned NumModules = ModuleMgr.size();
   auto removeModulesAndReturn = [&](ASTReadResult ReadResult) {
     assert(ReadResult && "expected to return error");
+#if 0
+    return ReadResult;
+#endif
     ModuleMgr.removeModules(ModuleMgr.begin() + NumModules,
                             PP.getLangOpts().Modules
                                 ? &PP.getHeaderSearchInfo().getModuleMap()
