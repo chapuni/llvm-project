@@ -53,6 +53,8 @@ private:
   SmallString<128> FileName;
   SmallString<128> LockFileName;
   SmallString<128> UniqueLockFileName;
+  SmallString<128> UniquePipeName;
+  int UniquePipeFD;
 
   Optional<std::pair<std::string, int> > Owner;
   std::error_code ErrorCode;
@@ -61,7 +63,7 @@ private:
   LockFileManager(const LockFileManager &) = delete;
   LockFileManager &operator=(const LockFileManager &) = delete;
 
-  static Optional<std::pair<std::string, int> >
+  Optional<std::pair<std::string, int> >
   readLockFile(StringRef LockFileName);
 
   static bool processStillExecuting(StringRef Hostname, int PID);

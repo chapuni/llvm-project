@@ -32,6 +32,8 @@
 #include <windows.h>
 #endif
 #if LLVM_ON_UNIX
+#include <fcntl.h>
+#include <poll.h>
 #include <unistd.h>
 #endif
 
@@ -54,15 +56,46 @@ using namespace llvm;
 /// \returns The process ID of the process that owns this lock file
 Optional<std::pair<std::string, int> >
 LockFileManager::readLockFile(StringRef LockFileName) {
+  char linkpath[PATH_MAX];
+  ssize_t linkpathlen;
+  SmallString<256> uniqpipename;
+  SmallString<256> uniqlockname;
+  std::unique_ptr<MemoryBuffer> MBP;
+  int fd;
+
   // Read the owning host and PID out of the lock file. If it appears that the
   // owning process is dead, the lock file is invalid.
-  ErrorOr<std::unique_ptr<MemoryBuffer>> MBOrErr =
-      MemoryBuffer::getFile(LockFileName);
-  if (!MBOrErr) {
-    sys::fs::remove(LockFileName);
-    return None;
+  while (1) {
+    linkpathlen = ::readlink(LockFileName.str().c_str(), linkpath, sizeof(linkpath));
+    if (linkpathlen <= 0) {
+      // error
+      if (!uniqlockname.empty())
+        fprintf(stderr, "%d\t[FAILED](%zd)\t%s\n", ::getpid(), linkpathlen, LockFileName.str().c_str());
+      sys::fs::remove(LockFileName);
+      return None;
+    }
+
+    linkpath[linkpathlen] = 0;
+    if (uniqlockname != linkpath) {
+      if (!uniqpipename.empty())
+        fprintf(stderr, "%d\t[---]\t%s\n\t[+++]\t%s\n", ::getpid(), uniqpipename.c_str(), linkpath);
+      uniqpipename = linkpath;
+      uniqpipename += ".pipe";
+      uniqlockname = linkpath;
+    }
+
+    fd = ::open(uniqpipename.c_str(), O_RDONLY | O_NONBLOCK);
+    ErrorOr<std::unique_ptr<MemoryBuffer>> MBOrErr = MemoryBuffer::getFile(uniqlockname);
+    if (fd > 0 && MBOrErr) {
+      MBP = std::move(MBOrErr.get());
+      break;
+    }
+
+    if (fd > 0)
+      ::close(fd);
   }
-  MemoryBuffer &MB = *MBOrErr.get();
+
+  MemoryBuffer &MB = *MBP.get();
 
   StringRef Hostname;
   StringRef PIDStr;
@@ -71,8 +104,18 @@ LockFileManager::readLockFile(StringRef LockFileName) {
   int PID;
   if (!PIDStr.getAsInteger(10, PID)) {
     auto Owner = std::make_pair(std::string(Hostname), PID);
-    if (processStillExecuting(Owner.first, Owner.second))
+    if (processStillExecuting(Owner.first, Owner.second)) {
+      if (UniquePipeFD > 0) {
+        fprintf(stderr, "%d\t[close]%d\t%s\n\t[reOPENRD]%d\t%s\n", ::getpid(), UniquePipeFD, UniquePipeName.c_str(), fd, uniqpipename.c_str());
+        ::close(UniquePipeFD);
+      } else {
+        fprintf(stderr, "%d\t[OPENRD]%d\t%s\n", ::getpid(), fd, uniqpipename.c_str());
+      }
+      UniquePipeName = uniqpipename;
+      UniqueLockFileName = uniqlockname;
+      UniquePipeFD = fd;
       return Owner;
+    }
   }
 
   // Delete the lock file. It's invalid anyway.
@@ -135,7 +178,7 @@ namespace {
 /// will remove the unique lock file. The caller should ensure there is a
 /// matching call to sys::DontRemoveFileOnSignal when the lock is released.
 class RemoveUniqueLockFileOnSignal {
-  StringRef Filename;
+  SmallString<256> Filename;
   bool RemoveImmediately;
 public:
   RemoveUniqueLockFileOnSignal(StringRef Name)
@@ -149,7 +192,7 @@ public:
       // released.
       return;
     }
-    sys::fs::remove(Filename);
+    ::unlink(Filename.c_str());
     sys::DontRemoveFileOnSignal(Filename);
   }
 
@@ -214,12 +257,30 @@ LockFileManager::LockFileManager(StringRef FileName)
   // held since the .lock symlink will point to a nonexistent file.
   RemoveUniqueLockFileOnSignal RemoveUniqueFile(UniqueLockFileName);
 
+#if 1
+  UniquePipeName = UniqueLockFileName;
+  UniquePipeName += ".pipe";
+  RemoveUniqueLockFileOnSignal RemoveUniquePipe(UniquePipeName);
+  if (::mkfifo(UniquePipeName.c_str(), 0666) == 0) {
+    int rfd = ::open(UniquePipeName.c_str(), O_RDONLY | O_NONBLOCK);
+    if (rfd > 0) {
+      UniquePipeFD = ::open(UniquePipeName.c_str(), O_WRONLY | O_NONBLOCK);
+      if (UniquePipeFD > 0) {
+      } else {
+        ::close(rfd);
+      }
+    }
+    fprintf(stderr, "%d\t[OPENWR]%d\t%s\n", ::getpid(), UniquePipeFD, UniquePipeName.c_str());
+  }
+#endif
+
   while (true) {
     // Create a link from the lock file name. If this succeeds, we're done.
     std::error_code EC =
         sys::fs::create_link(UniqueLockFileName, LockFileName);
     if (!EC) {
       RemoveUniqueFile.lockAcquired();
+      RemoveUniquePipe.lockAcquired();
       return;
     }
 
@@ -235,7 +296,6 @@ LockFileManager::LockFileManager(StringRef FileName)
     // from the lock file.
     if ((Owner = readLockFile(LockFileName))) {
       // Wipe out our unique lock file (it's useless now)
-      sys::fs::remove(UniqueLockFileName);
       return;
     }
 
@@ -279,15 +339,30 @@ std::string LockFileManager::getErrorMessage() const {
 }
 
 LockFileManager::~LockFileManager() {
-  if (getState() != LFS_Owned)
+  if (getState() != LFS_Owned) {
+#if 1
+    if (UniquePipeFD > 0) {
+      fprintf(stderr, "%d\t[~CLOSE]%d\t%s\n", ::getpid(), UniquePipeFD, UniquePipeName.c_str());
+      ::close(UniquePipeFD);
+    }
+#endif
     return;
+  }
 
   // Since we own the lock, remove the lock file and our own unique lock file.
   sys::fs::remove(LockFileName);
   sys::fs::remove(UniqueLockFileName);
+#if 1
+  if (UniquePipeFD > 0) {
+    ::unlink(UniquePipeName.c_str());
+    fprintf(stderr, "%d\t[~UNLINK]%d\t%s\n", ::getpid(), UniquePipeFD, UniquePipeName.c_str());
+    ::close(UniquePipeFD);
+  }
+#endif
   // The unique file is now gone, so remove it from the signal handler. This
   // matches a sys::RemoveFileOnSignal() in LockFileManager().
   sys::DontRemoveFileOnSignal(UniqueLockFileName);
+  sys::DontRemoveFileOnSignal(UniquePipeName);
 }
 
 LockFileManager::WaitForUnlockResult
@@ -309,6 +384,10 @@ LockFileManager::waitForUnlock(const unsigned MaxSeconds) {
 
   auto StartTime = std::chrono::steady_clock::now();
 
+  struct pollfd fds[1];
+  fds[0].fd = UniquePipeFD;
+  fds[0].events = POLLIN;
+
   do {
     // FIXME: implement event-based waiting
 
@@ -317,7 +396,17 @@ LockFileManager::waitForUnlock(const unsigned MaxSeconds) {
     std::uniform_int_distribution<unsigned long> Distribution(1,
                                                               WaitMultiplier);
     unsigned long WaitDurationMS = MinWaitDurationMS * Distribution(Engine);
-    std::this_thread::sleep_for(std::chrono::milliseconds(WaitDurationMS));
+    if (UniquePipeFD > 0) {
+      int r = ::poll(fds, 1, WaitDurationMS);
+      if (r == 1 && (fds[0].revents & POLLHUP)) {
+        ::close(UniquePipeFD);
+        fprintf(stderr, "%d\t[+ ACCLOSE]%d\t%s\n", ::getpid(), UniquePipeFD, UniquePipeName.c_str());
+        UniquePipeFD = -1;
+      }
+    } else {
+      fprintf(stderr, "%d [WAIT]\t\t\t%s\n", ::getpid(), LockFileName.c_str());
+      std::this_thread::sleep_for(std::chrono::milliseconds(WaitDurationMS));
+    }
 
     if (sys::fs::access(LockFileName.c_str(), sys::fs::AccessMode::Exist) ==
         errc::no_such_file_or_directory) {
