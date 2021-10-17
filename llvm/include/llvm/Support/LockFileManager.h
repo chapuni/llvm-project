@@ -14,6 +14,7 @@
 #include <utility> // for std::pair
 
 namespace llvm {
+class LockFileReader;
 class StringRef;
 
 /// Class that manages the creation of a lock file to aid
@@ -55,6 +56,8 @@ private:
   SmallString<128> UniqueLockFileName;
   SmallString<128> UniquePipeName;
   int UniquePipeFD;
+
+  std::unique_ptr<LockFileReader> Reader;
 
   Optional<std::pair<std::string, int> > Owner;
   std::error_code ErrorCode;

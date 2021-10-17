@@ -47,22 +47,12 @@
 #include <uuid/uuid.h>
 #endif
 
-using namespace llvm;
-
-#if 0
+namespace llvm {
 class LockFileReader {
-  SmallString<256> UniquePipeName;
-  SmallString<256> UniqueLockFileName;
-
-  LockFileReader() = delete;
-  LockFileReader(StringRef LockFileName);
-
-public:
-  std::unique_ptr<LockFileReader> Subscribe(StringRef LockFileName) {
-    return std::make_unique(new LockFileReader(LockFileName));
-  }
 };
-#endif
+} // namespace llvm
+
+using namespace llvm;
 
 /// Attempt to read the lock file with the given name, if it exists.
 ///
