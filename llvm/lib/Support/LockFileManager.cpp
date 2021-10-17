@@ -49,6 +49,21 @@
 
 using namespace llvm;
 
+#if 0
+class LockFileReader {
+  SmallString<256> UniquePipeName;
+  SmallString<256> UniqueLockFileName;
+
+  LockFileReader() = delete;
+  LockFileReader(StringRef LockFileName);
+
+public:
+  std::unique_ptr<LockFileReader> Subscribe(StringRef LockFileName) {
+    return std::make_unique(new LockFileReader(LockFileName));
+  }
+};
+#endif
+
 /// Attempt to read the lock file with the given name, if it exists.
 ///
 /// \param LockFileName The name of the lock file to read.
@@ -99,8 +114,16 @@ LockFileManager::readLockFile(StringRef LockFileName) {
 
   StringRef Hostname;
   StringRef PIDStr;
-  std::tie(Hostname, PIDStr) = getToken(MB.getBuffer(), " ");
-  PIDStr = PIDStr.substr(PIDStr.find_first_not_of(" "));
+#if 1
+  SmallVector<StringRef, 4> toks;
+  SplitString(MB.getBuffer(), toks, "#");
+  Hostname = toks[1];
+  PIDStr = toks[2];
+#else
+  std::tie(Hostname, PIDStr) = getToken(MB.getBuffer(), "#");
+  fprintf(stderr, "<%s><%s>\n", Hostname.str().c_str(), PIDStr.str().c_str());
+  PIDStr = PIDStr.substr(PIDStr.find_first_not_of("#"));
+#endif
   int PID;
   if (!PIDStr.getAsInteger(10, PID)) {
     auto Owner = std::make_pair(std::string(Hostname), PID);
@@ -154,6 +177,18 @@ static std::error_code getHostID(SmallVectorImpl<char> &HostID) {
   return std::error_code();
 }
 
+static std::error_code getLockFileID(std::string &ID) {
+  SmallString<256> HostID;
+  if (auto EC = getHostID(HostID)) {
+    return EC;
+  }
+
+  raw_string_ostream OSS(ID);
+  OSS << ".#" << HostID << '#' << sys::Process::getProcessId() << '#';
+
+  return std::error_code();
+}
+
 bool LockFileManager::processStillExecuting(StringRef HostID, int PID) {
 #if LLVM_ON_UNIX && !defined(__ANDROID__)
   SmallString<256> StoredHostID;
@@ -193,6 +228,7 @@ public:
       return;
     }
     ::unlink(Filename.c_str());
+    fprintf(stderr, "%d\t[remove]\t%s\n", ::getpid(), Filename.c_str());
     sys::DontRemoveFileOnSignal(Filename);
   }
 
@@ -218,8 +254,15 @@ LockFileManager::LockFileManager(StringRef FileName)
   if ((Owner = readLockFile(LockFileName)))
     return;
 
+  std::string LockFileID;
+  if (auto EC = getLockFileID(LockFileID)) {
+    setError(EC, "failed to get host id");
+    return;
+  }
+
   // Create a lock file that is unique to this instance.
   UniqueLockFileName = LockFileName;
+  UniqueLockFileName += LockFileID;
   UniqueLockFileName += "-%%%%%%%%";
   int UniqueLockFileID;
   if (std::error_code EC = sys::fs::createUniqueFile(
@@ -239,7 +282,7 @@ LockFileManager::LockFileManager(StringRef FileName)
     }
 
     raw_fd_ostream Out(UniqueLockFileID, /*shouldClose=*/true);
-    Out << HostID << ' ' << sys::Process::getProcessId();
+    Out << ".#" << HostID << '#' << sys::Process::getProcessId() << '#';
     Out.close();
 
     if (Out.has_error()) {
@@ -281,6 +324,7 @@ LockFileManager::LockFileManager(StringRef FileName)
     if (!EC) {
       RemoveUniqueFile.lockAcquired();
       RemoveUniquePipe.lockAcquired();
+      fprintf(stderr, "%d\t[LOCK  ]%d\t%s\n", ::getpid(), UniquePipeFD, UniquePipeName.c_str());
       return;
     }
 
