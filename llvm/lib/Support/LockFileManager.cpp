@@ -47,6 +47,14 @@
 #include <uuid/uuid.h>
 #endif
 
+namespace llvm {
+class LockFileReader {
+};
+
+class LockFileWriter {
+};
+} // namespace llvm
+
 using namespace llvm;
 
 /// Attempt to read the lock file with the given name, if it exists.
