@@ -84,7 +84,7 @@ class FileManager : public RefCountedBase<FileManager> {
   /// VirtualDirectoryEntries/VirtualFileEntries above.
   ///
   llvm::StringMap<llvm::ErrorOr<DirectoryEntry &>, llvm::BumpPtrAllocator>
-  SeenDirEntries;
+      SeenDirEntries;
 
   /// A cache that maps paths to file entries (either real or
   /// virtual) we have looked up, or an error that occurred when we looked up
@@ -184,8 +184,8 @@ public:
   ///
   /// \param CacheFailure If true and the file does not exist, we'll cache
   /// the failure to find this file.
-  llvm::ErrorOr<const DirectoryEntry *>
-  getDirectory(StringRef DirName, bool CacheFailure = true);
+  llvm::ErrorOr<const DirectoryEntry *> getDirectory(StringRef DirName,
+                                                     bool CacheFailure = true);
 
   /// Lookup, cache, and verify the specified file (real or
   /// virtual).
@@ -309,8 +309,7 @@ public:
 
   /// Produce an array mapping from the unique IDs assigned to each
   /// file to the corresponding FileEntry pointer.
-  void GetUniqueIDMapping(
-                    SmallVectorImpl<const FileEntry *> &UIDToFiles) const;
+  void GetUniqueIDMapping(SmallVectorImpl<const FileEntry *> &UIDToFiles) const;
 
   /// Retrieve the canonical name for a given directory.
   ///
