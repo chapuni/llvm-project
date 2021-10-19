@@ -69,6 +69,9 @@ public:
     }
     return nullptr;
   }
+
+protected:
+  bool decodeLockFileID(StringRef LockFileID);
 };
 
 class LockFileWriter {
@@ -116,12 +119,7 @@ LockFileReader::LockFileReader(StringRef LockFileName) {
   }
   MemoryBuffer &MB = *MBOrErr.get();
 
-  StringRef Hostname;
-  StringRef PIDStr;
-  std::tie(Hostname, PIDStr) = getToken(MB.getBuffer(), " ");
-  HostID = Hostname.str();
-  PIDStr = PIDStr.substr(PIDStr.find_first_not_of(" "));
-  if (!PIDStr.getAsInteger(10, PID)) {
+  if (decodeLockFileID(MB.getBuffer())) {
     if (processStillExecuting())
       return;
   }
@@ -164,6 +162,28 @@ static std::error_code getHostID(SmallVectorImpl<char> &HostID) {
 #endif
 
   return std::error_code();
+}
+
+static std::error_code emitLockFileID(raw_ostream &OS) {
+  SmallString<256> HostID;
+  if (auto EC = getHostID(HostID)) {
+    return EC;
+  }
+
+  OS << HostID << ' ' << sys::Process::getProcessId();
+  return std::error_code();
+}
+
+bool LockFileReader::decodeLockFileID(StringRef LockFileID) {
+  StringRef Hostname;
+  StringRef PIDStr;
+  std::tie(Hostname, PIDStr) = getToken(LockFileID, " ");
+  HostID = Hostname.str();
+  PIDStr = PIDStr.substr(PIDStr.find_first_not_of(" "));
+  if (!PIDStr.getAsInteger(10, PID)) {
+    return true;
+  }
+  return false;
 }
 
 bool LockFileReader::processStillExecuting() {
@@ -266,14 +286,8 @@ LockFileWriter::LockFileWriter(StringRef LockFileName_,
 
   // Write our process ID to our unique lock file.
   {
-    SmallString<256> HostID;
-    if (auto EC = getHostID(HostID)) {
-      setError(EC, "failed to get host id");
-      return;
-    }
-
     raw_fd_ostream Out(UniqueLockFileID, /*shouldClose=*/true);
-    Out << HostID << ' ' << sys::Process::getProcessId();
+    emitLockFileID(Out);
     Out.close();
 
     if (Out.has_error()) {
