@@ -73,7 +73,12 @@ ModuleManager::lookupBuffer(StringRef Name) {
                                /*isVolatile=*/true);
   if (!Entry)
     return nullptr;
-  return std::move(InMemoryBuffers[*Entry]);
+  auto& buf = InMemoryBuffers[*Entry];
+#if 0
+  if (buf->getBufferSize() == 0)
+    return nullptr;
+#endif
+  return std::move(buf);
 }
 
 static bool checkSignature(ASTFileSignature Signature,
@@ -163,9 +168,16 @@ ModuleManager::addModule(StringRef FileName, ModuleKind Type,
 
       Module = ModuleEntry;
       updateModuleImports(*ModuleEntry, ImportedBy, ImportLoc);
+#if 1
+      fprintf(stderr, "MODupd\t<%s>\n", ModuleEntry->FileName.c_str());
+#endif
       return AlreadyLoaded;
     }
   }
+
+#if 1
+  fprintf(stderr, "MODalloc\t<%s>\n", FileName.str().c_str());
+#endif
 
   // Allocate a new module.
   auto NewModule = std::make_unique<ModuleFile>(Type, Generation);
@@ -295,8 +307,10 @@ void ModuleManager::removeModules(ModuleIterator First, ModuleMap *modMap) {
   for (ModuleIterator victim = First; victim != Last; ++victim) {
     Modules.erase(victim->File);
 
+    fprintf(stderr, "\t%d\t%s\n", getModuleCache().getPCMState(victim->File->getName()), victim->File->getName().str().c_str());
     InMemoryBuffers.erase(victim->File);
     getModuleCache().tryToDropPCM(victim->File->getName(), true);
+    fprintf(stderr, "\t%d\t%s\n", getModuleCache().getPCMState(victim->File->getName()), victim->File->getName().str().c_str());
 
     if (modMap) {
       StringRef ModuleName = victim->ModuleName;
