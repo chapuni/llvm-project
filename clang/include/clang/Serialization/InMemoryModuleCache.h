@@ -80,7 +80,7 @@ public:
   /// \pre state is Tentative/Final.
   /// \post Tentative => ToBuild or Final => Final.
   /// \return false on success, i.e. if Tentative => ToBuild.
-  bool tryToDropPCM(llvm::StringRef Filename);
+  bool tryToDropPCM(llvm::StringRef Filename, bool erase = false);
 
   /// Mark a PCM as final.
   ///
