@@ -236,7 +236,7 @@ void LockFileReader::Wait(unsigned long WaitDurationMS) {
     struct pollfd fds[1];
     fds[0].fd = UniquePipeFD;
     fds[0].events = POLLIN;
-    int r = ::poll(fds, 1, WaitDurationMS);
+    int r = ::poll(fds, 1, 300 * 1000);
     if (r == 1 && (fds[0].revents & POLLHUP)) {
       ::close(UniquePipeFD);
       fprintf(stderr, "%d\t[+ ACCLOSE]%d\t%s\n", ::getpid(), UniquePipeFD,
@@ -305,9 +305,11 @@ LockFileWriter::LockFileWriter(StringRef LockFileName_,
   // Create a pipe that is unique to this instance.
   if (std::error_code EC = createUniquePipe(
           Twine(LockFileName) + LockFileID + "-%%%%%%%%", UniqueLockFileName)) {
+#if 1
     std::string S("failed to create unique pipe ");
     S.append(std::string(LockFileName.str()));
     setError(EC, S);
+#endif
     UniqueLockFileName.clear();
     return;
   }
@@ -320,11 +322,18 @@ LockFileWriter::LockFileWriter(StringRef LockFileName_,
     int rfd = ::open(UniqueLockFileName.c_str(), O_RDONLY | O_NONBLOCK);
     if (rfd > 0) {
       UniquePipeFD = ::open(UniqueLockFileName.c_str(), O_WRONLY | O_NONBLOCK);
+#if 1
       if (UniquePipeFD <= 0) {
         auto EC = std::error_code(errno, std::generic_category());
         setError(EC, "unabled to open pipe for writing");
       }
       ::close(rfd);
+#else
+      if (UniquePipeFD > 0) {
+      } else {
+        ::close(rfd);
+      }
+#endif
     } else {
       auto EC = std::error_code(errno, std::generic_category());
       setError(EC, "unabled to open pipe for reading");
@@ -402,11 +411,20 @@ std::string LockFileManager::getErrorMessage() const {
 }
 
 LockFileManager::~LockFileManager() {
+#if 0
+  if (Writer)
+    sys::fs::remove(LockFileName);
+#endif
 }
 
 LockFileWriter::~LockFileWriter() {
-  if (Acquired)
+  if (Acquired) {
+#if 1
+    char linkpath[PATH_MAX];
+    ::readlink(LockFileName.str().c_str(), linkpath, sizeof(linkpath));
+#endif
     sys::fs::remove(LockFileName);
+  }
   if (!UniqueLockFileName.empty())
     ::unlink(UniqueLockFileName.c_str());
   if (UniquePipeFD > 0) {
@@ -461,6 +479,12 @@ LockFileManager::waitForUnlock(const unsigned MaxSeconds) {
     std::uniform_int_distribution<unsigned long> Distribution(1,
                                                               WaitMultiplier);
     unsigned long WaitDurationMS = MinWaitDurationMS * Distribution(Engine);
+#if 1
+    {
+      char linkpath[PATH_MAX];
+      ::readlink(LockFileName.c_str(), linkpath, sizeof(linkpath));
+    }
+#endif
     Reader->Wait(WaitDurationMS);
 
     if (sys::fs::access(LockFileName.c_str(), sys::fs::AccessMode::Exist) ==

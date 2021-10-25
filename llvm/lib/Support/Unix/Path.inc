@@ -580,8 +580,13 @@ std::error_code rename(const Twine &from, const Twine &to) {
   StringRef f = from.toNullTerminatedStringRef(from_storage);
   StringRef t = to.toNullTerminatedStringRef(to_storage);
 
+#if 0
+  if (::renameat2(AT_FDCWD, f.begin(), AT_FDCWD, t.begin(), RENAME_EXCHANGE) == -1)
+    return std::error_code(errno, std::generic_category());
+#else
   if (::rename(f.begin(), t.begin()) == -1)
     return std::error_code(errno, std::generic_category());
+#endif
 
   return std::error_code();
 }
