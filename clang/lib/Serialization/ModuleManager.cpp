@@ -294,6 +294,8 @@ void ModuleManager::removeModules(ModuleIterator First, ModuleMap *modMap) {
   for (ModuleIterator victim = First; victim != Last; ++victim) {
     Modules.erase(victim->File);
 
+    getModuleCache().tryToDropPCM(victim->File->getName(), true);
+
     if (modMap) {
       StringRef ModuleName = victim->ModuleName;
       if (Module *mod = modMap->findModule(ModuleName)) {
