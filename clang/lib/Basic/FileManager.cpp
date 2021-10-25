@@ -192,22 +192,26 @@ FileManager::getDirectory(StringRef DirName, bool CacheFailure) {
   return llvm::errorToErrorCode(Result.takeError());
 }
 
-llvm::ErrorOr<const FileEntry *>
-FileManager::getFile(StringRef Filename, bool openFile, bool CacheFailure) {
-  auto Result = getFileRef(Filename, openFile, CacheFailure);
+llvm::ErrorOr<const FileEntry *> FileManager::getFile(StringRef Filename,
+                                                      bool openFile,
+                                                      bool CacheFailure,
+                                                      bool isVolatile) {
+  auto Result = getFileRef(Filename, openFile, CacheFailure, isVolatile);
   if (Result)
     return &Result->getFileEntry();
   return llvm::errorToErrorCode(Result.takeError());
 }
 
-llvm::Expected<FileEntryRef>
-FileManager::getFileRef(StringRef Filename, bool openFile, bool CacheFailure) {
+llvm::Expected<FileEntryRef> FileManager::getFileRef(StringRef Filename,
+                                                     bool openFile,
+                                                     bool CacheFailure,
+                                                     bool isVolatile) {
   ++NumFileLookups;
 
   // See if there is already an entry in the map.
   auto SeenFileInsertResult =
       SeenFileEntries.insert({Filename, std::errc::no_such_file_or_directory});
-  if (!SeenFileInsertResult.second) {
+  if (!isVolatile && !SeenFileInsertResult.second) {
     if (!SeenFileInsertResult.first->second)
       return llvm::errorCodeToError(
           SeenFileInsertResult.first->second.getError());
@@ -252,8 +256,9 @@ FileManager::getFileRef(StringRef Filename, bool openFile, bool CacheFailure) {
   // Check to see if the file exists.
   std::unique_ptr<llvm::vfs::File> F;
   llvm::vfs::Status Status;
-  auto statError =
-      getStatValue(InterndFileName, Status, true, openFile ? &F : nullptr);
+  auto statError = (isVolatile ? getNoncachedStatValue(InterndFileName, Status)
+                               : getStatValue(InterndFileName, Status, true,
+                                              openFile ? &F : nullptr));
   if (statError) {
     // There's no real file at the given path.
     if (CacheFailure)
@@ -268,7 +273,8 @@ FileManager::getFileRef(StringRef Filename, bool openFile, bool CacheFailure) {
 
   // It exists.  See if we have already opened a file with the same inode.
   // This occurs when one dir is symlinked to another, for example.
-  FileEntry &UFE = UniqueRealFiles[Status.getUniqueID()];
+  FileEntry &UFE = (isVolatile ? VolatileRealFiles[Filename]
+                               : UniqueRealFiles[Status.getUniqueID()]);
 
   if (Status.getName() == Filename) {
     // The name matches. Set the FileEntry.
@@ -304,6 +310,9 @@ FileManager::getFileRef(StringRef Filename, bool openFile, bool CacheFailure) {
     // Fix the tentative return value.
     NamedFileEnt = &Redirection;
   }
+
+  if (isVolatile && UFE.isValid() && UFE.UniqueID != Status.getUniqueID())
+    UFE.IsValid = false;
 
   FileEntryRef ReturnedRef(*NamedFileEnt);
   if (UFE.isValid()) { // Already have an entry with this inode, return it.
