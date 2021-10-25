@@ -192,9 +192,11 @@ FileManager::getDirectory(StringRef DirName, bool CacheFailure) {
   return llvm::errorToErrorCode(Result.takeError());
 }
 
-llvm::ErrorOr<const FileEntry *>
-FileManager::getFile(StringRef Filename, bool openFile, bool CacheFailure) {
-  auto Result = getFileRef(Filename, openFile, CacheFailure);
+llvm::ErrorOr<const FileEntry *> FileManager::getFile(StringRef Filename,
+                                                      bool openFile,
+                                                      bool CacheFailure,
+                                                      bool isVolatile) {
+  auto Result = getFileRef(Filename, openFile, CacheFailure, isVolatile);
   if (Result)
     return &Result->getFileEntry();
   return llvm::errorToErrorCode(Result.takeError());

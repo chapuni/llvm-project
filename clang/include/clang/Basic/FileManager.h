@@ -201,8 +201,10 @@ public:
   ///
   /// \param CacheFailure If true and the file does not exist, we'll cache
   /// the failure to find this file.
-  llvm::ErrorOr<const FileEntry *>
-  getFile(StringRef Filename, bool OpenFile = false, bool CacheFailure = true);
+  llvm::ErrorOr<const FileEntry *> getFile(StringRef Filename,
+                                           bool OpenFile = false,
+                                           bool CacheFailure = true,
+                                           bool isVolatile = false);
 
   /// Lookup, cache, and verify the specified file (real or virtual). Return the
   /// reference to the file entry together with the exact path that was used to
