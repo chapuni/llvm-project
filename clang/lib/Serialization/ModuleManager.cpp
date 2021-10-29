@@ -254,15 +254,6 @@ void ModuleManager::removeModules(ModuleIterator First, ModuleMap *modMap) {
   if (First == Last)
     return;
 
-#if 1
-  int i;
-  i = 0;
-  for (const auto& m : Modules) {
-    fprintf(stderr, "\t%d\t%s\n", i++, m.first->getName().str().c_str());
-  }
-  fprintf(stderr, "\t(%d)\n", i);
-#endif
-
   // Explicitly clear VisitOrder since we might not notice it is stale.
   VisitOrder.clear();
 
@@ -306,14 +297,6 @@ void ModuleManager::removeModules(ModuleIterator First, ModuleMap *modMap) {
 
   // Delete the modules.
   Chain.erase(Chain.begin() + (First - begin()), Chain.end());
-
-#if 1
-  i = 0;
-  for (const auto& m : Modules) {
-    fprintf(stderr, "\t%d\t%s\n", i++, m.first->getName().str().c_str());
-  }
-  fprintf(stderr, "\t(%d)\n", i);
-#endif
 }
 
 void
