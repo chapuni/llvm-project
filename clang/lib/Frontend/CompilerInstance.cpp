@@ -1411,6 +1411,7 @@ static bool compileModuleAndReadASTBehindLock(
     // The module may be out of date in the presence of file system races,
     // or if one of its imports depends on header search paths that are not
     // consistent with this ImportingInstance.  Try again...
+    fprintf(stderr, "****[*RETRY]**** %s\n", Module->Name.c_str());
   }
 }
 
