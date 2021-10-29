@@ -69,8 +69,7 @@ ModuleFile *ModuleManager::lookup(const FileEntry *File) const {
 std::unique_ptr<llvm::MemoryBuffer>
 ModuleManager::lookupBuffer(StringRef Name) {
   auto Entry = FileMgr.getFile(Name, /*OpenFile=*/false,
-                               /*CacheFailure=*/false,
-                               /*isVolatile=*/true);
+                               /*CacheFailure=*/false);
   if (!Entry)
     return nullptr;
   return std::move(InMemoryBuffers[*Entry]);
@@ -295,7 +294,6 @@ void ModuleManager::removeModules(ModuleIterator First, ModuleMap *modMap) {
   for (ModuleIterator victim = First; victim != Last; ++victim) {
     Modules.erase(victim->File);
 
-    InMemoryBuffers.erase(victim->File);
     getModuleCache().tryToDropPCM(victim->File->getName(), true);
 
     if (modMap) {
