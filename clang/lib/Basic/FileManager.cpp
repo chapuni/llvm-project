@@ -211,7 +211,7 @@ llvm::Expected<FileEntryRef> FileManager::getFileRef(StringRef Filename,
   // See if there is already an entry in the map.
   auto SeenFileInsertResult =
       SeenFileEntries.insert({Filename, std::errc::no_such_file_or_directory});
-  if (!isVolatile && !SeenFileInsertResult.second) {
+  if (!SeenFileInsertResult.second) {
     if (!SeenFileInsertResult.first->second)
       return llvm::errorCodeToError(
           SeenFileInsertResult.first->second.getError());
@@ -257,9 +257,7 @@ llvm::Expected<FileEntryRef> FileManager::getFileRef(StringRef Filename,
   std::unique_ptr<llvm::vfs::File> F;
   llvm::vfs::Status Status;
   auto statError =
-    (isVolatile
-     ? getNoncachedStatValue(InterndFileName, Status)
-     : getStatValue(InterndFileName, Status, true, openFile ? &F : nullptr));
+      getStatValue(InterndFileName, Status, true, openFile ? &F : nullptr);
   if (statError) {
     // There's no real file at the given path.
     if (CacheFailure)
@@ -311,9 +309,6 @@ llvm::Expected<FileEntryRef> FileManager::getFileRef(StringRef Filename,
     // Fix the tentative return value.
     NamedFileEnt = &Redirection;
   }
-
-  if (isVolatile && UFE.isValid() && UFE.UniqueID != Status.getUniqueID())
-    UFE.IsValid = false;
 
   FileEntryRef ReturnedRef(*NamedFileEnt);
   if (UFE.isValid()) { // Already have an entry with this inode, return it.
