@@ -252,11 +252,6 @@ llvm::Expected<FileEntryRef> FileManager::getFileRef(StringRef Filename,
 
   // FIXME: Use the directory info to prune this, before doing the stat syscall.
   // FIXME: This will reduce the # syscalls.
-#if 0
-  if (isVolatile) {
-    StatCache.reset();
-  }
-#endif
 
   // Check to see if the file exists.
   std::unique_ptr<llvm::vfs::File> F;
@@ -317,13 +312,8 @@ llvm::Expected<FileEntryRef> FileManager::getFileRef(StringRef Filename,
     NamedFileEnt = &Redirection;
   }
 
-#if 1
-  if (isVolatile && UFE.isValid() && UFE.UniqueID != Status.getUniqueID()) {
-    fprintf(stderr, "inode(%ld->%ld)\n", UFE.UniqueID.getFile(),
-            Status.getUniqueID().getFile());
+  if (isVolatile && UFE.isValid() && UFE.UniqueID != Status.getUniqueID())
     UFE.IsValid = false;
-  }
-#endif
 
   FileEntryRef ReturnedRef(*NamedFileEnt);
   if (UFE.isValid()) { // Already have an entry with this inode, return it.
