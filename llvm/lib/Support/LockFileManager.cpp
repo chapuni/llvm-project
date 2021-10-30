@@ -201,7 +201,47 @@ LockFileManager::LockFileManager(StringRef FileName) {
   if ((Reader = LockFileReader::subscribe(LockFileName)))
     return;
 
-  tryAcquire();
+  auto tWriter = LockFileWriter::create(LockFileName, ErrorCode, ErrorDiagMsg);
+  if (!tWriter)
+    return;
+
+  while (true) {
+    // Create a link from the lock file name. If this succeeds, we're done.
+    std::error_code EC = tWriter->acquire();
+    if (!EC) {
+      // Acquire
+      Writer = std::move(tWriter);
+      return;
+    }
+
+    if (EC != errc::file_exists) {
+      std::string S("failed to create link ");
+      raw_string_ostream OSS(S);
+      OSS << LockFileName.str();
+      setError(EC, OSS.str());
+      return;
+    }
+
+    // Someone else managed to create the lock file first. Read the process ID
+    // from the lock file.
+    if ((Reader = LockFileReader::subscribe(LockFileName)))
+      return;
+
+    if (!sys::fs::exists(LockFileName)) {
+      // The previous owner released the lock file before we could read it.
+      // Try to get ownership again.
+      continue;
+    }
+
+    // There is a lock file that nobody owns; try to clean it up and get
+    // ownership.
+    if ((EC = sys::fs::remove(LockFileName))) {
+      std::string S("failed to remove lockfile ");
+      S.append(std::string(LockFileName));
+      setError(EC, S);
+      return;
+    }
+  }
 }
 
 LockFileWriter::LockFileWriter(StringRef LockFileName_,
@@ -251,51 +291,6 @@ LockFileWriter::LockFileWriter(StringRef LockFileName_,
   // Clean up the unique file on signal, which also releases the lock if it is
   // held since the .lock symlink will point to a nonexistent file.
   sys::RemoveFileOnSignal(UniqueLockFileName, nullptr);
-}
-
-// FIXME: Let it inline.
-void LockFileManager::tryAcquire() {
-  auto tWriter = LockFileWriter::create(LockFileName, ErrorCode, ErrorDiagMsg);
-  if (!tWriter)
-    return;
-
-  while (true) {
-    // Create a link from the lock file name. If this succeeds, we're done.
-    std::error_code EC = tWriter->acquire();
-    if (!EC) {
-      // Acquire
-      Writer = std::move(tWriter);
-      return;
-    }
-
-    if (EC != errc::file_exists) {
-      std::string S("failed to create link ");
-      raw_string_ostream OSS(S);
-      OSS << LockFileName.str();
-      setError(EC, OSS.str());
-      return;
-    }
-
-    // Someone else managed to create the lock file first. Read the process ID
-    // from the lock file.
-    if ((Reader = LockFileReader::subscribe(LockFileName)))
-      return;
-
-    if (!sys::fs::exists(LockFileName)) {
-      // The previous owner released the lock file before we could read it.
-      // Try to get ownership again.
-      continue;
-    }
-
-    // There is a lock file that nobody owns; try to clean it up and get
-    // ownership.
-    if ((EC = sys::fs::remove(LockFileName))) {
-      std::string S("failed to remove lockfile ");
-      S.append(std::string(LockFileName));
-      setError(EC, S);
-      return;
-    }
-  }
 }
 
 LockFileManager::LockFileState LockFileManager::getState() const {
