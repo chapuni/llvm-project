@@ -64,8 +64,6 @@ private:
   LockFileManager(const LockFileManager &) = delete;
   LockFileManager &operator=(const LockFileManager &) = delete;
 
-  void tryAcquire();
-
 public:
   LockFileManager(StringRef FileName);
   ~LockFileManager();
