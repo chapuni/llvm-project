@@ -14,6 +14,8 @@
 #include <utility> // for std::pair
 
 namespace llvm {
+class LockFileReader;
+class LockFileWriter;
 class StringRef;
 
 /// Class that manages the creation of a lock file to aid
@@ -52,22 +54,17 @@ public:
 private:
   SmallString<128> FileName;
   SmallString<128> LockFileName;
-  SmallString<128> UniqueLockFileName;
 
-  Optional<std::pair<std::string, int> > Owner;
+  std::unique_ptr<LockFileReader> Reader;
+  std::unique_ptr<LockFileWriter> Writer;
+
   std::error_code ErrorCode;
   std::string ErrorDiagMsg;
 
   LockFileManager(const LockFileManager &) = delete;
   LockFileManager &operator=(const LockFileManager &) = delete;
 
-  static Optional<std::pair<std::string, int> >
-  readLockFile(StringRef LockFileName);
-
-  static bool processStillExecuting(StringRef Hostname, int PID);
-
 public:
-
   LockFileManager(StringRef FileName);
   ~LockFileManager();
 
