@@ -67,7 +67,6 @@ private:
   static bool processStillExecuting(StringRef Hostname, int PID);
 
 public:
-
   LockFileManager(StringRef FileName);
   ~LockFileManager();
 
