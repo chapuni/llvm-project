@@ -171,17 +171,16 @@ static std::error_code emitLockFileID(raw_ostream &OS) {
     return EC;
   }
 
-  OS << HostID << ' ' << sys::Process::getProcessId();
+  OS << ".#" << HostID << '#' << sys::Process::getProcessId() << '#';
   return std::error_code();
 }
 
+// Decode HostID and PID in the link, ...#HostID#PID#...
 bool LockFileReader::decodeLockFileID(StringRef LockFileID) {
-  StringRef Hostname;
-  StringRef PIDStr;
-  std::tie(Hostname, PIDStr) = getToken(LockFileID, " ");
-  HostID = Hostname.str();
-  PIDStr = PIDStr.substr(PIDStr.find_first_not_of(" "));
-  if (!PIDStr.getAsInteger(10, PID)) {
+  SmallVector<StringRef, 4> toks;
+  SplitString(LockFileID, toks, "#");
+  if (toks.size() >= 3 && !toks[2].getAsInteger(10, PID)) {
+    HostID = std::string(toks[1]);
     return true;
   }
   return false;
