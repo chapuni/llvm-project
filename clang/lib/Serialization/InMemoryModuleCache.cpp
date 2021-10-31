@@ -56,7 +56,7 @@ bool InMemoryModuleCache::shouldBuildPCM(llvm::StringRef Filename) const {
   return getPCMState(Filename) == ToBuild;
 }
 
-bool InMemoryModuleCache::tryToDropPCM(llvm::StringRef Filename) {
+bool InMemoryModuleCache::tryToDropPCM(llvm::StringRef Filename, bool erase) {
   auto I = PCMs.find(Filename);
   assert(I != PCMs.end() && "PCM to remove is unknown...");
 
@@ -66,7 +66,11 @@ bool InMemoryModuleCache::tryToDropPCM(llvm::StringRef Filename) {
   if (PCM.IsFinal)
     return true;
 
-  PCM.Buffer.reset();
+  if (erase)
+    PCMs.erase(I);
+  else
+    PCM.Buffer.reset();
+
   return false;
 }
 

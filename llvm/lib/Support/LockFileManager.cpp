@@ -32,10 +32,14 @@
 #include <windows.h>
 #endif
 #if LLVM_ON_UNIX
+#include <fcntl.h>
+#include <poll.h>
 #include <unistd.h>
 #endif
 
-#if defined(__APPLE__) && defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && (__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ > 1050)
+#if defined(__APPLE__) &&                                                      \
+    defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) &&                  \
+    (__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ > 1050)
 #define USE_OSX_GETHOSTUUID 1
 #else
 #define USE_OSX_GETHOSTUUID 0
@@ -45,6 +49,63 @@
 #include <uuid/uuid.h>
 #endif
 
+namespace llvm {
+class LockFileReader {
+  SmallString<256> UniqueLockFileName;
+  int UniquePipeFD;
+
+  StringRef HostID; // Referes UniqueLockFileName
+  int PID;
+
+  LockFileReader() = delete;
+
+public:
+  LockFileReader(StringRef LockFileName);
+  ~LockFileReader();
+
+  bool processStillExecuting();
+  void Wait(unsigned long WaitDurationMS);
+
+  static std::unique_ptr<LockFileReader> subscribe(StringRef LockFileName) {
+    if (auto p = std::make_unique<LockFileReader>(LockFileName)) {
+      if (p->UniquePipeFD > 0)
+        return p;
+    }
+    return nullptr;
+  }
+
+protected:
+  bool decodeLockFileID(StringRef LockFileID);
+};
+
+class LockFileWriter {
+  StringRef LockFileName;
+  bool Acquired;
+
+  SmallString<256> UniqueLockFileName;
+  int UniquePipeFD;
+
+  LockFileWriter() = delete;
+
+public:
+  LockFileWriter(StringRef LockFileName_, std::error_code &ErrorCode,
+                 std::string &ErrorDiagMsg);
+  ~LockFileWriter();
+
+  static std::unique_ptr<LockFileWriter> create(StringRef LockFileName,
+                                                std::error_code &ErrorCode,
+                                                std::string &ErrorDiagMsg) {
+    auto tWriter =
+        std::make_unique<LockFileWriter>(LockFileName, ErrorCode, ErrorDiagMsg);
+    if (ErrorCode)
+      return nullptr;
+    return tWriter;
+  }
+
+  std::error_code acquire();
+};
+} // namespace llvm
+
 using namespace llvm;
 
 /// Attempt to read the lock file with the given name, if it exists.
@@ -52,32 +113,52 @@ using namespace llvm;
 /// \param LockFileName The name of the lock file to read.
 ///
 /// \returns The process ID of the process that owns this lock file
-Optional<std::pair<std::string, int> >
-LockFileManager::readLockFile(StringRef LockFileName) {
+LockFileReader::LockFileReader(StringRef LockFileName) {
+  char linkpath[PATH_MAX];
+  ssize_t linkpathlen;
+
+  UniquePipeFD = 0;
+
   // Read the owning host and PID out of the lock file. If it appears that the
   // owning process is dead, the lock file is invalid.
-  ErrorOr<std::unique_ptr<MemoryBuffer>> MBOrErr =
-      MemoryBuffer::getFile(LockFileName);
-  if (!MBOrErr) {
-    sys::fs::remove(LockFileName);
-    return None;
-  }
-  MemoryBuffer &MB = *MBOrErr.get();
+  std::string tLockFileName(LockFileName.begin(), LockFileName.end());
+  auto pLockFileName = tLockFileName.c_str();
+  for (int i = 0; i < 16; ++i) {
+    linkpathlen = ::readlink(pLockFileName, linkpath, sizeof(linkpath));
+    if (linkpathlen <= 0) {
+      // error
+      sys::fs::remove(LockFileName);
+      return;
+    }
 
-  StringRef Hostname;
-  StringRef PIDStr;
-  std::tie(Hostname, PIDStr) = getToken(MB.getBuffer(), " ");
-  PIDStr = PIDStr.substr(PIDStr.find_first_not_of(" "));
-  int PID;
-  if (!PIDStr.getAsInteger(10, PID)) {
-    auto Owner = std::make_pair(std::string(Hostname), PID);
-    if (processStillExecuting(Owner.first, Owner.second))
-      return Owner;
+    linkpath[linkpathlen] = 0;
+    if (UniqueLockFileName != linkpath) {
+      UniqueLockFileName = linkpath;
+    }
+
+    UniquePipeFD = ::open(UniqueLockFileName.c_str(), O_RDONLY | O_NONBLOCK);
+    if (UniquePipeFD <= 0)
+      continue;
+
+    if (decodeLockFileID(UniqueLockFileName)) {
+      if (processStillExecuting())
+        return;
+    }
+
+    // Error -- unable to decode the link
+    break;
   }
 
   // Delete the lock file. It's invalid anyway.
   sys::fs::remove(LockFileName);
-  return None;
+
+  // close(FD) shall be done in the destructor.
+}
+
+LockFileReader::~LockFileReader() {
+  if (UniquePipeFD > 0) {
+    ::close(UniquePipeFD);
+  }
 }
 
 static std::error_code getHostID(SmallVectorImpl<char> &HostID) {
@@ -111,7 +192,28 @@ static std::error_code getHostID(SmallVectorImpl<char> &HostID) {
   return std::error_code();
 }
 
-bool LockFileManager::processStillExecuting(StringRef HostID, int PID) {
+static std::error_code emitLockFileID(raw_ostream &OS) {
+  SmallString<256> HostID;
+  if (auto EC = getHostID(HostID)) {
+    return EC;
+  }
+
+  OS << ".#" << HostID << '#' << sys::Process::getProcessId() << '#';
+  return std::error_code();
+}
+
+// Decode HostID and PID in the link, ...#HostID#PID#...
+bool LockFileReader::decodeLockFileID(StringRef LockFileID) {
+  SmallVector<StringRef, 4> toks;
+  SplitString(LockFileID, toks, "#");
+  if (toks.size() >= 3 && !toks[2].getAsInteger(10, PID)) {
+    HostID = toks[1];
+    return true;
+  }
+  return false;
+}
+
+bool LockFileReader::processStillExecuting() {
 #if LLVM_ON_UNIX && !defined(__ANDROID__)
   SmallString<256> StoredHostID;
   if (getHostID(StoredHostID))
@@ -125,41 +227,40 @@ bool LockFileManager::processStillExecuting(StringRef HostID, int PID) {
   return true;
 }
 
-namespace {
-
-/// An RAII helper object ensure that the unique lock file is removed.
-///
-/// Ensures that if there is an error or a signal before we finish acquiring the
-/// lock, the unique file will be removed. And if we successfully take the lock,
-/// the signal handler is left in place so that signals while the lock is held
-/// will remove the unique lock file. The caller should ensure there is a
-/// matching call to sys::DontRemoveFileOnSignal when the lock is released.
-class RemoveUniqueLockFileOnSignal {
-  StringRef Filename;
-  bool RemoveImmediately;
-public:
-  RemoveUniqueLockFileOnSignal(StringRef Name)
-  : Filename(Name), RemoveImmediately(true) {
-    sys::RemoveFileOnSignal(Filename, nullptr);
-  }
-
-  ~RemoveUniqueLockFileOnSignal() {
-    if (!RemoveImmediately) {
-      // Leave the signal handler enabled. It will be removed when the lock is
-      // released.
-      return;
+void LockFileReader::Wait(unsigned long WaitDurationMS) {
+  if (UniquePipeFD > 0) {
+    struct pollfd fds[1];
+    fds[0].fd = UniquePipeFD;
+    fds[0].events = POLLIN;
+    int r = ::poll(fds, 1, WaitDurationMS);
+    if (r == 1 && (fds[0].revents & POLLHUP)) {
+      ::close(UniquePipeFD);
+      UniquePipeFD = -1;
     }
-    sys::fs::remove(Filename);
-    sys::DontRemoveFileOnSignal(Filename);
+  } else {
+    std::this_thread::sleep_for(std::chrono::milliseconds(WaitDurationMS));
+  }
+}
+
+static std::error_code createUniquePipe(const Twine &Model,
+                                        SmallVectorImpl<char> &ResultPath) {
+  std::error_code EC;
+  SmallString<256> tResultPath;
+  for (int i = 64; i >= 0; --i) {
+    if (!(EC = sys::fs::getPotentiallyUniqueFileName(Model, tResultPath))) {
+      if (::mkfifo(tResultPath.c_str(), 0666) < 0) {
+        EC = std::error_code(errno, std::generic_category());
+        continue;
+      }
+      ResultPath = tResultPath;
+      return std::error_code();
+    }
   }
 
-  void lockAcquired() { RemoveImmediately = false; }
-};
+  return EC;
+}
 
-} // end anonymous namespace
-
-LockFileManager::LockFileManager(StringRef FileName)
-{
+LockFileManager::LockFileManager(StringRef FileName) {
   this->FileName = FileName;
   if (std::error_code EC = sys::fs::make_absolute(this->FileName)) {
     std::string S("failed to obtain absolute path for ");
@@ -172,72 +273,34 @@ LockFileManager::LockFileManager(StringRef FileName)
 
   // If the lock file already exists, don't bother to try to create our own
   // lock file; it won't work anyway. Just figure out who owns this lock file.
-  if ((Owner = readLockFile(LockFileName)))
+  if ((Reader = LockFileReader::subscribe(LockFileName)))
     return;
 
-  // Create a lock file that is unique to this instance.
-  UniqueLockFileName = LockFileName;
-  UniqueLockFileName += "-%%%%%%%%";
-  int UniqueLockFileID;
-  if (std::error_code EC = sys::fs::createUniqueFile(
-          UniqueLockFileName, UniqueLockFileID, UniqueLockFileName)) {
-    std::string S("failed to create unique file ");
-    S.append(std::string(UniqueLockFileName.str()));
-    setError(EC, S);
+  auto tWriter = LockFileWriter::create(LockFileName, ErrorCode, ErrorDiagMsg);
+  if (!tWriter)
     return;
-  }
-
-  // Write our process ID to our unique lock file.
-  {
-    SmallString<256> HostID;
-    if (auto EC = getHostID(HostID)) {
-      setError(EC, "failed to get host id");
-      return;
-    }
-
-    raw_fd_ostream Out(UniqueLockFileID, /*shouldClose=*/true);
-    Out << HostID << ' ' << sys::Process::getProcessId();
-    Out.close();
-
-    if (Out.has_error()) {
-      // We failed to write out PID, so report the error, remove the
-      // unique lock file, and fail.
-      std::string S("failed to write to ");
-      S.append(std::string(UniqueLockFileName.str()));
-      setError(Out.error(), S);
-      sys::fs::remove(UniqueLockFileName);
-      return;
-    }
-  }
-
-  // Clean up the unique file on signal, which also releases the lock if it is
-  // held since the .lock symlink will point to a nonexistent file.
-  RemoveUniqueLockFileOnSignal RemoveUniqueFile(UniqueLockFileName);
 
   while (true) {
     // Create a link from the lock file name. If this succeeds, we're done.
-    std::error_code EC =
-        sys::fs::create_link(UniqueLockFileName, LockFileName);
+    std::error_code EC = tWriter->acquire();
     if (!EC) {
-      RemoveUniqueFile.lockAcquired();
+      // Acquire
+      Writer = std::move(tWriter);
       return;
     }
 
     if (EC != errc::file_exists) {
       std::string S("failed to create link ");
       raw_string_ostream OSS(S);
-      OSS << LockFileName.str() << " to " << UniqueLockFileName.str();
+      OSS << LockFileName.str();
       setError(EC, OSS.str());
       return;
     }
 
     // Someone else managed to create the lock file first. Read the process ID
     // from the lock file.
-    if ((Owner = readLockFile(LockFileName))) {
-      // Wipe out our unique lock file (it's useless now)
-      sys::fs::remove(UniqueLockFileName);
+    if ((Reader = LockFileReader::subscribe(LockFileName)))
       return;
-    }
 
     if (!sys::fs::exists(LockFileName)) {
       // The previous owner released the lock file before we could read it.
@@ -249,15 +312,59 @@ LockFileManager::LockFileManager(StringRef FileName)
     // ownership.
     if ((EC = sys::fs::remove(LockFileName))) {
       std::string S("failed to remove lockfile ");
-      S.append(std::string(UniqueLockFileName.str()));
+      S.append(std::string(LockFileName));
       setError(EC, S);
       return;
     }
   }
 }
 
+LockFileWriter::LockFileWriter(StringRef LockFileName_,
+                               std::error_code &ErrorCode,
+                               std::string &ErrorDiagMsg)
+    : LockFileName(LockFileName_) {
+  auto setError = [&](const std::error_code &EC, StringRef ErrorMsg = "") {
+    ErrorCode = EC;
+    ErrorDiagMsg = ErrorMsg.str();
+  };
+
+  std::string LockFileID;
+  raw_string_ostream OSS(LockFileID);
+  if (auto EC = emitLockFileID(OSS)) {
+    setError(EC, "failed to get host id");
+    return;
+  }
+
+  // Create a pipe that is unique to this instance.
+  if (std::error_code EC = createUniquePipe(
+          Twine(LockFileName) + LockFileID + "-%%%%%%%%", UniqueLockFileName)) {
+    std::string S("failed to create unique pipe ");
+    S.append(std::string(LockFileName.str()));
+    setError(EC, S);
+    UniqueLockFileName.clear();
+    return;
+  }
+
+  // Clean up the unique file on signal, which also releases the lock if it is
+  // held since the .lock symlink will point to a nonexistent file.
+  sys::RemoveFileOnSignal(UniqueLockFileName, nullptr);
+
+  int rfd = ::open(UniqueLockFileName.c_str(), O_RDONLY | O_NONBLOCK);
+  if (rfd > 0) {
+    UniquePipeFD = ::open(UniqueLockFileName.c_str(), O_WRONLY | O_NONBLOCK);
+    if (UniquePipeFD <= 0) {
+      auto EC = std::error_code(errno, std::generic_category());
+      setError(EC, "unabled to open pipe for writing");
+    }
+    ::close(rfd);
+  } else {
+    auto EC = std::error_code(errno, std::generic_category());
+    setError(EC, "unabled to open pipe for reading");
+  }
+}
+
 LockFileManager::LockFileState LockFileManager::getState() const {
-  if (Owner)
+  if (Reader)
     return LFS_Shared;
 
   if (ErrorCode)
@@ -278,16 +385,35 @@ std::string LockFileManager::getErrorMessage() const {
   return "";
 }
 
-LockFileManager::~LockFileManager() {
-  if (getState() != LFS_Owned)
-    return;
+LockFileManager::~LockFileManager() {}
 
-  // Since we own the lock, remove the lock file and our own unique lock file.
-  sys::fs::remove(LockFileName);
-  sys::fs::remove(UniqueLockFileName);
+LockFileWriter::~LockFileWriter() {
+  // At first, remove the lock if it was acquired.
+  if (Acquired)
+    sys::fs::remove(LockFileName);
+  if (!UniqueLockFileName.empty())
+    // llvm::sys::fs::remove(pipe) doesn't work for a pipe.
+    ::unlink(UniqueLockFileName.c_str());
+  if (UniquePipeFD > 0) {
+    // Raise POLLHUP
+    ::close(UniquePipeFD);
+  }
+
   // The unique file is now gone, so remove it from the signal handler. This
   // matches a sys::RemoveFileOnSignal() in LockFileManager().
   sys::DontRemoveFileOnSignal(UniqueLockFileName);
+}
+
+std::error_code LockFileWriter::acquire() {
+  // Create a link from the lock file name. If this succeeds, we're done.
+  std::error_code EC = sys::fs::create_link(UniqueLockFileName, LockFileName);
+
+  if (!EC) {
+    Acquired = true;
+    return EC;
+  }
+
+  return EC;
 }
 
 LockFileManager::WaitForUnlockResult
@@ -317,7 +443,7 @@ LockFileManager::waitForUnlock(const unsigned MaxSeconds) {
     std::uniform_int_distribution<unsigned long> Distribution(1,
                                                               WaitMultiplier);
     unsigned long WaitDurationMS = MinWaitDurationMS * Distribution(Engine);
-    std::this_thread::sleep_for(std::chrono::milliseconds(WaitDurationMS));
+    Reader->Wait(WaitDurationMS);
 
     if (sys::fs::access(LockFileName.c_str(), sys::fs::AccessMode::Exist) ==
         errc::no_such_file_or_directory) {
@@ -328,7 +454,7 @@ LockFileManager::waitForUnlock(const unsigned MaxSeconds) {
     }
 
     // If the process owning the lock died without cleaning up, just bail out.
-    if (!processStillExecuting((*Owner).first, (*Owner).second))
+    if (!Reader->processStillExecuting())
       return Res_OwnerDied;
 
     WaitMultiplier *= 2;
