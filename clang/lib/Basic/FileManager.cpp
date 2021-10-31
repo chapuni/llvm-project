@@ -252,8 +252,8 @@ FileManager::getFileRef(StringRef Filename, bool openFile, bool CacheFailure) {
   // Check to see if the file exists.
   std::unique_ptr<llvm::vfs::File> F;
   llvm::vfs::Status Status;
-  auto statError = getStatValue(InterndFileName, Status, true,
-                                openFile ? &F : nullptr);
+  auto statError =
+      getStatValue(InterndFileName, Status, true, openFile ? &F : nullptr);
   if (statError) {
     // There's no real file at the given path.
     if (CacheFailure)
