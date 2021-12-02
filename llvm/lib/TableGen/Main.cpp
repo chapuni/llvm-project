@@ -23,6 +23,7 @@
 #include "llvm/Support/ToolOutputFile.h"
 #include "llvm/TableGen/Error.h"
 #include "llvm/TableGen/Record.h"
+#include <unistd.h>
 #include <algorithm>
 #include <cstdio>
 #include <system_error>
@@ -155,6 +156,14 @@ int llvm::TableGenMain(const char *argv0, TableGenMainFn *MainFn) {
   
   Records.stopTimer();
   Records.stopPhaseTiming();
+
+#if 1
+  {
+    if (const auto* xxx = ::getenv("XXX")) {
+      ::sleep(atoi(xxx));
+    }
+  }
+#endif
 
   if (ErrorsPrinted > 0)
     return reportError(argv0, Twine(ErrorsPrinted) + " errors.\n");
