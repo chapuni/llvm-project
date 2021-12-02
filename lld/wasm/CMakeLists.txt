@@ -1,6 +1,5 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(WasmOptionsTableGen)
 
 add_lld_library(lldWasm
   Driver.cpp
@@ -17,6 +16,7 @@ add_lld_library(lldWasm
   SyntheticSections.cpp
   Writer.cpp
   WriterUtils.cpp
+  Options.inc
 
   LINK_COMPONENTS
   ${LLVM_TARGETS_TO_BUILD}
@@ -34,6 +34,5 @@ add_lld_library(lldWasm
   lldCommon
 
   DEPENDS
-  WasmOptionsTableGen
   intrinsics_gen
   )

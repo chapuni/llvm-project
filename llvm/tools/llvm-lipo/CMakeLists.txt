@@ -10,12 +10,10 @@ set(LLVM_LINK_COMPONENTS
 
 set(LLVM_TARGET_DEFINITIONS LipoOpts.td)
 tablegen(LLVM LipoOpts.inc -gen-opt-parser-defs)
-add_public_tablegen_target(LipoOptsTableGen)
 
 add_llvm_tool(llvm-lipo
   llvm-lipo.cpp
-  DEPENDS
-  LipoOptsTableGen
+  LipoOpts.inc
 )
 
 if(LLVM_INSTALL_CCTOOLS_SYMLINKS)

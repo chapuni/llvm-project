@@ -5,7 +5,6 @@
 
 set(LLVM_TARGET_DEFINITIONS Opts.td)
 tablegen(LLVM Opts.inc -gen-opt-parser-defs)
-add_public_tablegen_target(SymbolizerOptsTableGen)
 
 set(LLVM_LINK_COMPONENTS
   DebugInfoDWARF
@@ -19,8 +18,7 @@ set(LLVM_LINK_COMPONENTS
 
 add_llvm_tool(llvm-symbolizer
   llvm-symbolizer.cpp
-  DEPENDS
-  SymbolizerOptsTableGen
+  Opts.inc
   )
 
 add_llvm_tool_symlink(llvm-addr2line llvm-symbolizer)

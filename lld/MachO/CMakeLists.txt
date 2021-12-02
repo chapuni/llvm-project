@@ -1,6 +1,5 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(MachOOptionsTableGen)
 
 include_directories(${LLVM_MAIN_SRC_DIR}/../libunwind/include)
 
@@ -31,6 +30,7 @@ add_lld_library(lldMachO
   Target.cpp
   UnwindInfoSection.cpp
   Writer.cpp
+  Options.inc
 
   LINK_COMPONENTS
   ${LLVM_TARGETS_TO_BUILD}
@@ -51,10 +51,6 @@ add_lld_library(lldMachO
   lldCommon
   ${LLVM_PTHREAD_LIB}
   ${XAR_LIB}
-
-  DEPENDS
-  MachOOptionsTableGen
-  ${tablegen_deps}
   )
 
 if(LLVM_HAVE_LIBXAR)

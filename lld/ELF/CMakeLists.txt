@@ -1,6 +1,5 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(ELFOptionsTableGen)
 
 add_lld_library(lldELF
   AArch64ErrataFix.cpp
@@ -41,6 +40,7 @@ add_lld_library(lldELF
   Target.cpp
   Thunks.cpp
   Writer.cpp
+  Options.inc
 
   LINK_COMPONENTS
   ${LLVM_TARGETS_TO_BUILD}
@@ -61,6 +61,5 @@ add_lld_library(lldELF
   ${LLVM_PTHREAD_LIB}
 
   DEPENDS
-  ELFOptionsTableGen
   intrinsics_gen
   )
