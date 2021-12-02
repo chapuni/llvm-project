@@ -23,6 +23,12 @@ endif()
 
 add_public_tablegen_target(X86CommonTableGen)
 
+target_include_directories(X86CommonTableGen
+  INTERFACE BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
 set(sources
   X86AsmPrinter.cpp
   X86AvoidTrailingCall.cpp
@@ -102,6 +108,12 @@ add_llvm_target(X86CodeGen ${sources}
   GlobalISel
   ProfileData
   CFGuard
+
+  LINK_LIBS
+  PUBLIC
+  X86CommonTableGen
+
+  PRIVATE
 
   ADD_TO_COMPONENT
   X86

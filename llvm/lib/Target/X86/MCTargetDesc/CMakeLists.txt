@@ -21,6 +21,10 @@ add_llvm_component_library(LLVMX86Desc
   X86Info
   BinaryFormat
 
+  LINK_LIBS
+  PRIVATE
+  X86CommonTableGen
+
   ADD_TO_COMPONENT
   X86
   )
