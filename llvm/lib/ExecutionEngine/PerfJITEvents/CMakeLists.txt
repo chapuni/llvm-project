@@ -9,5 +9,3 @@ add_llvm_component_library(LLVMPerfJITEvents
   Object
   Support
   )
-
-add_dependencies(LLVMPerfJITEvents LLVMCodeGen)

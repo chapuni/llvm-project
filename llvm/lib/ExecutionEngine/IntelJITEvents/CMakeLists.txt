@@ -52,5 +52,3 @@ add_llvm_component_library(LLVMIntelJITEvents
   Object
   ExecutionEngine
 )
-
-add_dependencies(LLVMIntelJITEvents LLVMCodeGen)
