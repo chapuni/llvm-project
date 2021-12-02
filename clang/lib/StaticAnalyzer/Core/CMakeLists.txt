@@ -60,8 +60,5 @@ add_clang_library(clangStaticAnalyzerCore
   clangLex
   clangRewrite
   clangToolingCore
-
-  DEPENDS
-  omp_gen
   )
 

@@ -87,9 +87,6 @@ add_clang_library(clangCodeGen
   TargetInfo.cpp
   VarBypassDetector.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_LIBS
   clangAnalysis
   clangAST

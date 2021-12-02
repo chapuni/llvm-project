@@ -2,9 +2,6 @@ set(LLVM_LINK_COMPONENTS BitWriter Core Object Support TransformUtils)
 
 add_clang_tool(clang-offload-wrapper
   ClangOffloadWrapper.cpp
-
-  DEPENDS
-  intrinsics_gen
   )
 
 set(CLANG_OFFLOAD_WRAPPER_LIB_DEPS

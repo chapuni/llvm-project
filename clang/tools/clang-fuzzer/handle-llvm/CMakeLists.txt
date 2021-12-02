@@ -18,7 +18,4 @@ set(LLVM_LINK_COMPONENTS
 
 add_clang_library(clangHandleLLVM
   handle_llvm.cpp
-
-  DEPENDS
-  intrinsics_gen
   )

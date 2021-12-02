@@ -5,8 +5,6 @@ set(LLVM_LINK_COMPONENTS
 
 add_clang_executable(clang-import-test
   clang-import-test.cpp
-  DEPENDS
-  intrinsics_gen
   )
 
 set(CLANG_IMPORT_TEST_LIB_DEPS

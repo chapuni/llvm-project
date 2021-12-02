@@ -23,7 +23,4 @@ add_clang_library(clangStaticAnalyzerFrontend
   clangLex
   clangStaticAnalyzerCheckers
   clangStaticAnalyzerCore
-
-  DEPENDS
-  omp_gen
   )

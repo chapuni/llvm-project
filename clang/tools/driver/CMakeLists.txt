@@ -31,7 +31,6 @@ add_clang_tool(clang
   cc1gen_reproducer_main.cpp
 
   DEPENDS
-  intrinsics_gen
   ${support_plugins}
   )
 

@@ -126,5 +126,4 @@ add_clang_library(clangAST
   DEPENDS
   ClangAttrDocTable
   Opcodes
-  omp_gen
   )
