@@ -9,7 +9,9 @@ add_llvm_component_library(LLVMLTO
 
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/LTO
-  DEPENDS
+
+  LINK_LIBS
+  PRIVATE
   llvm_vcsrevision_h
 
   LINK_COMPONENTS
