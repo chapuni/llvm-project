@@ -10,7 +10,7 @@ function(tablegen project ofn)
   endif()
 
   # Use depfile instead of globbing arbitrary *.td(s) for Ninja.
-  if(CMAKE_GENERATOR STREQUAL "Ninja")
+  if(FALSE AND CMAKE_GENERATOR STREQUAL "Ninja")
     # Make output path relative to build.ninja, assuming located on
     # ${CMAKE_BINARY_DIR}.
     # CMake emits build targets as relative paths but Ninja doesn't identify
@@ -92,7 +92,11 @@ function(tablegen project ofn)
   get_directory_property(tblgen_includes INCLUDE_DIRECTORIES)
   list(TRANSFORM tblgen_includes PREPEND -I)
 
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
+  string(SHA1 hash "${CMAKE_CURRENT_BINARY_DIR}/${ofn}")
+  set(xxxname ${ofn}_xxx_${hash})
+  add_custom_target(
+    ${xxxname}
+    BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
     COMMAND ${${project}_TABLEGEN_EXE} ${ARGN} -I ${CMAKE_CURRENT_SOURCE_DIR}
     ${tblgen_includes}
     ${LLVM_TABLEGEN_FLAGS}
@@ -102,12 +106,15 @@ function(tablegen project ofn)
     # The file in LLVM_TARGET_DEFINITIONS may be not in the current
     # directory and local_tds may not contain it, so we must
     # explicitly list it here:
-    DEPENDS ${${project}_TABLEGEN_TARGET} ${${project}_TABLEGEN_EXE}
+    DEPENDS
+    ${${project}_TABLEGEN_TARGET}
+    ${${project}_TABLEGEN_EXE}
       ${local_tds} ${global_tds}
     ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}
     ${LLVM_TARGET_DEPENDS}
     COMMENT "Building ${ofn}..."
     )
+  set_target_properties(${xxxname} PROPERTIES NOSIDEEFFECTS ON)
 
   # `make clean' must remove all those generated files:
   set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${ofn})
@@ -122,13 +129,31 @@ function(add_public_tablegen_target target)
   if(NOT TABLEGEN_OUTPUT)
     message(FATAL_ERROR "Requires tablegen() definitions as TABLEGEN_OUTPUT.")
   endif()
-  add_custom_target(${target}
-    DEPENDS ${TABLEGEN_OUTPUT})
+  #add_custom_target(${target}
+  #  DEPENDS ${TABLEGEN_OUTPUT})
+  add_library(${target} INTERFACE EXCLUDE_FROM_ALL)
+  # target_include_directories(${target} INTERFACE
+  #   $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+  #   $<INSTALL_INTERFACE:include>
+  #   )
+  target_sources(${target} PUBLIC ${TABLEGEN_OUTPUT})
+  set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${target})
+  #set_target_properties(${target} PROPERTIES NOSIDEEFFECTS ON)
+  install(TARGETS ${target}
+    EXPORT LLVMExports
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+    #LIBRARY PUBLIC_HEADER
+    )
   if(LLVM_COMMON_DEPENDS)
     add_dependencies(${target} ${LLVM_COMMON_DEPENDS})
   endif()
   set_target_properties(${target} PROPERTIES FOLDER "Tablegenning")
-  set(LLVM_COMMON_DEPENDS ${LLVM_COMMON_DEPENDS} ${target} PARENT_SCOPE)
+  #set(LLVM_COMMON_DEPENDS ${LLVM_COMMON_DEPENDS} ${target} PARENT_SCOPE)
+
+  # Sweep
+  set(TABLEGEN_OUTPUT PARENT_SCOPE)
 endfunction()
 
 macro(add_tablegen target project)
