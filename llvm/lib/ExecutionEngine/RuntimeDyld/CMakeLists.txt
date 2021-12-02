@@ -8,10 +8,6 @@ add_llvm_component_library(LLVMRuntimeDyld
   RuntimeDyldMachO.cpp
   Targets/RuntimeDyldELFMips.cpp
 
-  DEPENDS
-  intrinsics_gen
-
-
   LINK_COMPONENTS
   Core
   MC

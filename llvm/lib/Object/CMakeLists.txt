@@ -34,7 +34,6 @@ add_llvm_component_library(LLVMObject
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Object
 
   DEPENDS
-  intrinsics_gen
   llvm_vcsrevision_h
 
   LINK_COMPONENTS

@@ -10,6 +10,7 @@ set(LLVM_LINK_COMPONENTS
   MCDisassembler
   Object
   Support
+  Target
   )
 
 add_llvm_unittest(MCTests

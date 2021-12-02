@@ -11,9 +11,6 @@ set(LLVM_LINK_COMPONENTS
 
 add_llvm_tool(llvm-dwp
   llvm-dwp.cpp
-
-  DEPENDS
-  intrinsics_gen
   )
 
 if(LLVM_INSTALL_BINUTILS_SYMLINKS)

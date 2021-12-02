@@ -17,9 +17,6 @@ tablegen(LLVM Opts.inc -gen-opt-parser-defs)
 add_llvm_tool(llvm-nm
   llvm-nm.cpp
   Opts.inc
-
-  DEPENDS
-  intrinsics_gen
   )
 
 if(LLVM_INSTALL_BINUTILS_SYMLINKS)

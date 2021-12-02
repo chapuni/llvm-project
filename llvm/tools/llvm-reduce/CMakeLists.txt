@@ -31,7 +31,4 @@ add_llvm_tool(llvm-reduce
   deltas/ReduceOperands.cpp
   deltas/ReduceOperandsToArgs.cpp
   llvm-reduce.cpp
-
-  DEPENDS
-  intrinsics_gen
   )

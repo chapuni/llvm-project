@@ -24,7 +24,6 @@ add_llvm_tool(llc
   llc.cpp
 
   DEPENDS
-  intrinsics_gen
   SUPPORT_PLUGINS
   )
 

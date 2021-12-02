@@ -1,4 +1,5 @@
 set(LLVM_LINK_COMPONENTS
+  Core
   Support
   )
 
@@ -82,5 +83,3 @@ add_llvm_unittest(ADTTests
   )
 
 target_link_libraries(ADTTests PRIVATE LLVMTestingSupport)
-
-add_dependencies(ADTTests intrinsics_gen)

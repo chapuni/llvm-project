@@ -13,10 +13,6 @@ add_llvm_unittest(LLVMFrontendTests
   OpenMPContextTest.cpp
   OpenMPIRBuilderTest.cpp
   OpenMPParsingTest.cpp
-
-  DEPENDS
-  acc_gen
-  omp_gen
   )
 
 target_link_libraries(LLVMFrontendTests PRIVATE LLVMTestingSupport)

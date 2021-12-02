@@ -83,9 +83,6 @@ add_llvm_component_library(LLVMScalarOpts
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Transforms/Scalar
 
-  DEPENDS
-  intrinsics_gen
-
   COMPONENT_NAME
   Scalar
 

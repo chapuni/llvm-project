@@ -84,9 +84,6 @@ add_llvm_target(AArch64CodeGen
   SVEIntrinsicOpts.cpp
   AArch64SIMDInstrOpt.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   AArch64Desc
   AArch64Info

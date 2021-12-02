@@ -18,6 +18,5 @@ add_llvm_library( BugpointPasses MODULE BUILDTREE_ONLY
   TestPasses.cpp
 
   DEPENDS
-  intrinsics_gen
   bugpoint
   )

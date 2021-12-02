@@ -13,9 +13,6 @@ add_llvm_component_library(LLVMLibDriver
   LibDriver.cpp
   Options.inc
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   BinaryFormat
   BitReader

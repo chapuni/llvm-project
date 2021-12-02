@@ -5,9 +5,10 @@ add_llvm_component_library(LLVMFrontendOpenACC
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Frontend
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Frontend/OpenACC
 
-  DEPENDS
+  LINK_COMPONENTS
+  Support
+
+  LINK_LIBS
+  PRIVATE
   acc_gen
 )
-
-target_link_libraries(LLVMFrontendOpenACC LLVMSupport)
-

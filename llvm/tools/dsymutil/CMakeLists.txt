@@ -28,9 +28,6 @@ add_llvm_tool(dsymutil
   Reproducer.cpp
   SymbolMap.cpp
   Options.inc
-
-  DEPENDS
-  intrinsics_gen
   )
 
 if(APPLE)

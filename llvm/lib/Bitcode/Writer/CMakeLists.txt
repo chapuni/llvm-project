@@ -4,9 +4,6 @@ add_llvm_component_library(LLVMBitWriter
   BitcodeWriterPass.cpp
   ValueEnumerator.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   Analysis
   Core

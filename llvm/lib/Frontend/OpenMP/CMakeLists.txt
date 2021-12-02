@@ -7,9 +7,11 @@ add_llvm_component_library(LLVMFrontendOpenMP
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Frontend
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Frontend/OpenMP
 
-  DEPENDS
-  intrinsics_gen
+  LINK_LIBS
+  PUBLIC
   omp_gen
+
+  PRIVATE
 
   LINK_COMPONENTS
   Core

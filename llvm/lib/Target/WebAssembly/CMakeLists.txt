@@ -60,9 +60,6 @@ add_llvm_target(WebAssemblyCodeGen
   WebAssemblyTargetObjectFile.cpp
   WebAssemblyTargetTransformInfo.cpp
 
-  DEPENDS
-  intrinsics_gen
-
   LINK_COMPONENTS
   Analysis
   AsmPrinter

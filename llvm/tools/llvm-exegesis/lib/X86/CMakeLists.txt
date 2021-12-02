@@ -16,8 +16,4 @@ add_llvm_library(LLVMExegesisX86
   STATIC
   Target.cpp
   X86Counter.cpp
-
-  DEPENDS
-  intrinsics_gen
-  X86CommonTableGen
   )

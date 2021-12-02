@@ -17,8 +17,5 @@ set(LLVM_LINK_COMPONENTS
 
 add_llvm_tool(llvm-lto2
   llvm-lto2.cpp
-
-  DEPENDS
-  intrinsics_gen
   )
 export_executable_symbols_for_plugins(llvm-lto2)

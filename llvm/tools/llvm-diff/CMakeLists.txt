@@ -6,9 +6,6 @@ set(LLVM_LINK_COMPONENTS
 
 add_llvm_tool(llvm-diff
   llvm-diff.cpp
-
-  DEPENDS
-  intrinsics_gen
   )
 
 add_subdirectory(lib)

@@ -14,8 +14,4 @@ add_llvm_library(LLVMExegesisAArch64
   DISABLE_LLVM_LINK_LLVM_DYLIB
   STATIC
   Target.cpp
-
-  DEPENDS
-  intrinsics_gen
-  AArch64CommonTableGen
   )

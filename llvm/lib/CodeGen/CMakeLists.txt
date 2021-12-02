@@ -203,9 +203,10 @@ add_llvm_component_library(LLVMCodeGen
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/CodeGen/PBQP
 
   LINK_LIBS ${LLVM_PTHREAD_LIB}
+  PUBLIC
+  intrinsics_gen # llvm/CodeGen/AsmPrinter.h
 
-  DEPENDS
-  intrinsics_gen
+  PRIVATE
 
   LINK_COMPONENTS
   Analysis
