@@ -32,7 +32,4 @@ add_lld_library(lldWasm
 
   LINK_LIBS
   lldCommon
-
-  DEPENDS
-  intrinsics_gen
   )

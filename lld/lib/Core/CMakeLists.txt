@@ -18,7 +18,4 @@ add_lld_library(lldCore
 
   LINK_LIBS
   ${LLVM_PTHREAD_LIB}
-
-  DEPENDS
-  intrinsics_gen
   )

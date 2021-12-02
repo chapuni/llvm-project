@@ -12,7 +12,4 @@ add_lld_library(lldMinGW
   LINK_LIBS
   lldCOFF
   lldCommon
-
-  DEPENDS
-  intrinsics_gen
 )

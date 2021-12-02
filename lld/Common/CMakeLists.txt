@@ -54,7 +54,4 @@ add_lld_library(lldCommon
 
   LINK_LIBS
   ${LLD_SYSTEM_LIBS}
-
-  DEPENDS
-  intrinsics_gen
   )

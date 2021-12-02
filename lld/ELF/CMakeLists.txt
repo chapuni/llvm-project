@@ -59,7 +59,4 @@ add_lld_library(lldELF
   LINK_LIBS
   lldCommon
   ${LLVM_PTHREAD_LIB}
-
-  DEPENDS
-  intrinsics_gen
   )
