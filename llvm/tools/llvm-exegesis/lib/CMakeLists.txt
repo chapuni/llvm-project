@@ -66,7 +66,8 @@ add_llvm_library(LLVMExegesis
   UopsBenchmarkRunner.cpp
 
   LINK_LIBS ${libs}
+  PUBLIC
+  attributes_gen
 
-  DEPENDS
-  intrinsics_gen
+  PRIVATE
   )

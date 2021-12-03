@@ -13,8 +13,10 @@ endif()
 add_llvm_library( LLVMHello MODULE BUILDTREE_ONLY
   Hello.cpp
 
-  DEPENDS
-  intrinsics_gen
+  LINK_LIBS
+  PRIVATE
+  attributes_gen
+
   PLUGIN_TOOL
   opt
   )

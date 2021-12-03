@@ -8,8 +8,11 @@ add_llvm_component_library(LLVMBitReader
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Bitcode
 
-  DEPENDS
-  intrinsics_gen
+  LINK_LIBS
+  PUBLIC
+  attributes_gen
+
+  PRIVATE
 
   LINK_COMPONENTS
   BitstreamReader

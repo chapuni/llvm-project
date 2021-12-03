@@ -7,8 +7,9 @@ add_llvm_component_library(LLVMDWARFLinker
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/DWARFLinker
 
-  DEPENDS
-  intrinsics_gen
+  LINK_LIBS
+  PRIVATE
+  attributes_gen # Target,IR
 
   LINK_COMPONENTS
   BinaryFormat

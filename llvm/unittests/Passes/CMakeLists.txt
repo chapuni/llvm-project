@@ -26,7 +26,14 @@ if (NOT WIN32)
 
   set(LLVM_LINK_COMPONENTS)
   foreach(PLUGIN TestPlugin DoublerPlugin)
-    add_llvm_library(${PLUGIN} MODULE BUILDTREE_ONLY ${PLUGIN}.cpp)
+    add_llvm_library(${PLUGIN} MODULE
+      BUILDTREE_ONLY
+      ${PLUGIN}.cpp
+
+      LINK_LIBS
+      PRIVATE
+      attributes_gen
+      )
 
     # Put PLUGIN next to the unit test executable.
     set_output_directory(${PLUGIN}
@@ -35,7 +42,6 @@ if (NOT WIN32)
       )
     set_target_properties(${PLUGIN} PROPERTIES FOLDER "Tests")
 
-    add_dependencies(${PLUGIN} intrinsics_gen)
     add_dependencies(PluginsTests ${PLUGIN})
   endforeach()
 

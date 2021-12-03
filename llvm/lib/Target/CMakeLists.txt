@@ -1,5 +1,3 @@
-list(APPEND LLVM_COMMON_DEPENDS intrinsics_gen)
-
 list(APPEND LLVM_TABLEGEN_FLAGS -I ${LLVM_MAIN_SRC_DIR}/lib/Target)
 
 add_llvm_component_library(LLVMTarget
@@ -17,6 +15,12 @@ add_llvm_component_library(LLVMTarget
   Core
   MC
   Support
+
+  LINK_LIBS
+  PUBLIC
+  attributes_gen
+
+  PRIVATE
   )
 
 # When building shared objects for each target there are some internal APIs

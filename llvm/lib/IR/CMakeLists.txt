@@ -68,8 +68,11 @@ add_llvm_component_library(LLVMCore
   LINK_LIBS
   ${LLVM_PTHREAD_LIB}
 
-  DEPENDS
+  PUBLIC
+  attributes_gen
   intrinsics_gen
+
+  PRIVATE
 
   LINK_COMPONENTS
   BinaryFormat

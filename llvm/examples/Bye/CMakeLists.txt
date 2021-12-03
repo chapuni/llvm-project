@@ -9,8 +9,11 @@ endif()
 if (NOT WIN32)
   add_llvm_pass_plugin(Bye
     Bye.cpp
-    DEPENDS
-    intrinsics_gen
+
+    LINK_LIBS
+    PRIVATE
+    attributes_gen
+
     BUILDTREE_ONLY
    )
 
