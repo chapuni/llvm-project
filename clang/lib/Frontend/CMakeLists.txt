@@ -41,9 +41,6 @@ add_clang_library(clangFrontend
   VerifyDiagnosticConsumer.cpp
   InterfaceStubFunctionsConsumer.cpp
 
-  DEPENDS
-  ClangDriverOptions
-
   LINK_LIBS
   clangAST
   clangBasic
@@ -53,4 +50,10 @@ add_clang_library(clangFrontend
   clangParse
   clangSema
   clangSerialization
+
+  PUBLIC
+  # clangStaticAnalyzerCheckers
+  ClangSACheckers
+
+  PRIVATE
   )

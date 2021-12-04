@@ -94,4 +94,10 @@ add_clang_library(clangCodeGen
   clangFrontend
   clangLex
   clangSerialization
+
+  PRIVATE
+  ClangARMCdeBuiltinCG
+  ClangARMMveBuiltinCG
+  ClangARMSveBuiltinCG
+  ClangRISCVVectorBuiltinCG
   )

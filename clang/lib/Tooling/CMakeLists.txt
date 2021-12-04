@@ -117,9 +117,6 @@ add_clang_library(clangTooling
   ${BINARY_INCLUDE_DIR}/NodeIntrospection.inc
   Tooling.cpp
 
-  DEPENDS
-  ClangDriverOptions
-
   LINK_LIBS
   clangAST
   clangASTMatchers

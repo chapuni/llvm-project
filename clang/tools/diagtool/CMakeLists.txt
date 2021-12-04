@@ -16,4 +16,8 @@ clang_target_link_libraries(diagtool
   PRIVATE
   clangBasic
   clangFrontend
+
+  PRIVATE
+  # clangBasic
+  ClangDiagnosticIndexName
   )

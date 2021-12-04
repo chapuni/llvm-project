@@ -19,6 +19,7 @@ add_clang_library(clangToolingRefactoring
   clangASTMatchers
   clangBasic
   clangFormat
+  clangFrontend # for ClangSACheckers
   clangIndex
   clangLex
   clangRewrite

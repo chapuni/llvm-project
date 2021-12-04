@@ -27,4 +27,8 @@ add_clang_library(clangParse
   clangBasic
   clangLex
   clangSema
+
+  PRIVATE
+  ClangAttrParserStringSwitches
+  ClangAttrSubMatchRulesParserStringSwitches
   )

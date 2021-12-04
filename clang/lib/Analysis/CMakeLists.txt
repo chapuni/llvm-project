@@ -38,6 +38,10 @@ add_clang_library(clangAnalysis
   clangASTMatchers
   clangBasic
   clangLex
+
+  PRIVATE
+  # clangAST
+  StmtDataCollectors
   )
 
 add_subdirectory(plugins)

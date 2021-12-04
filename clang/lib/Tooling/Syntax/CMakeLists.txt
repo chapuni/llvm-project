@@ -15,4 +15,8 @@ add_clang_library(clangToolingSyntax
   clangFrontend
   clangLex
   clangToolingCore
+
+  PRIVATE
+  ClangSyntaxNodeClasses
+  ClangSyntaxNodeList
   )

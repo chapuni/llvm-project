@@ -63,8 +63,7 @@ add_clang_library(clangSema
   SemaType.cpp
   TypeLocBuilder.cpp
 
-  DEPENDS
-  ClangOpenCLBuiltinsImpl
+  OpenCLBuiltins.inc
 
   LINK_LIBS
   clangAST
@@ -72,4 +71,15 @@ add_clang_library(clangSema
   clangBasic
   clangEdit
   clangLex
+
+  PRIVATE
+  ClangAttrParsedAttrImpl
+  ClangAttrTemplateInstantiate
+
+  # clangBasic
+  ClangARMCdeBuiltinAliases
+  ClangARMCdeBuiltinSema
+  ClangARMMveBuiltinAliases
+  ClangARMMveBuiltinSema
+  ClangARMSveSemaRangeChecks
   )

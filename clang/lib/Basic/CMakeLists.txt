@@ -101,5 +101,43 @@ add_clang_library(clangBasic
   XRayInstr.cpp
   XRayLists.cpp
   ${version_inc}
+
+  LINK_LIBS
+
+  PUBLIC
+  ClangARMCdeBuiltinsDef
+  ClangARMFP16
+  ClangARMMveBuiltinsDef
+  ClangARMNeon
+  ClangARMSveBuiltins
+  ClangARMSveTypeFlags
+  ClangAttrSubjectMatchRuleList
+  ClangDiagnosticAST
+  ClangDiagnosticComment
+  ClangDiagnosticCommon
+  ClangDiagnosticCrossTU
+  ClangDiagnosticDriver
+  ClangDiagnosticFrontend
+  ClangDiagnosticGroups
+  ClangDiagnosticLex
+  ClangDiagnosticParse
+  ClangDiagnosticRefactoring
+  ClangDiagnosticSema
+  ClangDiagnosticSerialization
+  ClangRISCVVectorBuiltins
+
+  # clangSema
+  ClangAttrParsedAttrList
+
+  # LLVMFrontendOpenMP
+  omp_gen
+
+  PRIVATE
+  ClangDiagnosticAnalysis
+
+  PRIVATE
+  ClangAttrHasAttributeImpl
+  ClangAttrParsedAttrKinds
+  ClangAttrSpellingListIndex
   )
 

@@ -4,6 +4,7 @@ set(LLVM_LINK_COMPONENTS
   )
 
 set(link_libs
+  clangAST # for inclusions
   clangBasic
   clangCodeGen
   clangDriver
@@ -25,9 +26,6 @@ endif()
 
 add_clang_library(clangFrontendTool
   ExecuteCompilerInvocation.cpp
-
-  DEPENDS
-  ClangDriverOptions
 
   LINK_LIBS
   ${link_libs}

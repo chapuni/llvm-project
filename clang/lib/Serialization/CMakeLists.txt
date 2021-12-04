@@ -30,4 +30,18 @@ add_clang_library(clangSerialization
   clangBasic
   clangLex
   clangSema
+
+  PRIVATE
+
+  PUBLIC
+  ClangAttrPCHRead
+  ClangAttrPCHWrite
+
+  # clangAST
+  ClangAbstractBasicReader
+  ClangAbstractBasicWriter
+  ClangAbstractTypeReader
+  ClangAbstractTypeWriter
+
+  PRIVATE
   )

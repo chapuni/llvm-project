@@ -119,11 +119,33 @@ add_clang_library(clangAST
   VTableBuilder.cpp
   VTTBuilder.cpp
 
+  AttrDocTable.inc
+  Opcodes.inc
+
   LINK_LIBS
   clangBasic
   clangLex
 
-  DEPENDS
-  ClangAttrDocTable
-  Opcodes
+  PUBLIC
+  ClangAttrClasses
+  ClangAttrVisitor
+  ClangCommentCommandList
+  ClangCommentNodes
+  ClangDeclNodes
+  ClangStmtNodes
+  ClangTypeNodes
+
+  # clangBasic
+  ClangAttrList
+
+  PRIVATE
+  ClangAttrTextDump
+  ClangAttrTraverse
+
+  PRIVATE
+  ClangAttrImpl
+  ClangCommentCommandInfo
+  ClangCommentHTMLNamedCharacterReferences
+  ClangCommentHTMLTags
+  ClangCommentHTMLTagsProperties
   )
