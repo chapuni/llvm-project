@@ -676,6 +676,14 @@ function(llvm_add_library name)
       ${llvm_libs}
       )
 
+  if (TARGET obj.${name})
+    target_link_libraries(obj.${name} ${libtype}
+      ${ARG_LINK_LIBS}
+      ${lib_deps}
+      ${llvm_libs}
+      )
+  endif()
+
   if(LLVM_COMMON_DEPENDS)
     add_dependencies(${name} ${LLVM_COMMON_DEPENDS})
     # Add dependencies also to objlibs.
