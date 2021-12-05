@@ -14,7 +14,7 @@ if(lld_vc AND LLVM_APPEND_VC_REV)
   set(lld_source_dir ${LLD_SOURCE_DIR})
 endif()
 
-add_custom_command(OUTPUT "${version_inc}"
+add_custom_target(LLDVERXXX BYPRODUCTS "${version_inc}"
   DEPENDS "${lld_vc}" "${generate_vcs_version_script}"
   COMMAND ${CMAKE_COMMAND} "-DNAMES=LLD"
   "-DLLD_SOURCE_DIR=${lld_source_dir}"
@@ -36,8 +36,9 @@ add_lld_library(lldCommon
   Strings.cpp
   TargetOptionsCommandFlags.cpp
   Timer.cpp
-  VCSVersion.inc
   Version.cpp
+
+  ${version_inc}
 
   ADDITIONAL_HEADER_DIRS
   ${LLD_INCLUDE_DIR}/lld/Common

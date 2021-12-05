@@ -18,7 +18,7 @@ if(clang_vc AND LLVM_APPEND_VC_REV)
 endif()
 
 # Create custom target to generate the VC revision include.
-add_custom_target(XXXCLANGVER OUTPUT "${version_inc}"
+add_custom_target(XXXCLANGVER BYPRODUCTS "${version_inc}"
   DEPENDS "${llvm_vc}" "${clang_vc}" "${generate_vcs_version_script}"
   COMMAND ${CMAKE_COMMAND} "-DNAMES=\"LLVM;CLANG\""
                            "-DLLVM_SOURCE_DIR=${llvm_source_dir}"
