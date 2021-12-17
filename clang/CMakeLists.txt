@@ -504,7 +504,7 @@ add_custom_target(clang-tablegen-targets
   DEPENDS
   ${CLANG_TABLEGEN_TARGETS})
 set_target_properties(clang-tablegen-targets PROPERTIES FOLDER "Misc")
-list(APPEND LLVM_COMMON_DEPENDS clang-tablegen-targets)
+#list(APPEND LLVM_COMMON_DEPENDS clang-tablegen-targets)
 
 add_subdirectory(lib)
 add_subdirectory(tools)

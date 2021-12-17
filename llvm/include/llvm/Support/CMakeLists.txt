@@ -23,14 +23,16 @@ endif()
 
 # Create custom target to generate the VC revision include.
 if (fake_version_inc)
-  add_custom_target(XXXVER BYPRODUCTS "${version_inc}" "${fake_version_inc}"
+  add_custom_command(OUTPUT "${version_inc}" "${fake_version_inc}"
+    NOSIDEEFFECTS
     DEPENDS "${llvm_vc}" "${generate_vcs_version_script}"
     COMMAND ${CMAKE_COMMAND} "-DNAMES=LLVM"
                              "-DLLVM_SOURCE_DIR=${llvm_source_dir}"
                              "-DHEADER_FILE=${version_inc}"
                              -P "${generate_vcs_version_script}")
 else()
-  add_custom_target(XXXVER BYPRODUCTS "${version_inc}"
+  add_custom_command(OUTPUT "${version_inc}"
+    NOSIDEEFFECTS
     DEPENDS "${llvm_vc}" "${generate_vcs_version_script}"
     COMMAND ${CMAKE_COMMAND} "-DNAMES=LLVM"
                              "-DLLVM_SOURCE_DIR=${llvm_source_dir}"
@@ -43,16 +45,15 @@ set_source_files_properties("${version_inc}"
   PROPERTIES GENERATED TRUE
              HEADER_FILE_ONLY TRUE)
 
-#add_custom_target(llvm_vcsrevision_h ALL DEPENDS "${generated_files}")
-add_library(llvm_vcsrevision_h INTERFACE)
-target_sources(llvm_vcsrevision_h INTERFACE "${version_inc}")
-target_link_libraries(LLVMSupport PUBLIC llvm_vcsrevision_h)
-  set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS llvm_vcsrevision_h)
-install(TARGETS llvm_vcsrevision_h
-  EXPORT LLVMExports
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-  )
+add_library(llvm_vcsrevision_h INTERFACE EXCLUDE_FROM_ALL)
+target_sources(llvm_vcsrevision_h PUBLIC "${version_inc}")
+#target_link_libraries(LLVMSupport PUBLIC llvm_vcsrevision_h)
+set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS llvm_vcsrevision_h)
+# install(TARGETS llvm_vcsrevision_h
+#   EXPORT LLVMExports
+#   ARCHIVE DESTINATION lib
+#   LIBRARY DESTINATION lib
+#   RUNTIME DESTINATION bin
+#   )
 
 set_target_properties(llvm_vcsrevision_h PROPERTIES FOLDER "Misc")

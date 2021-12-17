@@ -14,7 +14,8 @@ if(lld_vc AND LLVM_APPEND_VC_REV)
   set(lld_source_dir ${LLD_SOURCE_DIR})
 endif()
 
-add_custom_target(LLDVERXXX BYPRODUCTS "${version_inc}"
+add_custom_command(OUTPUT "${version_inc}"
+  NOSIDEEFFECTS
   DEPENDS "${lld_vc}" "${generate_vcs_version_script}"
   COMMAND ${CMAKE_COMMAND} "-DNAMES=LLD"
   "-DLLD_SOURCE_DIR=${lld_source_dir}"

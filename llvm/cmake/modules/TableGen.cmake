@@ -10,7 +10,7 @@ function(tablegen project ofn)
   endif()
 
   # Use depfile instead of globbing arbitrary *.td(s) for Ninja.
-  if(FALSE AND CMAKE_GENERATOR STREQUAL "Ninja")
+  if(CMAKE_GENERATOR STREQUAL "Ninja")
     # Make output path relative to build.ninja, assuming located on
     # ${CMAKE_BINARY_DIR}.
     # CMake emits build targets as relative paths but Ninja doesn't identify
@@ -92,12 +92,9 @@ function(tablegen project ofn)
   get_directory_property(tblgen_includes INCLUDE_DIRECTORIES)
   list(TRANSFORM tblgen_includes PREPEND -I)
 
-  string(SHA1 hash "${CMAKE_CURRENT_BINARY_DIR}/${ofn}")
-  set(xxxname ${ofn}_xxx_${hash})
-  add_custom_target(
-    ${xxxname}
-    BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
     COMMAND ${${project}_TABLEGEN_EXE} ${ARGN} -I ${CMAKE_CURRENT_SOURCE_DIR}
+    NOSIDEEFFECTS
     ${tblgen_includes}
     ${LLVM_TABLEGEN_FLAGS}
     ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}
@@ -114,7 +111,6 @@ function(tablegen project ofn)
     ${LLVM_TARGET_DEPENDS}
     COMMENT "Building ${ofn}..."
     )
-  set_target_properties(${xxxname} PROPERTIES NOSIDEEFFECTS ON)
 
   # `make clean' must remove all those generated files:
   set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${ofn})
@@ -139,13 +135,13 @@ function(add_public_tablegen_target target)
   target_sources(${target} PUBLIC ${TABLEGEN_OUTPUT})
   set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${target})
   #set_target_properties(${target} PROPERTIES NOSIDEEFFECTS ON)
-  install(TARGETS ${target}
-    EXPORT LLVMExports
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
-    #LIBRARY PUBLIC_HEADER
-    )
+  # install(TARGETS ${target}
+  #   EXPORT LLVMExports
+  #   ARCHIVE DESTINATION lib
+  #   LIBRARY DESTINATION lib
+  #   RUNTIME DESTINATION bin
+  #   #LIBRARY PUBLIC_HEADER
+  #   )
   if(LLVM_COMMON_DEPENDS)
     add_dependencies(${target} ${LLVM_COMMON_DEPENDS})
   endif()

@@ -33,8 +33,9 @@ add_llvm_component_library(LLVMObject
   ADDITIONAL_HEADER_DIRS
   ${LLVM_MAIN_INCLUDE_DIR}/llvm/Object
 
-  DEPENDS
-  llvm_vcsrevision_h
+  # LINK_LIBS
+  # PRIVATE
+  # llvm_vcsrevision_h
 
   LINK_COMPONENTS
   BitReader
@@ -45,3 +46,5 @@ add_llvm_component_library(LLVMObject
   Support
   TextAPI
   )
+
+add_dependencies(LLVMObject llvm_vcsrevision_h)
