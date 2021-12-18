@@ -75,6 +75,7 @@ else()
 
   add_custom_command(
       COMMENT Generate NodeIntrospection.inc
+      NOSIDEEFFECTS
       OUTPUT ${BINARY_INCLUDE_DIR}/NodeIntrospection.inc
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ASTNodeAPI.json
         ${CMAKE_CURRENT_SOURCE_DIR}/DumpTool/generate_cxx_src_locs.py
