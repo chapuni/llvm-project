@@ -8,6 +8,7 @@ add_clang_unittest(RewriteTests
   )
 clang_target_link_libraries(RewriteTests
   PRIVATE
+  clangAST
   clangFrontend
   clangRewrite
   clangSerialization

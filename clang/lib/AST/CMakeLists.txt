@@ -138,6 +138,9 @@ add_clang_library(clangAST
   # clangBasic
   ClangAttrList
 
+  # LLVMFrontendOpenMP
+  omp_gen
+
   PRIVATE
   ClangAttrTextDump
   ClangAttrTraverse
