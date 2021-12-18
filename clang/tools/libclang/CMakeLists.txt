@@ -122,7 +122,6 @@ add_clang_library(libclang ${ENABLE_SHARED} ${ENABLE_STATIC} INSTALL_WITH_TOOLCH
   ${SOURCES}
 
   DEPENDS
-  ClangDriverOptions
   clang-resource-headers
 
   LINK_LIBS
