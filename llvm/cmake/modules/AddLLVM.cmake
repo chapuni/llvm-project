@@ -1820,7 +1820,7 @@ function(add_lit_testsuite target comment)
 endfunction()
 
 function(add_lit_testsuites project directory)
-  if (NOT LLVM_ENABLE_IDE)
+  if (FALSE)
     cmake_parse_arguments(ARG "EXCLUDE_FROM_CHECK_ALL" "" "PARAMS;DEPENDS;ARGS" ${ARGN})
 
     # Search recursively for test directories by assuming anything not
