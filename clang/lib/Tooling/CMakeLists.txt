@@ -54,6 +54,7 @@ else()
 
   add_custom_command(
       COMMENT Generate ASTNodeAPI.json
+      NOSIDEEFFECTS
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ASTNodeAPI.json
       DEPENDS clang-ast-dump clang-resource-headers
       COMMAND
