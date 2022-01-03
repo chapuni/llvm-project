@@ -42,7 +42,6 @@ add_clang_library(clangFrontend
   InterfaceStubFunctionsConsumer.cpp
 
   LINK_LIBS
-  clangAST
   clangBasic
   clangDriver
   clangEdit
@@ -54,6 +53,9 @@ add_clang_library(clangFrontend
   PUBLIC
   # clangStaticAnalyzerCheckers
   ClangSACheckers
+
+  # FrontendAction.h, ASTUnit.h
+  clangAST
 
   PRIVATE
   )
