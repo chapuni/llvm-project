@@ -21,6 +21,62 @@
 #include <cstring>
 #include <limits>
 
+#if 1
+#include <any>
+#include <barrier>
+#include <cassert>
+#include <cfenv>
+#include <cfloat>
+#include <cinttypes>
+#include <ciso646>
+#include <codecvt>
+#include <condition_variable>
+#include <csetjmp>
+#include <csignal>
+#include <cstdbool>
+#include <execution>
+#include <experimental/algorithm>
+#include <experimental/deque>
+#include <experimental/filesystem>
+#include <experimental/forward_list>
+#include <experimental/functional>
+#include <experimental/iterator>
+#include <experimental/list>
+#include <experimental/map>
+#include <experimental/propagate_const>
+#include <experimental/regex>
+#include <experimental/set>
+#include <experimental/simd>
+#include <experimental/type_traits>
+#include <experimental/unordered_map>
+#include <experimental/unordered_set>
+#include <experimental/vector>
+#include <format>
+#include <fstream>
+#include <future>
+#include <iostream>
+#include <latch>
+#include <numbers>
+#include <queue>
+#include <random>
+#include <ranges>
+#include <scoped_allocator>
+#include <semaphore>
+#include <shared_mutex>
+#include <stack>
+#include <strstream>
+#include <typeindex>
+#include <valarray>
+#include <complex.h>
+#include <stdbool.h>
+#include <tgmath.h>
+#endif
+
+#if 0
+#include <coroutine>
+#include <experimental/coroutine>
+#endif
+
 using namespace llvm;
 
 using llvm::itanium_demangle::OutputBuffer;
