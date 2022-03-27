@@ -622,12 +622,6 @@ module std [system] {
       module weibull_distribution            { private header "__random/weibull_distribution.h" }
     }
   }
-  module ranges {
-    header "ranges"
-    export compare
-    export initializer_list
-    export iterator
-    export *
 
     module __ranges {
       module access                 { private header "__ranges/access.h" }
@@ -668,7 +662,6 @@ module std [system] {
       }
       module view_interface         { private header "__ranges/view_interface.h" }
     }
-  }
   module ratio {
     header "ratio"
     export *
@@ -961,6 +954,14 @@ module std [system] {
   module queue {
     header "queue"
     export initializer_list
+    export *
+  }
+
+  module ranges {
+    header "ranges"
+    export compare
+    export initializer_list
+    export iterator
     export *
   }
 
