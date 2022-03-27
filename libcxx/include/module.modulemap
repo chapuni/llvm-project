@@ -578,11 +578,6 @@ module std [system] {
     // FIXME: should re-export ios, streambuf?
     export *
   }
-  module random {
-    header "random"
-    export initializer_list
-    export *
-
     module __random {
       module bernoulli_distribution          { private header "__random/bernoulli_distribution.h" }
       module binomial_distribution           { private header "__random/binomial_distribution.h" }
@@ -621,7 +616,6 @@ module std [system] {
       module uniform_real_distribution       { private header "__random/uniform_real_distribution.h" }
       module weibull_distribution            { private header "__random/weibull_distribution.h" }
     }
-  }
 
     module __ranges {
       module access                 { private header "__ranges/access.h" }
@@ -953,6 +947,12 @@ module std [system] {
 
   module queue {
     header "queue"
+    export initializer_list
+    export *
+  }
+
+  module random {
+    header "random"
     export initializer_list
     export *
   }
