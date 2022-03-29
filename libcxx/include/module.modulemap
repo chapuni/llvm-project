@@ -311,12 +311,6 @@ module std [system] {
       module byteswap { private header "__bit/byteswap.h" }
     }
   }
-  module bitset {
-    header "bitset"
-    export string
-    export iosfwd
-    export *
-  }
   // No submodule for cassert. It fundamentally needs repeated, textual inclusion.
   module chrono {
     header "chrono"
@@ -744,6 +738,13 @@ module std [system] {
   module barrier {
     requires cplusplus14
     header "barrier"
+    export *
+  }
+
+  module bitset {
+    header "bitset"
+    export string
+    export iosfwd
     export *
   }
 
