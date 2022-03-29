@@ -433,11 +433,6 @@ module std [system] {
     header "iosfwd"
     export *
   }
-  module istream {
-    header "istream"
-    // FIXME: should re-export ios, streambuf?
-    export *
-  }
   module iterator {
     header "iterator"
     export *
@@ -739,7 +734,6 @@ module std [system] {
   module __node_handle       { private header "__node_handle"       export * }
   module __nullptr           {         header "__nullptr"           export * }
   module __split_buffer      { private header "__split_buffer"      export * }
-  module __std_stream        { private header "__std_stream"        export * }
   module __string            { private header "__string"            export * }
   module __threading_support {         header "__threading_support" export * }
   module __tree              {         header "__tree"              export * }
@@ -918,6 +912,13 @@ module std [system] {
     export istream
     export ostream
     export *
+  }
+
+  module istream {
+    header "istream"
+    // FIXME: should re-export ios, streambuf?
+    export *
+  module __std_stream        { private header "__std_stream"        export * }
   }
 
   module latch {
