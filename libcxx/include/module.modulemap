@@ -539,11 +539,6 @@ module std [system] {
     header "optional"
     export *
   }
-  module ostream {
-    header "ostream"
-    // FIXME: should re-export ios, streambuf?
-    export *
-  }
     module __random {
       module bernoulli_distribution          { private header "__random/bernoulli_distribution.h" }
       module binomial_distribution           { private header "__random/binomial_distribution.h" }
@@ -941,6 +936,12 @@ module std [system] {
 
   module numbers {
     header "numbers"
+    export *
+  }
+
+  module ostream {
+    header "ostream"
+    // FIXME: should re-export ios, streambuf?
     export *
   }
 
