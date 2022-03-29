@@ -92,30 +92,11 @@ module std [system] {
     }
   }
 
-  // <complex.h> and <tgmath.h> are not C headers in any real sense, do not
-  // allow their use in extern "C" contexts.
-  module complex_h {
-    header "complex.h"
-    export ccomplex
-    export *
-  }
-  module tgmath_h {
-    header "tgmath.h"
-    export ccomplex
-    export cmath
-    export *
-  }
-
   // C compatibility headers.
   module compat {
     module cassert {
       // <cassert>'s use of NDEBUG requires textual inclusion.
       textual header "cassert"
-    }
-    module ccomplex {
-      header "ccomplex"
-      export complex
-      export *
     }
     module cctype {
       header "cctype"
@@ -190,12 +171,6 @@ module std [system] {
     }
     module cstring {
       header "cstring"
-      export *
-    }
-    module ctgmath {
-      header "ctgmath"
-      export ccomplex
-      export cmath
       export *
     }
     module ctime {
@@ -377,10 +352,6 @@ module std [system] {
       module three_way_comparable           { private header "__compare/three_way_comparable.h" }
       module weak_order                     { private header "__compare/weak_order.h" }
     }
-  }
-  module complex {
-    header "complex"
-    export *
   }
   module concepts {
     header "concepts"
@@ -807,6 +778,38 @@ module std [system] {
   module codecvt {
     header "codecvt"
     export *
+  }
+
+  module complex {
+    header "complex"
+    export *
+  // <complex.h> and <tgmath.h> are not C headers in any real sense, do not
+  // allow their use in extern "C" contexts.
+  module complex_h {
+    header "complex.h"
+    export ccomplex
+    export *
+  }
+  // <complex.h> and <tgmath.h> are not C headers in any real sense, do not
+  // allow their use in extern "C" contexts.
+  module tgmath_h {
+    header "tgmath.h"
+    export ccomplex
+    export cmath
+    export *
+  }
+
+    module ccomplex {
+      header "ccomplex"
+      export complex
+      export *
+    }
+    module ctgmath {
+      header "ctgmath"
+      export ccomplex
+      export cmath
+      export *
+    }
   }
 
   module condition_variable {
