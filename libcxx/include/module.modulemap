@@ -471,10 +471,6 @@ module std [system] {
     header "limits"
     export *
   }
-  module locale {
-    header "locale"
-    export *
-  }
   module memory {
     header "memory"
     export *
@@ -926,6 +922,11 @@ module std [system] {
   module list {
     header "list"
     export initializer_list
+    export *
+  }
+
+  module locale {
+    header "locale"
     export *
   }
 
