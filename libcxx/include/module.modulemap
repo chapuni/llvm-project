@@ -620,10 +620,6 @@ module std [system] {
     header "stdexcept"
     export *
   }
-  module streambuf {
-    header "streambuf"
-    export *
-  }
   module string {
     header "string"
     export initializer_list
@@ -1004,6 +1000,11 @@ module std [system] {
   module stack {
     header "stack"
     export initializer_list
+    export *
+  }
+
+  module streambuf {
+    header "streambuf"
     export *
   }
 
