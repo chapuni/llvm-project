@@ -636,11 +636,6 @@ module std [system] {
     export ranges.__ranges.enable_borrowed_range
     export version
   }
-  module sstream {
-    header "sstream"
-    // FIXME: should re-export istream, ostream, ios, streambuf, string?
-    export *
-  }
   module stdexcept {
     header "stdexcept"
     export *
@@ -994,6 +989,12 @@ module std [system] {
   module shared_mutex {
     header "shared_mutex"
     export version
+  }
+
+  module sstream {
+    header "sstream"
+    // FIXME: should re-export istream, ostream, ios, streambuf, string?
+    export *
   }
 
   module stack {
