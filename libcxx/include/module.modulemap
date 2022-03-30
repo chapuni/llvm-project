@@ -525,7 +525,6 @@ module std [system] {
     export *
   }
     module __random {
-      module generate_canonical              { private header "__random/generate_canonical.h" }
       module is_seed_sequence                { private header "__random/is_seed_sequence.h" }
       module log2                            { private header "__random/log2.h" }
       module uniform_int_distribution        { private header "__random/uniform_int_distribution.h" }
@@ -930,6 +929,7 @@ module std [system] {
       module extreme_value_distribution      { private header "__random/extreme_value_distribution.h" }
       module fisher_f_distribution           { private header "__random/fisher_f_distribution.h" }
       module gamma_distribution              { private header "__random/gamma_distribution.h" }
+      module generate_canonical              { private header "__random/generate_canonical.h" }
       module geometric_distribution          { private header "__random/geometric_distribution.h" }
       module independent_bits_engine         { private header "__random/independent_bits_engine.h" }
       module knuth_b                         { private header "__random/knuth_b.h" }
