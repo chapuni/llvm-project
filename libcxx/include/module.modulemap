@@ -525,12 +525,9 @@ module std [system] {
     export *
   }
     module __random {
-      module clamp_to_integral               { private header "__random/clamp_to_integral.h" }
-      module exponential_distribution        { private header "__random/exponential_distribution.h" }
       module generate_canonical              { private header "__random/generate_canonical.h" }
       module is_seed_sequence                { private header "__random/is_seed_sequence.h" }
       module log2                            { private header "__random/log2.h" }
-      module normal_distribution             { private header "__random/normal_distribution.h" }
       module uniform_int_distribution        { private header "__random/uniform_int_distribution.h" }
       module uniform_real_distribution       { private header "__random/uniform_real_distribution.h" }
     }
@@ -926,9 +923,11 @@ module std [system] {
       module binomial_distribution           { private header "__random/binomial_distribution.h" }
       module cauchy_distribution             { private header "__random/cauchy_distribution.h" }
       module chi_squared_distribution        { private header "__random/chi_squared_distribution.h" }
+      module clamp_to_integral               { private header "__random/clamp_to_integral.h" }
       module default_random_engine           { private header "__random/default_random_engine.h" }
       module discard_block_engine            { private header "__random/discard_block_engine.h" }
       module discrete_distribution           { private header "__random/discrete_distribution.h" }
+      module exponential_distribution        { private header "__random/exponential_distribution.h" }
       module extreme_value_distribution      { private header "__random/extreme_value_distribution.h" }
       module fisher_f_distribution           { private header "__random/fisher_f_distribution.h" }
       module gamma_distribution              { private header "__random/gamma_distribution.h" }
@@ -939,6 +938,7 @@ module std [system] {
       module lognormal_distribution          { private header "__random/lognormal_distribution.h" }
       module mersenne_twister_engine         { private header "__random/mersenne_twister_engine.h" }
       module negative_binomial_distribution  { private header "__random/negative_binomial_distribution.h" }
+      module normal_distribution             { private header "__random/normal_distribution.h" }
       module piecewise_constant_distribution { private header "__random/piecewise_constant_distribution.h" }
       module piecewise_linear_distribution   { private header "__random/piecewise_linear_distribution.h" }
       module poisson_distribution            { private header "__random/poisson_distribution.h" }
