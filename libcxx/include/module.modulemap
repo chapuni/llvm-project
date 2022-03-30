@@ -529,7 +529,6 @@ module std [system] {
       module is_seed_sequence                { private header "__random/is_seed_sequence.h" }
       module log2                            { private header "__random/log2.h" }
       module uniform_int_distribution        { private header "__random/uniform_int_distribution.h" }
-      module uniform_real_distribution       { private header "__random/uniform_real_distribution.h" }
     }
 
     module __ranges {
@@ -949,6 +948,7 @@ module std [system] {
       module student_t_distribution          { private header "__random/student_t_distribution.h" }
       module subtract_with_carry_engine      { private header "__random/subtract_with_carry_engine.h" }
       module uniform_random_bit_generator    { private header "__random/uniform_random_bit_generator.h" }
+      module uniform_real_distribution       { private header "__random/uniform_real_distribution.h" }
       module weibull_distribution            { private header "__random/weibull_distribution.h" }
   }
 
