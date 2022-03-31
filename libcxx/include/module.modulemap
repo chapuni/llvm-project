@@ -214,7 +214,6 @@ module std [system] {
       module exchange            { private header "__utility/exchange.h" }
       module forward             { private header "__utility/forward.h" }
       module move                { private header "__utility/move.h" }
-      module piecewise_construct { private header "__utility/piecewise_construct.h" }
     }
 
   module version {
@@ -1050,6 +1049,7 @@ module std [system] {
       module in_place            { private header "__utility/in_place.h" }
       module integer_sequence    { private header "__utility/integer_sequence.h" }
       module pair                { private header "__utility/pair.h" }
+      module piecewise_construct { private header "__utility/piecewise_construct.h" }
       module rel_ops             { private header "__utility/rel_ops.h" }
       module swap                { private header "__utility/swap.h" }
       module to_underlying       { private header "__utility/to_underlying.h" }
