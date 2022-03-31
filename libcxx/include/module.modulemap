@@ -6,6 +6,23 @@ module std_config [system] [extern_c] {
   textual header "__config_site"
 }
 
+module std_base [system] {
+  module version {
+    header "version"
+    export *
+  }
+
+    module cstddef {
+      header "cstddef"
+      export *
+    }
+
+  // __config not modularised due to a bug in Clang
+  // FIXME: These should be private.
+  module __nullptr           {         header "__nullptr"           export * }
+  module __undef_macros      {         header "__undef_macros"      export * }
+}
+
 module std [system] {
   export std_config
   // FIXME: The standard does not require that each of these submodules
@@ -152,10 +169,6 @@ module std [system] {
       header "cstdbool"
       export *
     }
-    module cstddef {
-      header "cstddef"
-      export *
-    }
     module cstdint {
       header "cstdint"
       export depr.stdint_h
@@ -190,29 +203,6 @@ module std [system] {
   }
 
   // No submodule for cassert. It fundamentally needs repeated, textual inclusion.
-
-  module limits {
-    header "limits"
-    export *
-  }
-  module ratio {
-    header "ratio"
-    export *
-  }
-  module type_traits {
-    header "type_traits"
-    export functional.__functional.unwrap_ref
-    export *
-  }
-  module version {
-    header "version"
-    export *
-  }
-
-  // __config not modularised due to a bug in Clang
-  // FIXME: These should be private.
-  module __nullptr           {         header "__nullptr"           export * }
-  module __undef_macros      {         header "__undef_macros"      export * }
 }
 
   module algorithm {
@@ -710,6 +700,11 @@ module std [system] {
     export *
   }
 
+  module limits {
+    header "limits"
+    export *
+  }
+
   module list {
     header "list"
     export initializer_list
@@ -907,6 +902,11 @@ module std [system] {
       module size                   { private header "__ranges/size.h" }
   }
 
+
+  module ratio {
+    header "ratio"
+    export *
+  }
   module regex {
     header "regex"
     export initializer_list
@@ -1003,6 +1003,12 @@ module std [system] {
 
   module tuple {
     header "tuple"
+    export *
+  }
+
+  module type_traits {
+    header "type_traits"
+    export functional.__functional.unwrap_ref
     export *
   }
 
