@@ -232,10 +232,6 @@ module std [system] {
       module weak_result_type           { private header "__functional/weak_result_type.h" }
     }
 
-    module __iterator {
-      module incrementable_traits  { private header "__iterator/incrementable_traits.h" }
-    }
-
   module limits {
     header "limits"
     export *
@@ -678,6 +674,7 @@ module std [system] {
     header "iterator"
     export *
 
+    module __iterator {
       module access                { private header "__iterator/access.h" }
       module advance               { private header "__iterator/advance.h" }
       module back_insert_iterator  { private header "__iterator/back_insert_iterator.h" }
@@ -706,10 +703,12 @@ module std [system] {
       module size                  { private header "__iterator/size.h" }
       module unreachable_sentinel  { private header "__iterator/unreachable_sentinel.h" }
       module wrap_iter             { private header "__iterator/wrap_iter.h" }
+    }
   }
 
   module iterator__iterator_1 {
       module concepts              { private header "__iterator/concepts.h" }
+      module incrementable_traits  { private header "__iterator/incrementable_traits.h" }
       module iter_move             { private header "__iterator/iter_move.h" }
       module iterator_traits       { private header "__iterator/iterator_traits.h" }
       module readable_traits       { private header "__iterator/readable_traits.h" }
