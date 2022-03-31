@@ -191,10 +191,6 @@ module std [system] {
 
   // No submodule for cassert. It fundamentally needs repeated, textual inclusion.
 
-    module __concepts {
-      module arithmetic                 { private header "__concepts/arithmetic.h" }
-    }
-
   module limits {
     header "limits"
     export *
@@ -456,6 +452,8 @@ module std [system] {
     header "concepts"
     export *
 
+    module __concepts {
+      module arithmetic                 { private header "__concepts/arithmetic.h" }
       module assignable                 { private header "__concepts/assignable.h" }
       module class_or_enum              { private header "__concepts/class_or_enum.h" }
       module common_reference_with      { private header "__concepts/common_reference_with.h" }
@@ -477,7 +475,7 @@ module std [system] {
       module semiregular                { private header "__concepts/semiregular.h" }
       module swappable                  { private header "__concepts/swappable.h" }
       module totally_ordered            { private header "__concepts/totally_ordered.h" }
-
+    }
   }
 
   module condition_variable {
