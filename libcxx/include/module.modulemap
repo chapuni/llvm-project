@@ -229,7 +229,6 @@ module std [system] {
       module binary_function            { private header "__functional/binary_function.h" }
       module invoke                     { private header "__functional/invoke.h" }
       module unary_function             { private header "__functional/unary_function.h" }
-      module unwrap_ref                 { private header "__functional/unwrap_ref.h" }
       module weak_result_type           { private header "__functional/weak_result_type.h" }
     }
 
@@ -629,6 +628,10 @@ module std [system] {
       module identity                   { private header "__functional/identity.h" }
       module operations                 { private header "__functional/operations.h" }
       module reference_wrapper          { private header "__functional/reference_wrapper.h" }
+  }
+
+  module functional__functional_2 {
+      module unwrap_ref                 { private header "__functional/unwrap_ref.h" }
   }
 
   module future {
