@@ -190,7 +190,6 @@ module std [system] {
   }
 
     module __algorithm {
-      module comp                     { private header "__algorithm/comp.h" }
       module in_out_result            { private header "__algorithm/in_out_result.h" }
     }
 
@@ -460,6 +459,7 @@ module std [system] {
   }
 
   module algorithm__algorithm_1 {
+      module comp                     { private header "__algorithm/comp.h" }
       module search                   { private header "__algorithm/search.h" }
   }
 
