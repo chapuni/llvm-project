@@ -191,7 +191,6 @@ module std [system] {
 
     module __algorithm {
       module comp                     { private header "__algorithm/comp.h" }
-      module comp_ref_type            { private header "__algorithm/comp_ref_type.h" }
       module in_out_result            { private header "__algorithm/in_out_result.h" }
       module search                   { private header "__algorithm/search.h" }
       module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
@@ -493,6 +492,7 @@ module std [system] {
       module any_of                   { private header "__algorithm/any_of.h" }
       module binary_search            { private header "__algorithm/binary_search.h" }
       module clamp                    { private header "__algorithm/clamp.h" }
+      module comp_ref_type            { private header "__algorithm/comp_ref_type.h" }
       module copy                     { private header "__algorithm/copy.h" }
       module copy_backward            { private header "__algorithm/copy_backward.h" }
       module copy_if                  { private header "__algorithm/copy_if.h" }
