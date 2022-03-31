@@ -194,10 +194,6 @@ module std [system] {
       module in_out_result            { private header "__algorithm/in_out_result.h" }
       module search                   { private header "__algorithm/search.h" }
     }
-  module atomic {
-    header "atomic"
-    export *
-  }
   module bit {
     header "bit"
     export *
@@ -547,6 +543,11 @@ module std [system] {
   module array {
     header "array"
     export initializer_list
+    export *
+  }
+
+  module atomic {
+    header "atomic"
     export *
   }
 
