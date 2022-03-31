@@ -512,24 +512,13 @@ module std [system] {
 
     module __ranges {
       module access                 { private header "__ranges/access.h" }
-      module all                    {
-        private header "__ranges/all.h"
-        export functional.__functional.compose
-        export functional.__functional.perfect_forward
-      }
       module concepts               { private header "__ranges/concepts.h" }
-      module copyable_box           { private header "__ranges/copyable_box.h" }
       module dangling               { private header "__ranges/dangling.h" }
       module data                   { private header "__ranges/data.h" }
       module empty                  { private header "__ranges/empty.h" }
       module enable_borrowed_range  { private header "__ranges/enable_borrowed_range.h" }
       module enable_view            { private header "__ranges/enable_view.h" }
-      module non_propagating_cache  { private header "__ranges/non_propagating_cache.h" }
-      module owning_view            { private header "__ranges/owning_view.h" }
-      module range_adaptor          { private header "__ranges/range_adaptor.h" }
-      module ref_view               { private header "__ranges/ref_view.h" }
       module size                   { private header "__ranges/size.h" }
-      module subrange               { private header "__ranges/subrange.h" }
       module view_interface         { private header "__ranges/view_interface.h" }
     }
   module ratio {
@@ -937,7 +926,13 @@ module std [system] {
     export initializer_list
     export iterator
     export *
+      module all                    {
+        private header "__ranges/all.h"
+        export functional.__functional.compose
+        export functional.__functional.perfect_forward
+      }
       module common_view            { private header "__ranges/common_view.h" }
+      module copyable_box           { private header "__ranges/copyable_box.h" }
       module counted                {
         private header "__ranges/counted.h"
         export span
@@ -946,8 +941,13 @@ module std [system] {
       module empty_view             { private header "__ranges/empty_view.h" }
       module iota_view              { private header "__ranges/iota_view.h" }
       module join_view              { private header "__ranges/join_view.h" }
+      module non_propagating_cache  { private header "__ranges/non_propagating_cache.h" }
+      module owning_view            { private header "__ranges/owning_view.h" }
+      module range_adaptor          { private header "__ranges/range_adaptor.h" }
+      module ref_view               { private header "__ranges/ref_view.h" }
       module reverse_view           { private header "__ranges/reverse_view.h" }
       module single_view            { private header "__ranges/single_view.h" }
+      module subrange               { private header "__ranges/subrange.h" }
       module take_view              { private header "__ranges/take_view.h" }
       module transform_view         {
         private header "__ranges/transform_view.h"
