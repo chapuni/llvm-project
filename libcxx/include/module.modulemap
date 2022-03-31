@@ -201,9 +201,7 @@ module std [system] {
       module in_out_result            { private header "__algorithm/in_out_result.h" }
       module min                      { private header "__algorithm/min.h" }
       module min_element              { private header "__algorithm/min_element.h" }
-      module pop_heap                 { private header "__algorithm/pop_heap.h" }
       module search                   { private header "__algorithm/search.h" }
-      module sift_down                { private header "__algorithm/sift_down.h" }
       module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
     }
   module atomic {
@@ -548,6 +546,7 @@ module std [system] {
       module partition                { private header "__algorithm/partition.h" }
       module partition_copy           { private header "__algorithm/partition_copy.h" }
       module partition_point          { private header "__algorithm/partition_point.h" }
+      module pop_heap                 { private header "__algorithm/pop_heap.h" }
       module prev_permutation         { private header "__algorithm/prev_permutation.h" }
       module push_heap                { private header "__algorithm/push_heap.h" }
       module remove                   { private header "__algorithm/remove.h" }
@@ -571,6 +570,7 @@ module std [system] {
       module shift_left               { private header "__algorithm/shift_left.h" }
       module shift_right              { private header "__algorithm/shift_right.h" }
       module shuffle                  { private header "__algorithm/shuffle.h" }
+      module sift_down                { private header "__algorithm/sift_down.h" }
       module sort                     { private header "__algorithm/sort.h" }
       module sort_heap                { private header "__algorithm/sort_heap.h" }
       module stable_partition         { private header "__algorithm/stable_partition.h" }
