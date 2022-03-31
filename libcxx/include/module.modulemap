@@ -523,11 +523,6 @@ module std [system] {
     header "ratio"
     export *
   }
-  module span {
-    header "span"
-    export ranges.__ranges.enable_borrowed_range
-    export version
-  }
   module stdexcept {
     header "stdexcept"
     export *
@@ -981,6 +976,12 @@ module std [system] {
 
   module shared_mutex {
     header "shared_mutex"
+    export version
+  }
+
+  module span {
+    header "span"
+    export ranges.__ranges.enable_borrowed_range
     export version
   }
 
