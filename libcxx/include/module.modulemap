@@ -189,11 +189,6 @@ module std [system] {
     }
   }
 
-  module algorithm {
-    header "algorithm"
-    export initializer_list
-    export *
-
     module __algorithm {
       module adjacent_find            { private header "__algorithm/adjacent_find.h" }
       module all_of                   { private header "__algorithm/all_of.h" }
@@ -292,7 +287,6 @@ module std [system] {
       module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
       module upper_bound              { private header "__algorithm/upper_bound.h" }
     }
-  }
   module atomic {
     header "atomic"
     export *
@@ -580,6 +574,12 @@ module std [system] {
   module __tuple             { private header "__tuple"             export * }
   module __undef_macros      {         header "__undef_macros"      export * }
 }
+
+  module algorithm {
+    header "algorithm"
+    export initializer_list
+    export *
+  }
 
   module any {
     header "any"
