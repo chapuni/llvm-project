@@ -378,14 +378,6 @@ module std [system] {
       module transaction         { private header "__utility/transaction.h" }
     }
   }
-  module variant {
-    header "variant"
-    export *
-
-    module __variant {
-      module monostate { private header "__variant/monostate.h" }
-    }
-  }
   module version {
     header "version"
     export *
@@ -1043,6 +1035,15 @@ module std [system] {
     header "valarray"
     export initializer_list
     export *
+  }
+
+  module variant {
+    header "variant"
+    export *
+
+    module __variant {
+      module monostate { private header "__variant/monostate.h" }
+    }
   }
 
   module vector {
