@@ -204,7 +204,6 @@ module std [system] {
       module constructible              { private header "__concepts/constructible.h" }
       module convertible_to             { private header "__concepts/convertible_to.h" }
       module destructible               { private header "__concepts/destructible.h" }
-      module movable                    { private header "__concepts/movable.h" }
       module same_as                    { private header "__concepts/same_as.h" }
       module swappable                  { private header "__concepts/swappable.h" }
     }
@@ -489,6 +488,7 @@ module std [system] {
       module different_from             { private header "__concepts/different_from.h" }
       module equality_comparable        { private header "__concepts/equality_comparable.h" }
       module invocable                  { private header "__concepts/invocable.h" }
+      module movable                    { private header "__concepts/movable.h" }
       module predicate                  { private header "__concepts/predicate.h" }
       module regular                    { private header "__concepts/regular.h" }
       module relation                   { private header "__concepts/relation.h" }
