@@ -353,11 +353,6 @@ module std [system] {
       module concepts                        { private header "__memory/concepts.h" }
       module construct_at                    { private header "__memory/construct_at.h" }
       module pointer_traits                  { private header "__memory/pointer_traits.h" }
-      module ranges_construct_at             { private header "__memory/ranges_construct_at.h" }
-      module ranges_uninitialized_algorithms { private header "__memory/ranges_uninitialized_algorithms.h" }
-      module raw_storage_iterator            { private header "__memory/raw_storage_iterator.h" }
-      module shared_ptr                      { private header "__memory/shared_ptr.h" }
-      module temporary_buffer                { private header "__memory/temporary_buffer.h" }
       module uninitialized_algorithms        { private header "__memory/uninitialized_algorithms.h" }
       module unique_ptr                      { private header "__memory/unique_ptr.h" }
       module uses_allocator                  { private header "__memory/uses_allocator.h" }
@@ -808,6 +803,12 @@ module std [system] {
   module memory {
     header "memory"
     export *
+
+      module ranges_construct_at             { private header "__memory/ranges_construct_at.h" }
+      module ranges_uninitialized_algorithms { private header "__memory/ranges_uninitialized_algorithms.h" }
+      module raw_storage_iterator            { private header "__memory/raw_storage_iterator.h" }
+      module shared_ptr                      { private header "__memory/shared_ptr.h" }
+      module temporary_buffer                { private header "__memory/temporary_buffer.h" }
   }
 
   module mutex {
