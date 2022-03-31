@@ -195,21 +195,6 @@ module std [system] {
     }
 
   // No submodule for cassert. It fundamentally needs repeated, textual inclusion.
-  module chrono {
-    header "chrono"
-    export *
-
-    module __chrono {
-      module calendar              { private header "__chrono/calendar.h" }
-      module convert_to_timespec   { private header "__chrono/convert_to_timespec.h" }
-      module duration              { private header "__chrono/duration.h" }
-      module file_clock            { private header "__chrono/file_clock.h" }
-      module high_resolution_clock { private header "__chrono/high_resolution_clock.h" }
-      module steady_clock          { private header "__chrono/steady_clock.h" }
-      module system_clock          { private header "__chrono/system_clock.h" }
-      module time_point            { private header "__chrono/time_point.h" }
-    }
-  }
   module compare {
     header "compare"
     export *
@@ -501,6 +486,22 @@ module std [system] {
       module to_chars_result   { private header "__charconv/to_chars_result.h" }
     }
 
+  }
+
+  module chrono {
+    header "chrono"
+    export *
+
+    module __chrono {
+      module calendar              { private header "__chrono/calendar.h" }
+      module convert_to_timespec   { private header "__chrono/convert_to_timespec.h" }
+      module duration              { private header "__chrono/duration.h" }
+      module file_clock            { private header "__chrono/file_clock.h" }
+      module high_resolution_clock { private header "__chrono/high_resolution_clock.h" }
+      module steady_clock          { private header "__chrono/steady_clock.h" }
+      module system_clock          { private header "__chrono/system_clock.h" }
+      module time_point            { private header "__chrono/time_point.h" }
+    }
   }
 
   module codecvt {
