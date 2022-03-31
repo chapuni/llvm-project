@@ -205,7 +205,6 @@ module std [system] {
       module convertible_to             { private header "__concepts/convertible_to.h" }
       module destructible               { private header "__concepts/destructible.h" }
       module same_as                    { private header "__concepts/same_as.h" }
-      module swappable                  { private header "__concepts/swappable.h" }
     }
 
     module __functional {
@@ -493,6 +492,7 @@ module std [system] {
       module regular                    { private header "__concepts/regular.h" }
       module relation                   { private header "__concepts/relation.h" }
       module semiregular                { private header "__concepts/semiregular.h" }
+      module swappable                  { private header "__concepts/swappable.h" }
       module totally_ordered            { private header "__concepts/totally_ordered.h" }
 
   }
