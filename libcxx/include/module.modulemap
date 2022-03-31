@@ -514,13 +514,6 @@ module std [system] {
     header "stdexcept"
     export *
   }
-  module string {
-    header "string"
-    export initializer_list
-    export string_view
-    export __string
-    export *
-  }
   module string_view {
     header "string_view"
     export initializer_list
@@ -990,6 +983,14 @@ module std [system] {
 
   module streambuf {
     header "streambuf"
+    export *
+  }
+
+  module string {
+    header "string"
+    export initializer_list
+    export string_view
+    export __string
     export *
   }
 
