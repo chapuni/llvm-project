@@ -341,9 +341,6 @@ module std [system] {
     header "limits"
     export *
   }
-  module memory {
-    header "memory"
-    export *
 
     module __memory {
       module addressof                       { private header "__memory/addressof.h" }
@@ -366,7 +363,7 @@ module std [system] {
       module uses_allocator                  { private header "__memory/uses_allocator.h" }
       module voidify                         { private header "__memory/voidify.h" }
     }
-  }
+
   module new {
     header "new"
     export *
@@ -805,6 +802,11 @@ module std [system] {
   module map {
     header "map"
     export initializer_list
+    export *
+  }
+
+  module memory {
+    header "memory"
     export *
   }
 
