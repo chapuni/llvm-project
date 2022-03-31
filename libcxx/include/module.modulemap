@@ -198,19 +198,12 @@ module std [system] {
       module fill_n                   { private header "__algorithm/fill_n.h" }
       module find_end                 { private header "__algorithm/find_end.h" }
       module find_first_of            { private header "__algorithm/find_first_of.h" }
-      module half_positive            { private header "__algorithm/half_positive.h" }
       module in_out_result            { private header "__algorithm/in_out_result.h" }
-      module make_heap                { private header "__algorithm/make_heap.h" }
       module min                      { private header "__algorithm/min.h" }
       module min_element              { private header "__algorithm/min_element.h" }
-      module move                     { private header "__algorithm/move.h" }
-      module move_backward            { private header "__algorithm/move_backward.h" }
       module pop_heap                 { private header "__algorithm/pop_heap.h" }
       module search                   { private header "__algorithm/search.h" }
-      module shuffle                  { private header "__algorithm/shuffle.h" }
       module sift_down                { private header "__algorithm/sift_down.h" }
-      module sort_heap                { private header "__algorithm/sort_heap.h" }
-      module swap_ranges              { private header "__algorithm/swap_ranges.h" }
       module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
     }
   module atomic {
@@ -524,6 +517,7 @@ module std [system] {
       module for_each_n               { private header "__algorithm/for_each_n.h" }
       module generate                 { private header "__algorithm/generate.h" }
       module generate_n               { private header "__algorithm/generate_n.h" }
+      module half_positive            { private header "__algorithm/half_positive.h" }
       module in_in_out_result         { private header "__algorithm/in_in_out_result.h" }
       module in_in_result             { private header "__algorithm/in_in_result.h" }
       module includes                 { private header "__algorithm/includes.h" }
@@ -537,12 +531,15 @@ module std [system] {
       module iter_swap                { private header "__algorithm/iter_swap.h" }
       module lexicographical_compare  { private header "__algorithm/lexicographical_compare.h" }
       module lower_bound              { private header "__algorithm/lower_bound.h" }
+      module make_heap                { private header "__algorithm/make_heap.h" }
       module max                      { private header "__algorithm/max.h" }
       module max_element              { private header "__algorithm/max_element.h" }
       module merge                    { private header "__algorithm/merge.h" }
       module minmax                   { private header "__algorithm/minmax.h" }
       module minmax_element           { private header "__algorithm/minmax_element.h" }
       module mismatch                 { private header "__algorithm/mismatch.h" }
+      module move                     { private header "__algorithm/move.h" }
+      module move_backward            { private header "__algorithm/move_backward.h" }
       module next_permutation         { private header "__algorithm/next_permutation.h" }
       module none_of                  { private header "__algorithm/none_of.h" }
       module nth_element              { private header "__algorithm/nth_element.h" }
@@ -573,9 +570,12 @@ module std [system] {
       module set_union                { private header "__algorithm/set_union.h" }
       module shift_left               { private header "__algorithm/shift_left.h" }
       module shift_right              { private header "__algorithm/shift_right.h" }
+      module shuffle                  { private header "__algorithm/shuffle.h" }
       module sort                     { private header "__algorithm/sort.h" }
+      module sort_heap                { private header "__algorithm/sort_heap.h" }
       module stable_partition         { private header "__algorithm/stable_partition.h" }
       module stable_sort              { private header "__algorithm/stable_sort.h" }
+      module swap_ranges              { private header "__algorithm/swap_ranges.h" }
       module transform                { private header "__algorithm/transform.h" }
       module unique                   { private header "__algorithm/unique.h" }
       module unique_copy              { private header "__algorithm/unique_copy.h" }
