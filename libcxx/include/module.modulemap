@@ -873,8 +873,11 @@ module std [system] {
       module weibull_distribution            { private header "__random/weibull_distribution.h" }
     }
   }
+
+  module random__random_1 {
       module log2                            { private header "__random/log2.h" }
       module uniform_int_distribution        { private header "__random/uniform_int_distribution.h" }
+  }
 
   module ranges {
     header "ranges"
