@@ -308,7 +308,6 @@ module std [system] {
     }
 
     module __ranges {
-      module access                 { private header "__ranges/access.h" }
       module enable_borrowed_range  { private header "__ranges/enable_borrowed_range.h" }
     }
   module ratio {
@@ -917,6 +916,7 @@ module std [system] {
       }
       module view_interface         { private header "__ranges/view_interface.h" }
   }
+      module access                 { private header "__ranges/access.h" }
       module concepts               { private header "__ranges/concepts.h" }
       module dangling               { private header "__ranges/dangling.h" }
       module data                   { private header "__ranges/data.h" }
