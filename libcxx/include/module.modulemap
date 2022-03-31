@@ -293,11 +293,6 @@ module std [system] {
       module upper_bound              { private header "__algorithm/upper_bound.h" }
     }
   }
-  module array {
-    header "array"
-    export initializer_list
-    export *
-  }
   module atomic {
     header "atomic"
     export *
@@ -621,6 +616,12 @@ module std [system] {
 
   module any {
     header "any"
+    export *
+  }
+
+  module array {
+    header "array"
+    export initializer_list
     export *
   }
 
