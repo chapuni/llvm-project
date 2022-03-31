@@ -268,10 +268,6 @@ module std [system] {
       module totally_ordered            { private header "__concepts/totally_ordered.h" }
     }
   }
-  module exception {
-    header "exception"
-    export *
-  }
 
     module __functional {
       module binary_function            { private header "__functional/binary_function.h" }
@@ -589,6 +585,11 @@ module std [system] {
 
   module execution {
     header "execution"
+    export *
+  }
+
+  module exception {
+    header "exception"
     export *
   }
 
