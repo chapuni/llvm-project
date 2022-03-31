@@ -487,10 +487,6 @@ module std [system] {
       module voidify                         { private header "__memory/voidify.h" }
     }
   }
-  module mutex {
-    header "mutex"
-    export *
-  }
   module new {
     header "new"
     export *
@@ -823,6 +819,11 @@ module std [system] {
   module map {
     header "map"
     export initializer_list
+    export *
+  }
+
+  module mutex {
+    header "mutex"
     export *
   }
 
