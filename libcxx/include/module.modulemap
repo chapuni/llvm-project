@@ -274,7 +274,6 @@ module std [system] {
 
   // __config not modularised due to a bug in Clang
   // FIXME: These should be private.
-  module __debug             {         header "__debug"             export * }
   module __mbstate_t         { private header "__mbstate_t.h"       export * }
   module __nullptr           {         header "__nullptr"           export * }
   module __undef_macros      {         header "__undef_macros"      export * }
@@ -1079,6 +1078,7 @@ module std [system] {
   module __availability      { private header "__availability"      export * }
   module __bit_reference     { private header "__bit_reference"     export * }
   module __bits              { private header "__bits"              export * }
+  module __debug             {         header "__debug"             export * }
   module __errc              { private header "__errc"              export * }
   module __hash_table        {         header "__hash_table"        export * }
   module __locale            { private header "__locale"            export * }
