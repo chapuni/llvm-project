@@ -276,7 +276,6 @@ module std [system] {
 
     module __memory {
       module addressof                       { private header "__memory/addressof.h" }
-      module pointer_traits                  { private header "__memory/pointer_traits.h" }
     }
 
   module ratio {
@@ -779,6 +778,7 @@ module std [system] {
 
   module memory__memory_1 {
       module allocator_arg_t                 { private header "__memory/allocator_arg_t.h" }
+      module pointer_traits                  { private header "__memory/pointer_traits.h" }
       module uses_allocator                  { private header "__memory/uses_allocator.h" }
   }
 
