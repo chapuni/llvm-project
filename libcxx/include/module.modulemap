@@ -488,13 +488,13 @@ module std [system] {
       module common_with                { private header "__concepts/common_with.h" }
       module derived_from               { private header "__concepts/derived_from.h" }
       module different_from             { private header "__concepts/different_from.h" }
-      module regular                    { private header "__concepts/regular.h" }
-      module relation                   { private header "__concepts/relation.h" }
-      module totally_ordered            { private header "__concepts/totally_ordered.h" }
-
       module equality_comparable        { private header "__concepts/equality_comparable.h" }
       module predicate                  { private header "__concepts/predicate.h" }
+      module regular                    { private header "__concepts/regular.h" }
+      module relation                   { private header "__concepts/relation.h" }
       module semiregular                { private header "__concepts/semiregular.h" }
+      module totally_ordered            { private header "__concepts/totally_ordered.h" }
+
   }
 
   module condition_variable {
