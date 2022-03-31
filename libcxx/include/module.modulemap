@@ -263,7 +263,6 @@ module std [system] {
   }
 
     module __iterator {
-      module concepts              { private header "__iterator/concepts.h" }
       module incrementable_traits  { private header "__iterator/incrementable_traits.h" }
       module iter_move             { private header "__iterator/iter_move.h" }
       module iterator_traits       { private header "__iterator/iterator_traits.h" }
@@ -728,6 +727,10 @@ module std [system] {
       module size                  { private header "__iterator/size.h" }
       module unreachable_sentinel  { private header "__iterator/unreachable_sentinel.h" }
       module wrap_iter             { private header "__iterator/wrap_iter.h" }
+  }
+
+  module iterator__iterator_1 {
+      module concepts              { private header "__iterator/concepts.h" }
   }
 
   module latch {
