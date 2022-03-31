@@ -273,11 +273,6 @@ module std [system] {
     header "limits"
     export *
   }
-
-    module __memory {
-      module addressof                       { private header "__memory/addressof.h" }
-    }
-
   module ratio {
     header "ratio"
     export *
@@ -759,6 +754,7 @@ module std [system] {
     header "memory"
     export *
 
+    module __memory {
       module allocation_guard                { private header "__memory/allocation_guard.h" }
       module allocator                       { private header "__memory/allocator.h" }
       module allocator_traits                { private header "__memory/allocator_traits.h" }
@@ -774,9 +770,11 @@ module std [system] {
       module uninitialized_algorithms        { private header "__memory/uninitialized_algorithms.h" }
       module unique_ptr                      { private header "__memory/unique_ptr.h" }
       module voidify                         { private header "__memory/voidify.h" }
+    }
   }
 
   module memory__memory_1 {
+      module addressof                       { private header "__memory/addressof.h" }
       module allocator_arg_t                 { private header "__memory/allocator_arg_t.h" }
       module pointer_traits                  { private header "__memory/pointer_traits.h" }
       module uses_allocator                  { private header "__memory/uses_allocator.h" }
