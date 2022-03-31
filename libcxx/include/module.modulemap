@@ -307,10 +307,6 @@ module std [system] {
       module uses_allocator                  { private header "__memory/uses_allocator.h" }
     }
 
-    module __random {
-      module is_seed_sequence                { private header "__random/is_seed_sequence.h" }
-    }
-
     module __ranges {
       module access                 { private header "__ranges/access.h" }
       module concepts               { private header "__ranges/concepts.h" }
@@ -848,6 +844,7 @@ module std [system] {
     header "random"
     export initializer_list
     export *
+    module __random {
       module bernoulli_distribution          { private header "__random/bernoulli_distribution.h" }
       module binomial_distribution           { private header "__random/binomial_distribution.h" }
       module cauchy_distribution             { private header "__random/cauchy_distribution.h" }
@@ -863,6 +860,7 @@ module std [system] {
       module generate_canonical              { private header "__random/generate_canonical.h" }
       module geometric_distribution          { private header "__random/geometric_distribution.h" }
       module independent_bits_engine         { private header "__random/independent_bits_engine.h" }
+      module is_seed_sequence                { private header "__random/is_seed_sequence.h" }
       module knuth_b                         { private header "__random/knuth_b.h" }
       module linear_congruential_engine      { private header "__random/linear_congruential_engine.h" }
       module lognormal_distribution          { private header "__random/lognormal_distribution.h" }
@@ -881,6 +879,7 @@ module std [system] {
       module uniform_random_bit_generator    { private header "__random/uniform_random_bit_generator.h" }
       module uniform_real_distribution       { private header "__random/uniform_real_distribution.h" }
       module weibull_distribution            { private header "__random/weibull_distribution.h" }
+    }
   }
       module log2                            { private header "__random/log2.h" }
       module uniform_int_distribution        { private header "__random/uniform_int_distribution.h" }
