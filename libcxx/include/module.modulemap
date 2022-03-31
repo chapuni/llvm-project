@@ -200,10 +200,6 @@ module std [system] {
       module arithmetic                 { private header "__concepts/arithmetic.h" }
     }
 
-    module __functional {
-      module binary_function            { private header "__functional/binary_function.h" }
-    }
-
   module limits {
     header "limits"
     export *
@@ -597,6 +593,7 @@ module std [system] {
     header "functional"
     export *
 
+    module __functional {
       module binary_negate              { private header "__functional/binary_negate.h" }
       module bind                       { private header "__functional/bind.h" }
       module bind_back                  { private header "__functional/bind_back.h" }
@@ -615,6 +612,7 @@ module std [system] {
       module pointer_to_unary_function  { private header "__functional/pointer_to_unary_function.h" }
       module ranges_operations          { private header "__functional/ranges_operations.h" }
       module unary_negate               { private header "__functional/unary_negate.h" }
+    }
   }
 
   module functional__functional_1 {
@@ -625,6 +623,7 @@ module std [system] {
   }
 
   module functional__functional_2 {
+      module binary_function            { private header "__functional/binary_function.h" }
       module invoke                     { private header "__functional/invoke.h" }
       module unary_function             { private header "__functional/unary_function.h" }
       module unwrap_ref                 { private header "__functional/unwrap_ref.h" }
