@@ -201,8 +201,6 @@ module std [system] {
       export *
     }
   }
-
-  // No submodule for cassert. It fundamentally needs repeated, textual inclusion.
 }
 
   module algorithm {
@@ -306,35 +304,29 @@ module std [system] {
       module upper_bound              { private header "__algorithm/upper_bound.h" }
     }
   }
-
   module algorithm__algorithm_1 {
       module comp                     { private header "__algorithm/comp.h" }
       module in_out_result            { private header "__algorithm/in_out_result.h" }
       module search                   { private header "__algorithm/search.h" }
   }
-
   module any {
     header "any"
     export *
   }
-
   module array {
     header "array"
     export initializer_list
     export *
   }
-
   module atomic {
     header "atomic"
     export *
   }
-
   module barrier {
     requires cplusplus14
     header "barrier"
     export *
   }
-
   module bit {
     header "bit"
     export *
@@ -344,14 +336,12 @@ module std [system] {
       module byteswap { private header "__bit/byteswap.h" }
     }
   }
-
   module bitset {
     header "bitset"
     export string
     export iosfwd
     export *
   }
-
   module charconv {
     header "charconv"
     export *
@@ -363,7 +353,6 @@ module std [system] {
     }
 
   }
-
   module chrono {
     header "chrono"
     export *
@@ -379,12 +368,10 @@ module std [system] {
       module time_point            { private header "__chrono/time_point.h" }
     }
   }
-
   module codecvt {
     header "codecvt"
     export *
   }
-
   module compare {
     header "compare"
     export *
@@ -405,7 +392,6 @@ module std [system] {
       module weak_order                     { private header "__compare/weak_order.h" }
     }
   }
-
   module complex {
     header "complex"
     export *
@@ -424,7 +410,6 @@ module std [system] {
     export cmath
     export *
   }
-
     module ccomplex {
       header "ccomplex"
       export complex
@@ -437,7 +422,6 @@ module std [system] {
       export *
     }
   }
-
   module concepts {
     header "concepts"
     export *
@@ -445,11 +429,11 @@ module std [system] {
     module __concepts {
       module arithmetic                 { private header "__concepts/arithmetic.h" }
       module assignable                 { private header "__concepts/assignable.h" }
+      module boolean_testable           { private header "__concepts/boolean_testable.h" }
       module class_or_enum              { private header "__concepts/class_or_enum.h" }
       module common_reference_with      { private header "__concepts/common_reference_with.h" }
-      module constructible              { private header "__concepts/constructible.h" }
-      module boolean_testable           { private header "__concepts/boolean_testable.h" }
       module common_with                { private header "__concepts/common_with.h" }
+      module constructible              { private header "__concepts/constructible.h" }
       module convertible_to             { private header "__concepts/convertible_to.h" }
       module copyable                   { private header "__concepts/copyable.h" }
       module derived_from               { private header "__concepts/derived_from.h" }
@@ -467,12 +451,10 @@ module std [system] {
       module totally_ordered            { private header "__concepts/totally_ordered.h" }
     }
   }
-
   module condition_variable {
     header "condition_variable"
     export *
   }
-
   module coroutine {
     requires coroutines
     header "coroutine"
@@ -486,23 +468,19 @@ module std [system] {
       module trivial_awaitables         { private header "__coroutine/trivial_awaitables.h" }
     }
   }
-
   module deque {
     header "deque"
     export initializer_list
     export *
   }
-
-  module execution {
-    header "execution"
-    export *
-  }
-
   module exception {
     header "exception"
     export *
   }
-
+  module execution {
+    header "execution"
+    export *
+  }
   module filesystem {
     header "filesystem"
     export *
@@ -526,7 +504,6 @@ module std [system] {
       module u8path                       { private header "__filesystem/u8path.h" }
     }
   }
-
   module format {
     header "format"
     export *
@@ -555,18 +532,15 @@ module std [system] {
       module parser_std_format_spec   { private header "__format/parser_std_format_spec.h" }
     }
   }
-
   module forward_list {
     header "forward_list"
     export initializer_list
     export *
   }
-
   module fstream {
     header "fstream"
     export *
   }
-
   module functional {
     header "functional"
     export *
@@ -592,14 +566,12 @@ module std [system] {
       module unary_negate               { private header "__functional/unary_negate.h" }
     }
   }
-
   module functional__functional_1 {
       module hash                       { private header "__functional/hash.h" }
       module identity                   { private header "__functional/identity.h" }
       module operations                 { private header "__functional/operations.h" }
       module reference_wrapper          { private header "__functional/reference_wrapper.h" }
   }
-
   module functional__functional_2 {
       module binary_function            { private header "__functional/binary_function.h" }
       module invoke                     { private header "__functional/invoke.h" }
@@ -607,33 +579,27 @@ module std [system] {
       module unwrap_ref                 { private header "__functional/unwrap_ref.h" }
       module weak_result_type           { private header "__functional/weak_result_type.h" }
   }
-
   module future {
     header "future"
     export *
   }
-
   module initializer_list {
     header "initializer_list"
     export *
   }
-
   module iomanip {
     header "iomanip"
     export *
   }
-
   module ios {
     header "ios"
     export iosfwd
     export *
   }
-
   module iosfwd {
     header "iosfwd"
     export *
   }
-
   module iostream {
     header "iostream"
     export ios
@@ -643,13 +609,11 @@ module std [system] {
     export ostream
     export *
   }
-
   module istream {
     header "istream"
     // FIXME: should re-export ios, streambuf?
     export *
   }
-
   module iterator {
     header "iterator"
     export *
@@ -685,7 +649,6 @@ module std [system] {
       module wrap_iter             { private header "__iterator/wrap_iter.h" }
     }
   }
-
   module iterator__iterator_1 {
       module concepts              { private header "__iterator/concepts.h" }
       module incrementable_traits  { private header "__iterator/incrementable_traits.h" }
@@ -693,35 +656,29 @@ module std [system] {
       module iterator_traits       { private header "__iterator/iterator_traits.h" }
       module readable_traits       { private header "__iterator/readable_traits.h" }
   }
-
   module latch {
     requires cplusplus14
     header "latch"
     export *
   }
-
   module limits {
     header "limits"
     export *
   }
-
   module list {
     header "list"
     export initializer_list
     export *
   }
-
   module locale {
     header "locale"
     export *
   }
-
   module map {
     header "map"
     export initializer_list
     export *
   }
-
   module memory {
     header "memory"
     export *
@@ -744,29 +701,24 @@ module std [system] {
       module voidify                         { private header "__memory/voidify.h" }
     }
   }
-
   module memory__memory_1 {
       module addressof                       { private header "__memory/addressof.h" }
       module allocator_arg_t                 { private header "__memory/allocator_arg_t.h" }
       module pointer_traits                  { private header "__memory/pointer_traits.h" }
       module uses_allocator                  { private header "__memory/uses_allocator.h" }
   }
-
   module mutex {
     header "mutex"
     export *
   }
-
   module new {
     header "new"
     export *
   }
-
   module numbers {
     header "numbers"
     export *
   }
-
   module numeric {
     header "numeric"
     export *
@@ -787,28 +739,25 @@ module std [system] {
       module transform_reduce         { private header "__numeric/transform_reduce.h" }
     }
   }
-
   module optional {
     header "optional"
     export *
   }
-
   module ostream {
     header "ostream"
     // FIXME: should re-export ios, streambuf?
     export *
   }
-
   module queue {
     header "queue"
     export initializer_list
     export *
   }
-
   module random {
     header "random"
     export initializer_list
     export *
+
     module __random {
       module bernoulli_distribution          { private header "__random/bernoulli_distribution.h" }
       module binomial_distribution           { private header "__random/binomial_distribution.h" }
@@ -846,18 +795,17 @@ module std [system] {
       module weibull_distribution            { private header "__random/weibull_distribution.h" }
     }
   }
-
   module random__random_1 {
       module log2                            { private header "__random/log2.h" }
       module uniform_int_distribution        { private header "__random/uniform_int_distribution.h" }
   }
-
   module ranges {
     header "ranges"
     export compare
     export initializer_list
     export iterator
     export *
+
     module __ranges {
       module all                    {
         private header "__ranges/all.h"
@@ -891,7 +839,6 @@ module std [system] {
       module view_interface         { private header "__ranges/view_interface.h" }
     }
   }
-
   module std_ranges__range_1 {
       module access                 { private header "__ranges/access.h" }
       module concepts               { private header "__ranges/concepts.h" }
@@ -902,7 +849,6 @@ module std [system] {
       module size                   { private header "__ranges/size.h" }
   }
 
-
   module ratio {
     header "ratio"
     export *
@@ -912,57 +858,47 @@ module std [system] {
     export initializer_list
     export *
   }
-
   module scoped_allocator {
     header "scoped_allocator"
     export *
   }
-
   module semaphore {
     requires cplusplus14
     header "semaphore"
     export *
   }
-
   module set {
     header "set"
     export initializer_list
     export *
   }
-
   module shared_mutex {
     header "shared_mutex"
     export version
   }
-
   module span {
     header "span"
     export ranges.__ranges.enable_borrowed_range
     export version
   }
-
   module sstream {
     header "sstream"
     // FIXME: should re-export istream, ostream, ios, streambuf, string?
     export *
   }
-
   module stack {
     header "stack"
     export initializer_list
     export *
   }
-
   module stdexcept {
     header "stdexcept"
     export *
   }
-
   module streambuf {
     header "streambuf"
     export *
   }
-
   module string {
     header "string"
     export initializer_list
@@ -970,70 +906,57 @@ module std [system] {
     export __string
     export *
   }
-
   module string_view {
     header "string_view"
     export initializer_list
     export __string
     export *
   }
-
   module strstream {
     header "strstream"
     export *
   }
-
   module system_error {
     header "system_error"
     export *
   }
-
   module thread {
     header "thread"
     export *
   }
-
   module thread__thread_1 {
       module poll_with_backoff    { private header "__thread/poll_with_backoff.h" }
   }
-
   module thread__thread_2 {
       module timed_backoff_policy { private header "__thread/timed_backoff_policy.h" }
   }
-
   module tuple {
     header "tuple"
     export *
   }
-
   module type_traits {
     header "type_traits"
     export functional.__functional.unwrap_ref
     export *
   }
-
   module typeindex {
     header "typeindex"
     export *
   }
-
   module typeinfo {
     header "typeinfo"
     export *
   }
-
   module unordered_map {
     header "unordered_map"
     export initializer_list
     export *
   }
-
   module unordered_set {
     header "unordered_set"
     export initializer_list
     export *
   }
-
   module utility {
     header "utility"
     export initializer_list
@@ -1053,7 +976,6 @@ module std [system] {
       module transaction         { private header "__utility/transaction.h" }
     }
   }
-
   module utility__utility_1 {
       module declval             { private header "__utility/declval.h" }
       module exchange            { private header "__utility/exchange.h" }
@@ -1061,13 +983,11 @@ module std [system] {
       module move                { private header "__utility/move.h" }
       module priority_tag        { private header "__utility/priority_tag.h" }
   }
-
   module valarray {
     header "valarray"
     export initializer_list
     export *
   }
-
   module variant {
     header "variant"
     export *
@@ -1076,13 +996,11 @@ module std [system] {
       module monostate { private header "__variant/monostate.h" }
     }
   }
-
   module vector {
     header "vector"
     export initializer_list
     export *
   }
-
   module __availability      { private header "__availability"      export * }
   module __bit_reference     { private header "__bit_reference"     export * }
   module __bits              { private header "__bits"              export * }
@@ -1099,7 +1017,6 @@ module std [system] {
   module __threading_support {         header "__threading_support" export * }
   module __tree              {         header "__tree"              export * }
   module __tuple             { private header "__tuple"             export * }
-
   module experimental {
     requires cplusplus11
 
@@ -1194,4 +1111,3 @@ module std [system] {
       export *
     }
   } // end experimental
-//}
