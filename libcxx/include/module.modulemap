@@ -193,7 +193,6 @@ module std [system] {
       module comp                     { private header "__algorithm/comp.h" }
       module in_out_result            { private header "__algorithm/in_out_result.h" }
       module search                   { private header "__algorithm/search.h" }
-      module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
     }
   module atomic {
     header "atomic"
@@ -578,6 +577,7 @@ module std [system] {
       module transform                { private header "__algorithm/transform.h" }
       module unique                   { private header "__algorithm/unique.h" }
       module unique_copy              { private header "__algorithm/unique_copy.h" }
+      module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
       module upper_bound              { private header "__algorithm/upper_bound.h" }
 
   }
