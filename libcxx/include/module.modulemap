@@ -208,11 +208,6 @@ module std [system] {
     export functional.__functional.unwrap_ref
     export *
   }
-
-    module __utility {
-      module declval             { private header "__utility/declval.h" }
-    }
-
   module version {
     header "version"
     export *
@@ -1040,6 +1035,7 @@ module std [system] {
     export initializer_list
     export *
 
+    module __utility {
       module as_const            { private header "__utility/as_const.h" }
       module auto_cast           { private header "__utility/auto_cast.h" }
       module cmp                 { private header "__utility/cmp.h" }
@@ -1051,9 +1047,11 @@ module std [system] {
       module swap                { private header "__utility/swap.h" }
       module to_underlying       { private header "__utility/to_underlying.h" }
       module transaction         { private header "__utility/transaction.h" }
+    }
   }
 
   module utility__utility_1 {
+      module declval             { private header "__utility/declval.h" }
       module exchange            { private header "__utility/exchange.h" }
       module forward             { private header "__utility/forward.h" }
       module move                { private header "__utility/move.h" }
