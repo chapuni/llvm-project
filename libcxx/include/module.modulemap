@@ -253,10 +253,6 @@ module std [system] {
       module weak_result_type           { private header "__functional/weak_result_type.h" }
     }
 
-  module initializer_list {
-    header "initializer_list"
-    export *
-  }
   module iosfwd {
     header "iosfwd"
     export *
@@ -644,6 +640,11 @@ module std [system] {
 
   module future {
     header "future"
+    export *
+  }
+
+  module initializer_list {
+    header "initializer_list"
     export *
   }
 
