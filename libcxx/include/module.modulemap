@@ -309,7 +309,6 @@ module std [system] {
 
     module __random {
       module is_seed_sequence                { private header "__random/is_seed_sequence.h" }
-      module log2                            { private header "__random/log2.h" }
     }
 
     module __ranges {
@@ -883,6 +882,7 @@ module std [system] {
       module uniform_real_distribution       { private header "__random/uniform_real_distribution.h" }
       module weibull_distribution            { private header "__random/weibull_distribution.h" }
   }
+      module log2                            { private header "__random/log2.h" }
       module uniform_int_distribution        { private header "__random/uniform_int_distribution.h" }
 
   module ranges {
