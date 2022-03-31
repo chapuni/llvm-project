@@ -264,7 +264,6 @@ module std [system] {
 
     module __iterator {
       module incrementable_traits  { private header "__iterator/incrementable_traits.h" }
-      module iter_move             { private header "__iterator/iter_move.h" }
       module iterator_traits       { private header "__iterator/iterator_traits.h" }
       module readable_traits       { private header "__iterator/readable_traits.h" }
     }
@@ -725,6 +724,7 @@ module std [system] {
 
   module iterator__iterator_1 {
       module concepts              { private header "__iterator/concepts.h" }
+      module iter_move             { private header "__iterator/iter_move.h" }
   }
 
   module latch {
