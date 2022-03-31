@@ -582,6 +582,7 @@ if ( LLVM_COMPILER_IS_GCC_COMPATIBLE AND LLVM_ENABLE_MODULES )
     # On Darwin -fmodules does not imply -fcxx-modules.
     set(module_flags "${module_flags} -fcxx-modules")
   endif()
+  set(module_flags "${module_flags} -Xclang -Rmodule-build")
   if (LLVM_ENABLE_LOCAL_SUBMODULE_VISIBILITY)
     set(module_flags "${module_flags} -Xclang -fmodules-local-submodule-visibility")
   endif()
