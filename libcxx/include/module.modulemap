@@ -247,7 +247,6 @@ module std [system] {
 
     module __functional {
       module binary_function            { private header "__functional/binary_function.h" }
-      module hash                       { private header "__functional/hash.h" }
       module invoke                     { private header "__functional/invoke.h" }
       module unary_function             { private header "__functional/unary_function.h" }
       module unwrap_ref                 { private header "__functional/unwrap_ref.h" }
@@ -661,6 +660,7 @@ module std [system] {
   }
 
   module functional__functional_1 {
+      module hash                       { private header "__functional/hash.h" }
       module identity                   { private header "__functional/identity.h" }
       module operations                 { private header "__functional/operations.h" }
       module reference_wrapper          { private header "__functional/reference_wrapper.h" }
