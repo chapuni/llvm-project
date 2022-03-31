@@ -200,23 +200,18 @@ module std [system] {
       module find_first_of            { private header "__algorithm/find_first_of.h" }
       module half_positive            { private header "__algorithm/half_positive.h" }
       module in_out_result            { private header "__algorithm/in_out_result.h" }
-      module iter_swap                { private header "__algorithm/iter_swap.h" }
-      module lower_bound              { private header "__algorithm/lower_bound.h" }
       module make_heap                { private header "__algorithm/make_heap.h" }
       module min                      { private header "__algorithm/min.h" }
       module min_element              { private header "__algorithm/min_element.h" }
       module move                     { private header "__algorithm/move.h" }
       module move_backward            { private header "__algorithm/move_backward.h" }
-      module partial_sort             { private header "__algorithm/partial_sort.h" }
       module pop_heap                 { private header "__algorithm/pop_heap.h" }
-      module rotate                   { private header "__algorithm/rotate.h" }
       module search                   { private header "__algorithm/search.h" }
       module shuffle                  { private header "__algorithm/shuffle.h" }
       module sift_down                { private header "__algorithm/sift_down.h" }
       module sort_heap                { private header "__algorithm/sort_heap.h" }
       module swap_ranges              { private header "__algorithm/swap_ranges.h" }
       module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
-      module upper_bound              { private header "__algorithm/upper_bound.h" }
     }
   module atomic {
     header "atomic"
@@ -539,7 +534,9 @@ module std [system] {
       module is_permutation           { private header "__algorithm/is_permutation.h" }
       module is_sorted                { private header "__algorithm/is_sorted.h" }
       module is_sorted_until          { private header "__algorithm/is_sorted_until.h" }
+      module iter_swap                { private header "__algorithm/iter_swap.h" }
       module lexicographical_compare  { private header "__algorithm/lexicographical_compare.h" }
+      module lower_bound              { private header "__algorithm/lower_bound.h" }
       module max                      { private header "__algorithm/max.h" }
       module max_element              { private header "__algorithm/max_element.h" }
       module merge                    { private header "__algorithm/merge.h" }
@@ -549,6 +546,7 @@ module std [system] {
       module next_permutation         { private header "__algorithm/next_permutation.h" }
       module none_of                  { private header "__algorithm/none_of.h" }
       module nth_element              { private header "__algorithm/nth_element.h" }
+      module partial_sort             { private header "__algorithm/partial_sort.h" }
       module partial_sort_copy        { private header "__algorithm/partial_sort_copy.h" }
       module partition                { private header "__algorithm/partition.h" }
       module partition_copy           { private header "__algorithm/partition_copy.h" }
@@ -565,6 +563,7 @@ module std [system] {
       module replace_if               { private header "__algorithm/replace_if.h" }
       module reverse                  { private header "__algorithm/reverse.h" }
       module reverse_copy             { private header "__algorithm/reverse_copy.h" }
+      module rotate                   { private header "__algorithm/rotate.h" }
       module rotate_copy              { private header "__algorithm/rotate_copy.h" }
       module sample                   { private header "__algorithm/sample.h" }
       module search_n                 { private header "__algorithm/search_n.h" }
@@ -580,6 +579,7 @@ module std [system] {
       module transform                { private header "__algorithm/transform.h" }
       module unique                   { private header "__algorithm/unique.h" }
       module unique_copy              { private header "__algorithm/unique_copy.h" }
+      module upper_bound              { private header "__algorithm/upper_bound.h" }
 
   }
 
