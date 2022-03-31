@@ -283,8 +283,6 @@ module std [system] {
       module identity                   { private header "__functional/identity.h" }
       module invoke                     { private header "__functional/invoke.h" }
       module operations                 { private header "__functional/operations.h" }
-      module perfect_forward            { private header "__functional/perfect_forward.h" }
-      module pointer_to_unary_function  { private header "__functional/pointer_to_unary_function.h" }
       module reference_wrapper          { private header "__functional/reference_wrapper.h" }
       module unary_function             { private header "__functional/unary_function.h" }
       module unwrap_ref                 { private header "__functional/unwrap_ref.h" }
@@ -747,9 +745,12 @@ module std [system] {
       module mem_fn                     { private header "__functional/mem_fn.h" }
       module mem_fun_ref                { private header "__functional/mem_fun_ref.h" }
       module not_fn                     { private header "__functional/not_fn.h" }
+      module perfect_forward            { private header "__functional/perfect_forward.h" }
       module pointer_to_binary_function { private header "__functional/pointer_to_binary_function.h" }
+      module pointer_to_unary_function  { private header "__functional/pointer_to_unary_function.h" }
       module ranges_operations          { private header "__functional/ranges_operations.h" }
       module unary_negate               { private header "__functional/unary_negate.h" }
+
   }
 
   module future {
