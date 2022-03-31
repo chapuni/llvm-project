@@ -281,10 +281,6 @@ module std [system] {
     export functional.__functional.unwrap_ref
     export *
   }
-  module utility {
-    header "utility"
-    export initializer_list
-    export *
 
     module __utility {
       module as_const            { private header "__utility/as_const.h" }
@@ -304,7 +300,7 @@ module std [system] {
       module to_underlying       { private header "__utility/to_underlying.h" }
       module transaction         { private header "__utility/transaction.h" }
     }
-  }
+
   module version {
     header "version"
     export *
@@ -1047,6 +1043,12 @@ module std [system] {
 
   module unordered_set {
     header "unordered_set"
+    export initializer_list
+    export *
+  }
+
+  module utility {
+    header "utility"
     export initializer_list
     export *
   }
