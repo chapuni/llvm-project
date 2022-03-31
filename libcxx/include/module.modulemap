@@ -215,7 +215,6 @@ module std [system] {
       module forward             { private header "__utility/forward.h" }
       module move                { private header "__utility/move.h" }
       module piecewise_construct { private header "__utility/piecewise_construct.h" }
-      module priority_tag        { private header "__utility/priority_tag.h" }
     }
 
   module version {
@@ -1055,6 +1054,10 @@ module std [system] {
       module swap                { private header "__utility/swap.h" }
       module to_underlying       { private header "__utility/to_underlying.h" }
       module transaction         { private header "__utility/transaction.h" }
+  }
+
+  module utility__utility_1 {
+      module priority_tag        { private header "__utility/priority_tag.h" }
   }
 
   module valarray {
