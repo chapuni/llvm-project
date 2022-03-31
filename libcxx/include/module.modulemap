@@ -190,39 +190,29 @@ module std [system] {
   }
 
     module __algorithm {
-      module adjacent_find            { private header "__algorithm/adjacent_find.h" }
       module comp                     { private header "__algorithm/comp.h" }
       module comp_ref_type            { private header "__algorithm/comp_ref_type.h" }
       module copy                     { private header "__algorithm/copy.h" }
       module copy_backward            { private header "__algorithm/copy_backward.h" }
       module copy_n                   { private header "__algorithm/copy_n.h" }
       module fill_n                   { private header "__algorithm/fill_n.h" }
-      module find                     { private header "__algorithm/find.h" }
       module find_end                 { private header "__algorithm/find_end.h" }
       module find_first_of            { private header "__algorithm/find_first_of.h" }
-      module find_if                  { private header "__algorithm/find_if.h" }
       module half_positive            { private header "__algorithm/half_positive.h" }
       module in_out_result            { private header "__algorithm/in_out_result.h" }
-      module inplace_merge            { private header "__algorithm/inplace_merge.h" }
-      module is_heap_until            { private header "__algorithm/is_heap_until.h" }
-      module is_sorted_until          { private header "__algorithm/is_sorted_until.h" }
       module iter_swap                { private header "__algorithm/iter_swap.h" }
       module lower_bound              { private header "__algorithm/lower_bound.h" }
       module make_heap                { private header "__algorithm/make_heap.h" }
-      module max_element              { private header "__algorithm/max_element.h" }
       module min                      { private header "__algorithm/min.h" }
       module min_element              { private header "__algorithm/min_element.h" }
       module move                     { private header "__algorithm/move.h" }
       module move_backward            { private header "__algorithm/move_backward.h" }
       module partial_sort             { private header "__algorithm/partial_sort.h" }
       module pop_heap                 { private header "__algorithm/pop_heap.h" }
-      module replace                  { private header "__algorithm/replace.h" }
-      module reverse                  { private header "__algorithm/reverse.h" }
       module rotate                   { private header "__algorithm/rotate.h" }
       module search                   { private header "__algorithm/search.h" }
       module shuffle                  { private header "__algorithm/shuffle.h" }
       module sift_down                { private header "__algorithm/sift_down.h" }
-      module sort                     { private header "__algorithm/sort.h" }
       module sort_heap                { private header "__algorithm/sort_heap.h" }
       module swap_ranges              { private header "__algorithm/swap_ranges.h" }
       module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
@@ -521,6 +511,7 @@ module std [system] {
     export initializer_list
     export *
 
+      module adjacent_find            { private header "__algorithm/adjacent_find.h" }
       module all_of                   { private header "__algorithm/all_of.h" }
       module any_of                   { private header "__algorithm/any_of.h" }
       module binary_search            { private header "__algorithm/binary_search.h" }
@@ -531,6 +522,8 @@ module std [system] {
       module equal                    { private header "__algorithm/equal.h" }
       module equal_range              { private header "__algorithm/equal_range.h" }
       module fill                     { private header "__algorithm/fill.h" }
+      module find                     { private header "__algorithm/find.h" }
+      module find_if                  { private header "__algorithm/find_if.h" }
       module find_if_not              { private header "__algorithm/find_if_not.h" }
       module for_each                 { private header "__algorithm/for_each.h" }
       module for_each_n               { private header "__algorithm/for_each_n.h" }
@@ -539,12 +532,16 @@ module std [system] {
       module in_in_out_result         { private header "__algorithm/in_in_out_result.h" }
       module in_in_result             { private header "__algorithm/in_in_result.h" }
       module includes                 { private header "__algorithm/includes.h" }
+      module inplace_merge            { private header "__algorithm/inplace_merge.h" }
       module is_heap                  { private header "__algorithm/is_heap.h" }
+      module is_heap_until            { private header "__algorithm/is_heap_until.h" }
       module is_partitioned           { private header "__algorithm/is_partitioned.h" }
       module is_permutation           { private header "__algorithm/is_permutation.h" }
       module is_sorted                { private header "__algorithm/is_sorted.h" }
+      module is_sorted_until          { private header "__algorithm/is_sorted_until.h" }
       module lexicographical_compare  { private header "__algorithm/lexicographical_compare.h" }
       module max                      { private header "__algorithm/max.h" }
+      module max_element              { private header "__algorithm/max_element.h" }
       module merge                    { private header "__algorithm/merge.h" }
       module minmax                   { private header "__algorithm/minmax.h" }
       module minmax_element           { private header "__algorithm/minmax_element.h" }
@@ -562,9 +559,11 @@ module std [system] {
       module remove_copy              { private header "__algorithm/remove_copy.h" }
       module remove_copy_if           { private header "__algorithm/remove_copy_if.h" }
       module remove_if                { private header "__algorithm/remove_if.h" }
+      module replace                  { private header "__algorithm/replace.h" }
       module replace_copy             { private header "__algorithm/replace_copy.h" }
       module replace_copy_if          { private header "__algorithm/replace_copy_if.h" }
       module replace_if               { private header "__algorithm/replace_if.h" }
+      module reverse                  { private header "__algorithm/reverse.h" }
       module reverse_copy             { private header "__algorithm/reverse_copy.h" }
       module rotate_copy              { private header "__algorithm/rotate_copy.h" }
       module sample                   { private header "__algorithm/sample.h" }
@@ -575,11 +574,13 @@ module std [system] {
       module set_union                { private header "__algorithm/set_union.h" }
       module shift_left               { private header "__algorithm/shift_left.h" }
       module shift_right              { private header "__algorithm/shift_right.h" }
+      module sort                     { private header "__algorithm/sort.h" }
       module stable_partition         { private header "__algorithm/stable_partition.h" }
       module stable_sort              { private header "__algorithm/stable_sort.h" }
       module transform                { private header "__algorithm/transform.h" }
       module unique                   { private header "__algorithm/unique.h" }
       module unique_copy              { private header "__algorithm/unique_copy.h" }
+
   }
 
   module any {
