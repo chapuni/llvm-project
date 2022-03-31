@@ -203,7 +203,6 @@ module std [system] {
     module __functional {
       module binary_function            { private header "__functional/binary_function.h" }
       module unary_function             { private header "__functional/unary_function.h" }
-      module weak_result_type           { private header "__functional/weak_result_type.h" }
     }
 
   module limits {
@@ -629,6 +628,7 @@ module std [system] {
   module functional__functional_2 {
       module invoke                     { private header "__functional/invoke.h" }
       module unwrap_ref                 { private header "__functional/unwrap_ref.h" }
+      module weak_result_type           { private header "__functional/weak_result_type.h" }
   }
 
   module future {
