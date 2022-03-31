@@ -192,7 +192,6 @@ module std [system] {
     module __algorithm {
       module comp                     { private header "__algorithm/comp.h" }
       module in_out_result            { private header "__algorithm/in_out_result.h" }
-      module search                   { private header "__algorithm/search.h" }
     }
 
     module __bit {
@@ -458,7 +457,10 @@ module std [system] {
       module unique_copy              { private header "__algorithm/unique_copy.h" }
       module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
       module upper_bound              { private header "__algorithm/upper_bound.h" }
+  }
 
+  module algorithm__algorithm_1 {
+      module search                   { private header "__algorithm/search.h" }
   }
 
   module any {
