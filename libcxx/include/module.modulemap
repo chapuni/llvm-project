@@ -293,9 +293,6 @@ module std [system] {
     header "iosfwd"
     export *
   }
-  module iterator {
-    header "iterator"
-    export *
 
     module __iterator {
       module access                { private header "__iterator/access.h" }
@@ -332,7 +329,7 @@ module std [system] {
       module unreachable_sentinel  { private header "__iterator/unreachable_sentinel.h" }
       module wrap_iter             { private header "__iterator/wrap_iter.h" }
     }
-  }
+
   module limits {
     header "limits"
     export *
@@ -761,6 +758,11 @@ module std [system] {
   module istream {
     header "istream"
     // FIXME: should re-export ios, streambuf?
+    export *
+  }
+
+  module iterator {
+    header "iterator"
     export *
   }
 
