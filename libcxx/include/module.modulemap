@@ -305,9 +305,6 @@ module std [system] {
     header "ratio"
     export *
   }
-    module __thread {
-      module poll_with_backoff    { private header "__thread/poll_with_backoff.h" }
-    }
   module type_traits {
     header "type_traits"
     export functional.__functional.unwrap_ref
@@ -1013,7 +1010,11 @@ module std [system] {
     export *
   }
 
-  module thread__thread {
+  module thread__thread_1 {
+      module poll_with_backoff    { private header "__thread/poll_with_backoff.h" }
+  }
+
+  module thread__thread_2 {
       module timed_backoff_policy { private header "__thread/timed_backoff_policy.h" }
   }
 
