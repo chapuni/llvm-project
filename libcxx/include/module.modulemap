@@ -233,11 +233,6 @@ module std [system] {
       module weak_result_type           { private header "__functional/weak_result_type.h" }
     }
 
-  module iosfwd {
-    header "iosfwd"
-    export *
-  }
-
     module __iterator {
       module incrementable_traits  { private header "__iterator/incrementable_traits.h" }
       module iterator_traits       { private header "__iterator/iterator_traits.h" }
@@ -417,7 +412,7 @@ module std [system] {
   module bitset {
     header "bitset"
     export string
-    export std.iosfwd
+    export iosfwd
     export *
   }
 
@@ -654,14 +649,19 @@ module std [system] {
 
   module ios {
     header "ios"
-    export std.iosfwd
+    export iosfwd
+    export *
+  }
+
+  module iosfwd {
+    header "iosfwd"
     export *
   }
 
   module iostream {
     header "iostream"
     export ios
-    export std.iosfwd
+    export iosfwd
     export streambuf
     export istream
     export ostream
