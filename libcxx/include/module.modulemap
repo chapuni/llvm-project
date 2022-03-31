@@ -189,10 +189,6 @@ module std [system] {
     }
   }
 
-    module __bit {
-      module bit_cast { private header "__bit/bit_cast.h" }
-    }
-
   // No submodule for cassert. It fundamentally needs repeated, textual inclusion.
 
     module __concepts {
@@ -367,7 +363,10 @@ module std [system] {
     header "bit"
     export *
 
+    module __bit {
+      module bit_cast { private header "__bit/bit_cast.h" }
       module byteswap { private header "__bit/byteswap.h" }
+    }
   }
 
   module bitset {
