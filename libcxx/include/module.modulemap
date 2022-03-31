@@ -348,7 +348,6 @@ module std [system] {
   module __debug             {         header "__debug"             export * }
   module __mbstate_t         { private header "__mbstate_t.h"       export * }
   module __nullptr           {         header "__nullptr"           export * }
-  module __threading_support {         header "__threading_support" export * }
   module __tuple             { private header "__tuple"             export * }
   module __undef_macros      {         header "__undef_macros"      export * }
 }
@@ -1076,6 +1075,7 @@ module std [system] {
   module __split_buffer      { private header "__split_buffer"      export * }
   module __std_stream        { private header "__std_stream"        export * }
   module __string            { private header "__string"            export * }
+  module __threading_support {         header "__threading_support" export * }
   module __tree              {         header "__tree"              export * }
 
   module experimental {
