@@ -189,10 +189,6 @@ module std [system] {
     }
   }
 
-    module __algorithm {
-      module in_out_result            { private header "__algorithm/in_out_result.h" }
-    }
-
     module __bit {
       module bit_cast { private header "__bit/bit_cast.h" }
       module byteswap { private header "__bit/byteswap.h" }
@@ -363,6 +359,7 @@ module std [system] {
     export initializer_list
     export *
 
+    module __algorithm {
       module adjacent_find            { private header "__algorithm/adjacent_find.h" }
       module all_of                   { private header "__algorithm/all_of.h" }
       module any_of                   { private header "__algorithm/any_of.h" }
@@ -456,10 +453,12 @@ module std [system] {
       module unique_copy              { private header "__algorithm/unique_copy.h" }
       module unwrap_iter              { private header "__algorithm/unwrap_iter.h" }
       module upper_bound              { private header "__algorithm/upper_bound.h" }
+    }
   }
 
   module algorithm__algorithm_1 {
       module comp                     { private header "__algorithm/comp.h" }
+      module in_out_result            { private header "__algorithm/in_out_result.h" }
       module search                   { private header "__algorithm/search.h" }
   }
 
