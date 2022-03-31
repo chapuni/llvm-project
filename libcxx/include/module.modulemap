@@ -211,7 +211,6 @@ module std [system] {
 
     module __utility {
       module declval             { private header "__utility/declval.h" }
-      module forward             { private header "__utility/forward.h" }
     }
 
   module version {
@@ -1056,6 +1055,7 @@ module std [system] {
 
   module utility__utility_1 {
       module exchange            { private header "__utility/exchange.h" }
+      module forward             { private header "__utility/forward.h" }
       module move                { private header "__utility/move.h" }
       module priority_tag        { private header "__utility/priority_tag.h" }
   }
