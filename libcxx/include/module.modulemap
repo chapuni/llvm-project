@@ -194,15 +194,12 @@ module std [system] {
       module in_out_result            { private header "__algorithm/in_out_result.h" }
       module search                   { private header "__algorithm/search.h" }
     }
-  module bit {
-    header "bit"
-    export *
 
     module __bit {
       module bit_cast { private header "__bit/bit_cast.h" }
       module byteswap { private header "__bit/byteswap.h" }
     }
-  }
+
   // No submodule for cassert. It fundamentally needs repeated, textual inclusion.
   module chrono {
     header "chrono"
@@ -497,6 +494,11 @@ module std [system] {
   module barrier {
     requires cplusplus14
     header "barrier"
+    export *
+  }
+
+  module bit {
+    header "bit"
     export *
   }
 
