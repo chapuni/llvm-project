@@ -198,8 +198,6 @@ module std [system] {
 
     module __concepts {
       module arithmetic                 { private header "__concepts/arithmetic.h" }
-      module convertible_to             { private header "__concepts/convertible_to.h" }
-      module same_as                    { private header "__concepts/same_as.h" }
     }
 
     module __functional {
@@ -481,6 +479,7 @@ module std [system] {
       module constructible              { private header "__concepts/constructible.h" }
       module boolean_testable           { private header "__concepts/boolean_testable.h" }
       module common_with                { private header "__concepts/common_with.h" }
+      module convertible_to             { private header "__concepts/convertible_to.h" }
       module copyable                   { private header "__concepts/copyable.h" }
       module derived_from               { private header "__concepts/derived_from.h" }
       module destructible               { private header "__concepts/destructible.h" }
@@ -491,6 +490,7 @@ module std [system] {
       module predicate                  { private header "__concepts/predicate.h" }
       module regular                    { private header "__concepts/regular.h" }
       module relation                   { private header "__concepts/relation.h" }
+      module same_as                    { private header "__concepts/same_as.h" }
       module semiregular                { private header "__concepts/semiregular.h" }
       module swappable                  { private header "__concepts/swappable.h" }
       module totally_ordered            { private header "__concepts/totally_ordered.h" }
