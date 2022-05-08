@@ -7184,6 +7184,9 @@ const SCEV *ScalarEvolution::createSCEV(Value *V) {
   else if (!isa<ConstantExpr>(V))
     return getUnknown(V);
 
+  const SCEV *LHS;
+  const SCEV *RHS;
+
   Operator *U = cast<Operator>(V);
   if (auto BO = MatchBinaryOp(U, DT)) {
     switch (BO->Opcode) {
@@ -7249,8 +7252,9 @@ const SCEV *ScalarEvolution::createSCEV(Value *V) {
 
           SCEV::NoWrapFlags Flags = getNoWrapFlagsFromUB(BO->Op);
           if (Flags != SCEV::FlagAnyWrap) {
-            MulOps.push_back(
-                getMulExpr(getSCEV(BO->LHS), getSCEV(BO->RHS), Flags));
+            LHS = getSCEV(BO->LHS);
+            RHS = getSCEV(BO->RHS);
+            MulOps.push_back(getMulExpr(LHS, RHS, Flags));
             break;
           }
         }
@@ -7267,14 +7271,20 @@ const SCEV *ScalarEvolution::createSCEV(Value *V) {
       return getMulExpr(MulOps);
     }
     case Instruction::UDiv:
-      return getUDivExpr(getSCEV(BO->LHS), getSCEV(BO->RHS));
+      LHS = getSCEV(BO->LHS);
+      RHS = getSCEV(BO->RHS);
+      return getUDivExpr(LHS, RHS);
     case Instruction::URem:
-      return getURemExpr(getSCEV(BO->LHS), getSCEV(BO->RHS));
+      LHS = getSCEV(BO->LHS);
+      RHS = getSCEV(BO->RHS);
+      return getURemExpr(LHS, RHS);
     case Instruction::Sub: {
       SCEV::NoWrapFlags Flags = SCEV::FlagAnyWrap;
       if (BO->Op)
         Flags = getNoWrapFlagsFromUB(BO->Op);
-      return getMinusSCEV(getSCEV(BO->LHS), getSCEV(BO->RHS), Flags);
+      LHS = getSCEV(BO->LHS);
+      RHS = getSCEV(BO->RHS);
+      return getMinusSCEV(LHS, RHS, Flags);
     }
     case Instruction::And:
       // For an expression like x&255 that merely masks off the high bits,
@@ -7327,8 +7337,11 @@ const SCEV *ScalarEvolution::createSCEV(Value *V) {
         }
       }
       // Binary `and` is a bit-wise `umin`.
-      if (BO->LHS->getType()->isIntegerTy(1))
-        return getUMinExpr(getSCEV(BO->LHS), getSCEV(BO->RHS));
+      if (BO->LHS->getType()->isIntegerTy(1)) {
+        LHS = getSCEV(BO->LHS);
+        RHS = getSCEV(BO->RHS);
+        return getUMinExpr(LHS, RHS);
+      }
       break;
 
     case Instruction::Or:
@@ -7349,8 +7362,11 @@ const SCEV *ScalarEvolution::createSCEV(Value *V) {
         }
       }
       // Binary `or` is a bit-wise `umax`.
-      if (BO->LHS->getType()->isIntegerTy(1))
-        return getUMaxExpr(getSCEV(BO->LHS), getSCEV(BO->RHS));
+      if (BO->LHS->getType()->isIntegerTy(1)) {
+        LHS = getSCEV(BO->LHS);
+        RHS = getSCEV(BO->RHS);
+        return getUMaxExpr(LHS, RHS);
+      }
       break;
 
     case Instruction::Xor:
@@ -7527,16 +7543,16 @@ const SCEV *ScalarEvolution::createSCEV(Value *V) {
 
   case Instruction::SDiv:
     // If both operands are non-negative, this is just an udiv.
-    if (isKnownNonNegative(getSCEV(U->getOperand(0))) &&
-        isKnownNonNegative(getSCEV(U->getOperand(1))))
-      return getUDivExpr(getSCEV(U->getOperand(0)), getSCEV(U->getOperand(1)));
+    if (isKnownNonNegative(LHS = getSCEV(U->getOperand(0))) &&
+        isKnownNonNegative(RHS = getSCEV(U->getOperand(1))))
+      return getUDivExpr(LHS, RHS);
     break;
 
   case Instruction::SRem:
     // If both operands are non-negative, this is just an urem.
-    if (isKnownNonNegative(getSCEV(U->getOperand(0))) &&
-        isKnownNonNegative(getSCEV(U->getOperand(1))))
-      return getURemExpr(getSCEV(U->getOperand(0)), getSCEV(U->getOperand(1)));
+    if (isKnownNonNegative(LHS = getSCEV(U->getOperand(0))) &&
+        isKnownNonNegative(RHS = getSCEV(U->getOperand(1))))
+      return getURemExpr(LHS, RHS);
     break;
 
   case Instruction::GetElementPtr:
@@ -7561,17 +7577,21 @@ const SCEV *ScalarEvolution::createSCEV(Value *V) {
             getSCEV(II->getArgOperand(0)),
             /*IsNSW=*/cast<ConstantInt>(II->getArgOperand(1))->isOne());
       case Intrinsic::umax:
-        return getUMaxExpr(getSCEV(II->getArgOperand(0)),
-                           getSCEV(II->getArgOperand(1)));
+        LHS = getSCEV(II->getArgOperand(0));
+        RHS = getSCEV(II->getArgOperand(1));
+        return getUMaxExpr(LHS, RHS);
       case Intrinsic::umin:
-        return getUMinExpr(getSCEV(II->getArgOperand(0)),
-                           getSCEV(II->getArgOperand(1)));
+        LHS = getSCEV(II->getArgOperand(0));
+        RHS = getSCEV(II->getArgOperand(1));
+        return getUMinExpr(LHS, RHS);
       case Intrinsic::smax:
-        return getSMaxExpr(getSCEV(II->getArgOperand(0)),
-                           getSCEV(II->getArgOperand(1)));
+        LHS = getSCEV(II->getArgOperand(0));
+        RHS = getSCEV(II->getArgOperand(1));
+        return getSMaxExpr(LHS, RHS);
       case Intrinsic::smin:
-        return getSMinExpr(getSCEV(II->getArgOperand(0)),
-                           getSCEV(II->getArgOperand(1)));
+        LHS = getSCEV(II->getArgOperand(0));
+        RHS = getSCEV(II->getArgOperand(1));
+        return getSMinExpr(LHS, RHS);
       case Intrinsic::usub_sat: {
         const SCEV *X = getSCEV(II->getArgOperand(0));
         const SCEV *Y = getSCEV(II->getArgOperand(1));
