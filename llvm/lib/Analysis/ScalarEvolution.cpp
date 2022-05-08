@@ -14496,8 +14496,9 @@ const SCEV *ScalarEvolution::applyLoopGuards(const SCEV *Expr, const Loop *L) {
       if (auto *Cmp = dyn_cast<ICmpInst>(Cond)) {
         auto Predicate =
             EnterIfTrue ? Cmp->getPredicate() : Cmp->getInversePredicate();
-        CollectCondition(Predicate, getSCEV(Cmp->getOperand(0)),
-                         getSCEV(Cmp->getOperand(1)), RewriteMap);
+        const auto *LHS = getSCEV(Cmp->getOperand(0));
+        const auto *RHS = getSCEV(Cmp->getOperand(1));
+        CollectCondition(Predicate, LHS, RHS, RewriteMap);
         continue;
       }
 
@@ -14518,8 +14519,9 @@ const SCEV *ScalarEvolution::applyLoopGuards(const SCEV *Expr, const Loop *L) {
     auto *Cmp = dyn_cast<ICmpInst>(AssumeI->getOperand(0));
     if (!Cmp || !DT.dominates(AssumeI, L->getHeader()))
       continue;
-    CollectCondition(Cmp->getPredicate(), getSCEV(Cmp->getOperand(0)),
-                     getSCEV(Cmp->getOperand(1)), RewriteMap);
+    const auto *LHS = getSCEV(Cmp->getOperand(0));
+    const auto *RHS = getSCEV(Cmp->getOperand(1));
+    CollectCondition(Cmp->getPredicate(), LHS, RHS, RewriteMap);
   }
 
   if (RewriteMap.empty())
