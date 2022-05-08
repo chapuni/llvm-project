@@ -6096,8 +6096,10 @@ static Optional<const SCEV *> createNodeForSelectViaUMinSeq(ScalarEvolution *SE,
   if (!isa<ConstantInt>(TrueVal) && !isa<ConstantInt>(FalseVal))
     return None;
 
-  return createNodeForSelectViaUMinSeq(
-      SE, SE->getSCEV(Cond), SE->getSCEV(TrueVal), SE->getSCEV(FalseVal));
+  const auto *SECond = SE->getSCEV(Cond);
+  const auto *SETrue = SE->getSCEV(TrueVal);
+  const auto *SEFalse = SE->getSCEV(FalseVal);
+  return createNodeForSelectViaUMinSeq(SE, SECond, SETrue, SEFalse);
 }
 
 const SCEV *ScalarEvolution::createNodeForSelectOrPHIViaUMinSeq(
