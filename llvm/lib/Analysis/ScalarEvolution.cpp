@@ -10633,17 +10633,27 @@ bool ScalarEvolution::isKnownPredicateViaConstantRanges(
     return false;
 
   if (Pred == CmpInst::ICMP_NE) {
-    if (CheckRanges(getSignedRange(LHS), getSignedRange(RHS)) ||
-        CheckRanges(getUnsignedRange(LHS), getUnsignedRange(RHS)))
+    auto SL = getSignedRange(LHS);
+    auto SR = getSignedRange(RHS);
+    if (CheckRanges(SL, SR))
+      return true;
+    auto UL = getUnsignedRange(LHS);
+    auto UR = getUnsignedRange(RHS);
+    if (CheckRanges(UL, UR))
       return true;
     auto *Diff = getMinusSCEV(LHS, RHS);
     return !isa<SCEVCouldNotCompute>(Diff) && isKnownNonZero(Diff);
   }
 
-  if (CmpInst::isSigned(Pred))
-    return CheckRanges(getSignedRange(LHS), getSignedRange(RHS));
+  if (CmpInst::isSigned(Pred)) {
+    auto SL = getSignedRange(LHS);
+    auto SR = getSignedRange(RHS);
+    return CheckRanges(SL, SR);
+  }
 
-  return CheckRanges(getUnsignedRange(LHS), getUnsignedRange(RHS));
+  auto UL = getUnsignedRange(LHS);
+  auto UR = getUnsignedRange(RHS);
+  return CheckRanges(UL, UR);
 }
 
 bool ScalarEvolution::isKnownPredicateViaNoOverflow(ICmpInst::Predicate Pred,
