@@ -203,6 +203,8 @@ cc_library(
             "lib/Support/BLAKE3/blake3_avx2_x86-64_unix.S",
             "lib/Support/BLAKE3/blake3_avx512_x86-64_unix.S",
         ],
+        "//conditions:default": [
+        ]
     }),
     hdrs = glob([
         "include/llvm/Support/**/*.h",
