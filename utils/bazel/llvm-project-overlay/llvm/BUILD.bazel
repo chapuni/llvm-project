@@ -2597,7 +2597,7 @@ gentbl(
 template_rule(
     name = "dsymutil_main",
     src = "cmake/driver-template.cpp.in",
-    out = "dsymutil_main.cpp",
+    out = "dsymutil-driver.cpp",
     substitutions = {
         "@TOOL_NAME@": "dsymutil"
     },
@@ -2608,7 +2608,7 @@ cc_binary(
     srcs = glob([
         "tools/dsymutil/*.cpp",
         "tools/dsymutil/*.h",
-    ]) + ["dsymutil_main.cpp"],
+    ]) + ["dsymutil-driver.cpp"],
     copts = llvm_copts,
     stamp = 0,
     deps = [
@@ -2701,7 +2701,7 @@ cc_binary(
 template_rule(
     name = "ar_main",
     src = "cmake/driver-template.cpp.in",
-    out = "ar_main.cpp",
+    out = "llvm-ar-driver.cpp",
     substitutions = {
         "@TOOL_NAME@": "llvm_ar"
     },
@@ -2712,7 +2712,7 @@ cc_binary(
     srcs = glob([
         "tools/llvm-ar/*.cpp",
         "tools/llvm-ar/*.h",
-    ]) + ["ar_main.cpp"],
+    ]) + ["llvm-ar-driver.cpp"],
     copts = llvm_copts,
     stamp = 0,
     deps = [
@@ -2903,7 +2903,7 @@ gentbl(
 template_rule(
     name = "cxxfilt_main",
     src = "cmake/driver-template.cpp.in",
-    out = "cxxfilt_main.cpp",
+    out = "llvm-cxxfilt-driver.cpp",
     substitutions = {
         "@TOOL_NAME@": "llvm_cxxfilt"
     },
@@ -2914,7 +2914,7 @@ cc_binary(
     srcs = glob([
         "tools/llvm-cxxfilt/*.cpp",
         "tools/llvm-cxxfilt/*.h",
-    ]) + ["cxxfilt_main.cpp"],
+    ]) + ["llvm-cxxfilt-driver.cpp"],
     copts = llvm_copts,
     stamp = 0,
     deps = [
@@ -3446,7 +3446,7 @@ cc_binary(
 template_rule(
     name = "objcopy_main",
     src = "cmake/driver-template.cpp.in",
-    out = "objcopy_main.cpp",
+    out = "llvm-objcopy-driver.cpp",
     substitutions = {
         "@TOOL_NAME@": "llvm_objcopy"
     },
@@ -3458,7 +3458,7 @@ cc_binary(
     srcs = glob([
         "tools/llvm-objcopy/*.cpp",
         "tools/llvm-objcopy/*.h",
-    ]) + ["objcopy_main.cpp"],
+    ]) + ["llvm-objcopy-driver.cpp"],
     copts = llvm_copts,
     stamp = 0,
     deps = [
