@@ -125,25 +125,35 @@ def _extract_cmake_settings(repository_ctx, llvm_cmake):
         c["LLVM_VERSION_PATCH"],
     )
 
-    # Write out individual vars
-    fc = "# Generated from {}\n\n".format(llvm_cmake)
-    for k, v in c.items():
-        fc += '{} = "{}"\n'.format(k, v)
-    # Write out values as dict for convenience for minimum export.
-    fc += "\nllvm_vars={\n"
-    for k, v in c.items():
-        fc += '    "{}": "{}",\n'.format(k, v)
-    fc += "}\n"
-    repository_ctx.file("vars.bzl", content=fc)
-
     return c
+
+def _write_dict_to_file(repository_ctx, filepath, header, vars):
+
+    # (fci + individual vars) + (fcd + dict items) + (fct)
+    fci = header
+    fcd = "\nllvm_vars={\n"
+    fct = "}\n"
+
+    for k, v in vars.items():
+        fci += '{} = "{}"\n'.format(k, v)
+        fcd += '    "{}": "{}",\n'.format(k, v)
+
+    repository_ctx.file(filepath, content=fci + fcd + fct)
 
 def _llvm_configure_impl(repository_ctx):
     _overlay_directories(repository_ctx)
 
+    llvm_cmake = "llvm/CMakeLists.txt"
     vars = _extract_cmake_settings(
         repository_ctx,
-        "llvm/CMakeLists.txt",
+        llvm_cmake,
+    )
+
+    _write_dict_to_file(
+        repository_ctx,
+        filepath="vars.bzl",
+        header="# Generated from {}\n\n".format(llvm_cmake),
+        vars=vars,
     )
 
     # Create a starlark file with the requested LLVM targets.
