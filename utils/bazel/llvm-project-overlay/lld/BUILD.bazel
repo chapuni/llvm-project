@@ -3,6 +3,13 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 load("@bazel_skylib//rules:expand_template.bzl", "expand_template")
+load(
+    "@rules_pkg//pkg:mappings.bzl",
+    "pkg_attributes",
+    "pkg_filegroup",
+    "pkg_files",
+    "pkg_mklink",
+)
 load("//llvm:tblgen.bzl", "gentbl")
 
 load(
@@ -316,4 +323,31 @@ genrule(
     cmd =
         "target=$$(basename $<); for n in ld.lld ld64.lld lld-link wasm-ld; do ln -sf $$target $(@D)/$$n; done",
     output_to_bindir = 1,
+)
+
+# For packaging
+
+pkg_files(
+    name="pkg-lld-exe",
+    attributes=pkg_attributes(
+        mode="0755",
+    ),
+    srcs=[
+        ":lld",
+    ],
+)
+
+pkg_mklink(
+    name="pkg-ld.lld-symlink",
+    link_name="ld.lld",
+    target="lld",
+)
+
+pkg_filegroup(
+    name="pkg-lld",
+    prefix="bin",
+    srcs=[
+        ":pkg-ld.lld-symlink",
+        ":pkg-lld-exe",
+    ],
 )

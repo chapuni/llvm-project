@@ -3,6 +3,13 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 load("@bazel_skylib//rules:expand_template.bzl", "expand_template")
+load(
+    "@rules_pkg//pkg:mappings.bzl",
+    "pkg_attributes",
+    "pkg_filegroup",
+    "pkg_files",
+    "pkg_mklink",
+)
 load("//llvm:tblgen.bzl", "gentbl")
 load("//llvm:binary_alias.bzl", "binary_alias")
 load("//llvm:cc_plugin_library.bzl", "cc_plugin_library")
@@ -2240,4 +2247,52 @@ cc_library(
         "//llvm:Option",
         "//llvm:Support",
     ],
+)
+
+# For packaging
+
+CLANG_EXE = "clang-{}".format(LLVM_VERSION_MAJOR)
+
+pkg_files(
+    name="pkg-clang-exe",
+    attributes=pkg_attributes(
+        mode="0755",
+    ),
+    renames={
+        ":clang": CLANG_EXE,
+    },
+    srcs=[
+        ":clang",
+    ],
+)
+
+pkg_mklink(
+    name="pkg-clang-symlink",
+    link_name="clang",
+    target=CLANG_EXE,
+)
+
+pkg_mklink(
+    name="pkg-clangxx-symlink",
+    link_name="clang++",
+    target=CLANG_EXE,
+)
+
+pkg_filegroup(
+    name="pkg-clang",
+    prefix="bin",
+    srcs=[
+        ":pkg-clang-exe",
+        ":pkg-clang-symlink",
+        ":pkg-clangxx-symlink",
+    ],
+)
+
+pkg_files(
+    name="pkg-clang-resources",
+    prefix="lib/clang/{}/include".format(LLVM_VERSION_MAJOR),
+    srcs=[
+        ":builtin_headers_gen",
+    ],
+    strip_prefix="staging/include",
 )
