@@ -276,11 +276,9 @@ def compilerMacros(config, flags=''):
   """
   with _makeConfigTest(config) as test:
     with open(test.getSourcePath(), 'w') as sourceFile:
-      sourceFile.write("""
-      #if __has_include(<__config_site>)
-      #  include <__config_site>
-      #endif
-      """)
+      # Make sure files like <__config> are included, since they can define
+      # additional macros.
+      sourceFile.write("#include <stddef.h>")
     unparsedOutput, err, exitCode, _ = _executeScriptInternal(test, [
       "%{{cxx}} %s -dM -E %{{flags}} %{{compile_flags}} {}".format(flags)
     ])

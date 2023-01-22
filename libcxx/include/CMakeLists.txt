@@ -661,6 +661,7 @@ set(files
   map
   math.h
   memory
+  module.modulemap
   mutex
   new
   numbers
@@ -711,17 +712,9 @@ set(files
   wctype.h
   )
 
-foreach(feature LIBCXX_ENABLE_FILESYSTEM LIBCXX_ENABLE_LOCALIZATION LIBCXX_ENABLE_THREADS LIBCXX_ENABLE_WIDE_CHARACTERS)
-  if (NOT ${${feature}})
-    set(requires_${feature} "requires LIBCXX_CONFIGURED_WITHOUT_SUPPORT_FOR_THIS_HEADER")
-  endif()
-endforeach()
-
 configure_file("__config_site.in" "${LIBCXX_GENERATED_INCLUDE_TARGET_DIR}/__config_site" @ONLY)
-configure_file("module.modulemap.in" "${LIBCXX_GENERATED_INCLUDE_DIR}/module.modulemap" @ONLY)
 
-set(_all_includes "${LIBCXX_GENERATED_INCLUDE_TARGET_DIR}/__config_site"
-                  "${LIBCXX_GENERATED_INCLUDE_DIR}/module.modulemap")
+set(_all_includes "${LIBCXX_GENERATED_INCLUDE_TARGET_DIR}/__config_site")
 foreach(f ${files})
   set(src "${CMAKE_CURRENT_SOURCE_DIR}/${f}")
   set(dst "${LIBCXX_GENERATED_INCLUDE_DIR}/${f}")
