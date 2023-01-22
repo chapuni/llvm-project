@@ -13,7 +13,6 @@
 
 // Test that hash specializations for <string> require "char_traits<_CharT>" not just any "_Trait".
 
-#include <functional>
 #include <string>
 
 #include "test_macros.h"
