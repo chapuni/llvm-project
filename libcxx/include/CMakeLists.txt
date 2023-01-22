@@ -751,9 +751,8 @@ if (LIBCXX_INSTALL_HEADERS)
     )
   endforeach()
 
-  # Install the generated __config_site and the generated modulemap file.
-  install(FILES "${LIBCXX_GENERATED_INCLUDE_TARGET_DIR}/__config_site"
-                "${LIBCXX_GENERATED_INCLUDE_DIR}/module.modulemap"
+  # Install the generated __config_site.
+  install(FILES ${LIBCXX_GENERATED_INCLUDE_TARGET_DIR}/__config_site
     DESTINATION "${LIBCXX_INSTALL_INCLUDE_TARGET_DIR}"
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
     COMPONENT cxx-headers)
