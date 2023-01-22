@@ -99,7 +99,6 @@ API Changes
     - ``<chrono>``
     - ``<exception>``
     - ``<functional>``
-    - ``<iterator>``
     - ``<new>``
     - ``<typeinfo>``
     - ``<utility>``

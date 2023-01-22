@@ -208,6 +208,7 @@ template <class charT> class messages_byname;
 #include <cstdlib>
 #include <ctime>
 #include <ios>
+#include <iterator> // TODO: Remove this include
 #include <limits>
 #include <memory>
 #include <streambuf>
