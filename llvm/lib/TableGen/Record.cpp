@@ -2976,18 +2976,21 @@ void RecordKeeper::stopBackendTimer() {
 }
 
 std::vector<Record *>
-RecordKeeper::getAllDerivedDefinitions(StringRef ClassName) const {
+RecordKeeper::getAllDerivedDefinitions(StringRef ClassName,
+                                       bool SortNumeric) const {
   // We cache the record vectors for single classes. Many backends request
   // the same vectors multiple times.
   auto Pair = ClassRecordsMap.try_emplace(ClassName);
   if (Pair.second)
-    Pair.first->second = getAllDerivedDefinitions(ArrayRef(ClassName));
+    Pair.first->second =
+        getAllDerivedDefinitions(ArrayRef(ClassName), SortNumeric);
 
   return Pair.first->second;
 }
 
-std::vector<Record *> RecordKeeper::getAllDerivedDefinitions(
-    ArrayRef<StringRef> ClassNames) const {
+std::vector<Record *>
+RecordKeeper::getAllDerivedDefinitions(ArrayRef<StringRef> ClassNames,
+                                       bool SortNumeric) const {
   SmallVector<Record *, 2> ClassRecs;
   std::vector<Record *> Defs;
 
@@ -3006,12 +3009,18 @@ std::vector<Record *> RecordKeeper::getAllDerivedDefinitions(
       Defs.push_back(OneDef.second.get());
   }
 
+  if (SortNumeric)
+    llvm::sort(Defs, [](Record *LHS, Record *RHS) {
+      return LHS->getName().compare_numeric(RHS->getName()) < 0;
+    });
+
   return Defs;
 }
 
 std::vector<Record *>
-RecordKeeper::getAllDerivedDefinitionsIfDefined(StringRef ClassName) const {
-  return getClass(ClassName) ? getAllDerivedDefinitions(ClassName)
+RecordKeeper::getAllDerivedDefinitionsIfDefined(StringRef ClassName,
+                                                bool SortNumeric) const {
+  return getClass(ClassName) ? getAllDerivedDefinitions(ClassName, SortNumeric)
                              : std::vector<Record *>();
 }
 

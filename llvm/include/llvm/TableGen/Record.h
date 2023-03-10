@@ -1999,17 +1999,19 @@ public:
 
   /// Get all the concrete records that inherit from the one specified
   /// class. The class must be defined.
-  std::vector<Record *> getAllDerivedDefinitions(StringRef ClassName) const;
+  std::vector<Record *> getAllDerivedDefinitions(StringRef ClassName,
+                                                 bool SortNumeric = true) const;
 
   /// Get all the concrete records that inherit from all the specified
   /// classes. The classes must be defined.
-  std::vector<Record *> getAllDerivedDefinitions(
-      ArrayRef<StringRef> ClassNames) const;
+  std::vector<Record *> getAllDerivedDefinitions(ArrayRef<StringRef> ClassNames,
+                                                 bool SortNumeric = true) const;
 
   /// Get all the concrete records that inherit from specified class, if the
   /// class is defined. Returns an empty vector if the class is not defined.
   std::vector<Record *>
-  getAllDerivedDefinitionsIfDefined(StringRef ClassName) const;
+  getAllDerivedDefinitionsIfDefined(StringRef ClassName,
+                                    bool SortNumeric = true) const;
 
   void dump() const;
 
