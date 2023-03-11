@@ -607,10 +607,12 @@ public:
 
 /// "anonymous_n" - Represent an anonymous record name
 class AnonymousNameInit : public TypedInit {
+  std::string Prefix;
   unsigned Value;
 
-  explicit AnonymousNameInit(RecordKeeper &RK, unsigned V)
-      : TypedInit(IK_AnonymousNameInit, StringRecTy::get(RK)), Value(V) {}
+  explicit AnonymousNameInit(RecordKeeper &RK, unsigned V, StringRef Prefix_)
+      : TypedInit(IK_AnonymousNameInit, StringRecTy::get(RK)), Prefix(Prefix_),
+        Value(V) {}
 
 public:
   AnonymousNameInit(const AnonymousNameInit &) = delete;
@@ -620,7 +622,7 @@ public:
     return I->getKind() == IK_AnonymousNameInit;
   }
 
-  static AnonymousNameInit *get(RecordKeeper &RK, unsigned);
+  static AnonymousNameInit *get(RecordKeeper &RK, unsigned V, StringRef Prefix);
 
   unsigned getValue() const { return Value; }
 
@@ -1968,7 +1970,7 @@ public:
     assert(Ins && "Global already exists");
   }
 
-  Init *getNewAnonymousName();
+  Init *getNewAnonymousName(StringRef Prefix = "anon");
 
   /// Start phase timing; called if the --time-phases option is specified.
   void startPhaseTiming() {

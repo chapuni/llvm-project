@@ -3,12 +3,12 @@
 
 // CHECK: --- Defs ---
 
-// CHECK: def a {
-// CHECK:   Bla bla = anonymous_0;
+// CHECK: def $Bla$0 {
+// CHECK:   string blu = "";
 // CHECK: }
 
-// CHECK: def anonymous_0 {
-// CHECK:   string blu = "";
+// CHECK: def a {
+// CHECK:   Bla bla = $Bla$0;
 // CHECK: }
 
 // CHECK: def b {

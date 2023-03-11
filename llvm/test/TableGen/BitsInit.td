@@ -12,15 +12,6 @@ def a {
   bits<2> c = { opc3{0}, opc3 };
 }
 
-// CHECK: def a {
-// CHECK:   bits<2> opc = { 0, 1 };
-// CHECK:   bits<2> opc2 = { 1, 0 };
-// CHECK:   bits<1> opc3 = { 1 };
-// CHECK:   bits<2> a;
-// CHECK:   bits<2> b = { 1, 0 };
-// CHECK:   bits<2> c = { 1, 1 };
-// CHECK: }
-
 def {
   bits<2> B1 = 0b011;  // bitfield is too small, reject
   bits<3> B2 = 0b011;  // ok
@@ -62,7 +53,7 @@ def {
   let L{1} = !eq(L{0}, 0);
 }
 
-// CHECK: def {{.*}} {
+// CHECK: def $anon$0 {
 // CHECK: bits<2> B1;
 // CHECK: bits<3> B2 = { 0, 1, 1 };
 // CHECK: bits<2> C1;
@@ -87,4 +78,13 @@ def {
 // CHECK: int J = 52275;
 // CHECK: int K = 1;
 // CHECK: bits<2> L = { 0, 1 };
+// CHECK: }
+
+// CHECK: def a {
+// CHECK:   bits<2> opc = { 0, 1 };
+// CHECK:   bits<2> opc2 = { 1, 0 };
+// CHECK:   bits<1> opc3 = { 1 };
+// CHECK:   bits<2> a;
+// CHECK:   bits<2> b = { 1, 0 };
+// CHECK:   bits<2> c = { 1, 1 };
 // CHECK: }

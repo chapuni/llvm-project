@@ -15,7 +15,7 @@
 // CHECK-DAG: ""
 // CHECK-DAG: Info
 // CHECK-DAG: Rec1
-// CHECK-DAG: anonymous_0
+// CHECK-DAG: $anon$0
 
 defvar Greeting = "Hello there.";
 defvar Answer = 42;

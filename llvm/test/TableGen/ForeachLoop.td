@@ -7,6 +7,27 @@ class Register<string name, int idx> {
 
 // CHECK-NOT: !strconcat
 
+// CHECK: def
+// CHECK: string Name = "T0";
+
+// CHECK: def
+// CHECK: string Name = "T1";
+
+// CHECK: def
+// CHECK: string Name = "T2";
+
+// CHECK: def
+// CHECK: string Name = "T3";
+
+// CHECK: def
+// CHECK: string Name = "T9";
+
+// CHECK: def
+// CHECK: string Name = "T8";
+
+// CHECK: def
+// CHECK: string Name = "T7";
+
 foreach i = 0...3 in
   def Q#i : Register<"Q"#i, i>;
 
@@ -62,25 +83,3 @@ foreach i = {0...3,9...7} in {
 // CHECK: def S7
 // CHECK: def S8
 // CHECK: def S9
-
-// CHECK: def
-// CHECK: string Name = "T0";
-
-// CHECK: def
-// CHECK: string Name = "T1";
-
-// CHECK: def
-// CHECK: string Name = "T2";
-
-// CHECK: def
-// CHECK: string Name = "T3";
-
-// CHECK: def
-// CHECK: string Name = "T9";
-
-// CHECK: def
-// CHECK: string Name = "T8";
-
-// CHECK: def
-// CHECK: string Name = "T7";
-

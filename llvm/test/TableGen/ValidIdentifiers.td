@@ -7,10 +7,10 @@ class foo<int X> { int THEVAL = X; }
 // CHECK-DAG: {{^X }}
 
 def : foo<2>;
-// CHECK-DAG: {{^anonymous_0 }}
+// CHECK-DAG: {{^\$anon\$0 }}
 
 def X {
   foo Y = foo<1>;
 }
-// CHECK-DAG: {{^anonymous_1 }}
+// CHECK-DAG: {{^\$foo\$0 }}
 // CHECK-DAG: {{^foo }}

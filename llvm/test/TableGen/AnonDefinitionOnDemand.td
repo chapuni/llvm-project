@@ -3,20 +3,20 @@
 
 // CHECK: --- Defs ---
 
-// CHECK: def X {
-// CHECK:   foo Y = anonymous_0;
-// CHECK: }
-
-// CHECK: def ZD {
-// CHECK:   foo Z = anonymous_1;
-// CHECK: }
-
-// CHECK: def anonymous_0 {
+// CHECK: def $foo$0 {
 // CHECK:   int THEVAL = 1;
 // CHECK: }
 
-// CHECK: def anonymous_1 {
+// CHECK: def $foo$1 {
 // CHECK:   int THEVAL = 42;
+// CHECK: }
+
+// CHECK: def X {
+// CHECK:   foo Y = $foo$0;
+// CHECK: }
+
+// CHECK: def ZD {
+// CHECK:   foo Z = $foo$1;
 // CHECK: }
 
 class foo<int X> { int THEVAL = X; }

@@ -33,6 +33,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -56,7 +57,7 @@ struct RecordKeeperImpl {
         SharedDagRecTy(RK), AnyRecord(RK, 0), TheUnsetInit(RK),
         TrueBitInit(true, &SharedBitRecTy),
         FalseBitInit(false, &SharedBitRecTy), StringInitStringPool(Allocator),
-        StringInitCodePool(Allocator), AnonCounter(0), LastRecordID(0) {}
+        StringInitCodePool(Allocator), LastRecordID(0) {}
 
   BumpPtrAllocator Allocator;
   std::vector<BitsRecTy *> SharedBitsRecTys;
@@ -91,7 +92,8 @@ struct RecordKeeperImpl {
   FoldingSet<DagInit> TheDagInitPool;
   FoldingSet<RecordRecTy> RecordTypePool;
 
-  unsigned AnonCounter;
+  std::unordered_map<std::string, int> AnonCounters;
+
   unsigned LastRecordID;
 };
 } // namespace detail
@@ -572,8 +574,9 @@ IntInit::convertInitializerBitRange(ArrayRef<unsigned> Bits) const {
   return BitsInit::get(getRecordKeeper(), NewBits);
 }
 
-AnonymousNameInit *AnonymousNameInit::get(RecordKeeper &RK, unsigned V) {
-  return new (RK.getImpl().Allocator) AnonymousNameInit(RK, V);
+AnonymousNameInit *AnonymousNameInit::get(RecordKeeper &RK, unsigned V,
+                                          StringRef Prefix) {
+  return new (RK.getImpl().Allocator) AnonymousNameInit(RK, V, Prefix);
 }
 
 StringInit *AnonymousNameInit::getNameInit() const {
@@ -581,7 +584,7 @@ StringInit *AnonymousNameInit::getNameInit() const {
 }
 
 std::string AnonymousNameInit::getAsString() const {
-  return "anonymous_" + utostr(Value);
+  return "$" + Prefix + "$" + utostr(Value);
 }
 
 Init *AnonymousNameInit::resolveReferences(Resolver &R) const {
@@ -2052,9 +2055,9 @@ void VarDefInit::Profile(FoldingSetNodeID &ID) const {
 DefInit *VarDefInit::instantiate() {
   if (!Def) {
     RecordKeeper &Records = Class->getRecords();
-    auto NewRecOwner = std::make_unique<Record>(Records.getNewAnonymousName(),
-                                           Class->getLoc(), Records,
-                                           /*IsAnonymous=*/true);
+    auto NewRecOwner = std::make_unique<Record>(
+        Records.getNewAnonymousName(Class->getName()), Class->getLoc(), Records,
+        /*IsAnonymous=*/true);
     Record *NewRec = NewRecOwner.get();
 
     // Copy values from class to instance
@@ -2930,8 +2933,9 @@ raw_ostream &llvm::operator<<(raw_ostream &OS, const RecordKeeper &RK) {
 
 /// GetNewAnonymousName - Generate a unique anonymous name that can be used as
 /// an identifier.
-Init *RecordKeeper::getNewAnonymousName() {
-  return AnonymousNameInit::get(*this, getImpl().AnonCounter++);
+Init *RecordKeeper::getNewAnonymousName(StringRef Prefix) {
+  return AnonymousNameInit::get(
+      *this, getImpl().AnonCounters[std::string(Prefix)]++, Prefix);
 }
 
 // These functions implement the phase timing facility. Starting a timer

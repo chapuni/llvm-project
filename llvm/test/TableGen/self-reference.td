@@ -3,6 +3,19 @@
 
 // CHECK: --- Defs ---
 
+// CHECK: def $anon$0 {
+// CHECK:   G g = $anon$0;
+// CHECK: }
+// CHECK: def $anon$1 {
+// CHECK:   G g = $anon$1;
+// CHECK: }
+// CHECK: def $anon$2 {
+// CHECK:   G g = $anon$2;
+// CHECK: }
+// CHECK: def $anon$5 {
+// CHECK:   G g = $anon$5;
+// CHECK: }
+
 // CHECK: def A0 {
 // CHECK:   dag a = (ops A0);
 // CHECK: }
@@ -30,19 +43,6 @@
 // CHECK: }
 // CHECK: def F0x {
 // CHECK:   Fc as_c = F0;
-// CHECK: }
-
-// CHECK: def anonymous_0 {
-// CHECK:   G g = anonymous_0;
-// CHECK: }
-// CHECK: def anonymous_1 {
-// CHECK:   G g = anonymous_1;
-// CHECK: }
-// CHECK: def anonymous_2 {
-// CHECK:   G g = anonymous_2;
-// CHECK: }
-// CHECK: def anonymous_5 {
-// CHECK:   G g = anonymous_5;
 // CHECK: }
 
 def ops;
