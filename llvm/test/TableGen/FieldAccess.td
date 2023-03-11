@@ -4,6 +4,10 @@
 // CHECK: --- Defs ---
 
 // CHECK: def a {
+// CHECK:   Bla bla = anonymous_0;
+// CHECK: }
+
+// CHECK: def anonymous_0 {
 // CHECK:   string blu = "";
 // CHECK: }
 

@@ -12,10 +12,10 @@
 // CHECK: Class2
 
 // CHECK: ----- Records
-// CHECK: ""
-// CHECK: Info
-// CHECK: Rec1
-// CHECK: anonymous_0
+// CHECK-DAG: ""
+// CHECK-DAG: Info
+// CHECK-DAG: Rec1
+// CHECK-DAG: anonymous_0
 
 defvar Greeting = "Hello there.";
 defvar Answer = 42;

@@ -4,13 +4,13 @@
 // Ensure that generated names for anonymous records are valid identifiers via the ctags index.
 
 class foo<int X> { int THEVAL = X; }
-// CHECK: {{^X }}
+// CHECK-DAG: {{^X }}
 
 def : foo<2>;
-// CHECK: {{^anonymous_0 }}
+// CHECK-DAG: {{^anonymous_0 }}
 
 def X {
   foo Y = foo<1>;
 }
-// CHECK: {{^anonymous_1 }}
-// CHECK: {{^foo }}
+// CHECK-DAG: {{^anonymous_1 }}
+// CHECK-DAG: {{^foo }}
