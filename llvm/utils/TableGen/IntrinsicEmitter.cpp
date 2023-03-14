@@ -173,8 +173,8 @@ void IntrinsicEmitter::EmitArgKind(raw_ostream &OS) {
   OS << "// llvm::Intrinsic::IITDescriptor::ArgKind\n";
   OS << "#ifdef GET_INTRINSIC_ARGKIND\n";
   if (auto RecArgKind = Records.getDef("ArgKind")) {
-    for (auto &Rec : RecArgKind->getValues())
-      OS << "    AK_" << Rec.getName() << " = " << *Rec.getValue() << ",\n";
+    for (auto &RV : RecArgKind->getValues())
+      OS << "    AK_" << RV.getName() << " = " << *RV.getValue() << ",\n";
   } else {
     OS << "#error \"ArgKind is not defined\"\n";
   }
