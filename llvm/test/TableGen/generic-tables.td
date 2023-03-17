@@ -1,5 +1,5 @@
-// RUN: llvm-tblgen -gen-searchable-tables -I %p/../../include %s | FileCheck %s
-// RUN: not llvm-tblgen -gen-searchable-tables -I %p/../../include -DERROR1 %s 2>&1 | FileCheck --check-prefix=ERROR1 %s
+// RUN: %llvm-cg-tblgen -gen-searchable-tables -I %p/../../include %s | FileCheck %s
+// RUN: not %llvm-cg-tblgen -gen-searchable-tables -I %p/../../include -DERROR1 %s 2>&1 | FileCheck --check-prefix=ERROR1 %s
 // XFAIL: vg_leak
 
 include "llvm/TableGen/SearchableTable.td"

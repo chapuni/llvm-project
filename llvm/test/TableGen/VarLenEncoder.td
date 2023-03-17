@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-emitter -I %p/../../include %s | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-emitter -I %p/../../include %s | FileCheck %s
 
 // Check if VarLenCodeEmitterGen works correctly.
 

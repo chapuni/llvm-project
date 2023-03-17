@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-register-info -I %p/../../include -I %p/Common %s | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-register-info -I %p/../../include -I %p/Common %s | FileCheck %s
 
 // Test to check the bare minimum pressure sets.
 // At least one register pressure set is required for the target.

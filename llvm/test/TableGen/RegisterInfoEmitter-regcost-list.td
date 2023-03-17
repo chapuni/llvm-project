@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-register-info -I %p/../../include -I %p/Common %s | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-register-info -I %p/../../include -I %p/Common %s | FileCheck %s
 
 // Checks two CostPerUse values for the registers.
 include "llvm/Target/Target.td"

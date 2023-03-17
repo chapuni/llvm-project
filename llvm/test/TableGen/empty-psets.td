@@ -1,4 +1,4 @@
-// RUN: not llvm-tblgen -gen-register-info -I %p/../../include -I %p/Common %s 2>&1 | FileCheck %s
+// RUN: not %llvm-cg-tblgen -gen-register-info -I %p/../../include -I %p/Common %s 2>&1 | FileCheck %s
 
 // Negative test to check empty Psets for a target.
 

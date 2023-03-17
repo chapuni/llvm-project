@@ -1,5 +1,5 @@
-// RUN: llvm-tblgen -gen-register-info -I %p/../../include -I %p/Common %s | FileCheck %s
-// RUN: llvm-tblgen -gen-register-info -I %p/../../include -I %p/Common -DUSE_NAMESPACE %s | FileCheck --check-prefixes=CHECK,NAMESPACE %s
+// RUN: %llvm-cg-tblgen -gen-register-info -I %p/../../include -I %p/Common %s | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-register-info -I %p/../../include -I %p/Common -DUSE_NAMESPACE %s | FileCheck --check-prefixes=CHECK,NAMESPACE %s
 
 include "reg-with-subregs-common.td"
 

@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-register-info -I %p/../../include %s 2>&1 | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-register-info -I %p/../../include %s 2>&1 | FileCheck %s
 //
 // CHECK-NOT: warning: SubRegIndex Test::subreg_h64 and Test::subreg_h32 compose ambiguously as Test::subreg_hh32 or Test::subreg_h32
 // CHECK: warning: SubRegIndex Test::subreg_l64 and Test::subreg_l32 compose ambiguously as Test::subreg_ll32 or Test::subreg_l32

@@ -29,7 +29,7 @@ def InstA : Instruction {
   let Namespace = "MyNamespace";
 }
 
-// RUN: llvm-tblgen -gen-instr-info -I %p/../../include %s \
+// RUN: %llvm-cg-tblgen -gen-instr-info -I %p/../../include %s \
 // RUN:   -instr-info-expand-mi-operand-info=1 \
 // RUN:   | FileCheck %s --check-prefix=CHECK-EXPAND
 // CHECK-EXPAND: #ifdef GET_INSTRINFO_OPERAND_TYPE
@@ -38,7 +38,7 @@ def InstA : Instruction {
 // CHECK-EXPAND-NEXT:   i8imm, i32imm, i8imm, i32imm, i32imm,
 // CHECK-EXPAND: #endif // GET_INSTRINFO_OPERAND_TYPE
 
-// RUN: llvm-tblgen -gen-instr-info -I %p/../../include %s \
+// RUN: %llvm-cg-tblgen -gen-instr-info -I %p/../../include %s \
 // RUN:   -instr-info-expand-mi-operand-info=0 \
 // RUN:   | FileCheck %s --check-prefix=CHECK-NOEXPAND
 // CHECK-NOEXPAND: #ifdef GET_INSTRINFO_OPERAND_TYPE

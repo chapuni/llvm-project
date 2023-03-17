@@ -1,4 +1,4 @@
-// RUN: not llvm-tblgen -gen-subtarget -I %p/../../include %s 2>&1 | FileCheck %s -DFILE=%s
+// RUN: not %llvm-cg-tblgen -gen-subtarget -I %p/../../include %s 2>&1 | FileCheck %s -DFILE=%s
 
 include "llvm/Target/Target.td"
 

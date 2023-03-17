@@ -1,4 +1,4 @@
-// RUN: not llvm-tblgen -gen-register-bank -I %p/../../include %s 2>&1 | FileCheck %s
+// RUN: not %llvm-cg-tblgen -gen-register-bank -I %p/../../include %s 2>&1 | FileCheck %s
 
 include "llvm/Target/Target.td"
 

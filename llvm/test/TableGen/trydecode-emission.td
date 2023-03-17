@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-disassembler -I %p/../../include %s | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-disassembler -I %p/../../include %s | FileCheck %s
 
 // Check that if decoding of an instruction fails and the instruction does not
 // have a complete decoder method that can determine if the bitpattern is valid

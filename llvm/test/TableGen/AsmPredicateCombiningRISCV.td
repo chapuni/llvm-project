@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-compress-inst-emitter -I %p/../../include %s | \
+// RUN: %llvm-cg-tblgen -gen-compress-inst-emitter -I %p/../../include %s | \
 // RUN:     FileCheck --check-prefix=COMPRESS %s
 
 // Check that combining conditions in AssemblerPredicate generates the correct

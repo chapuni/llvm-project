@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-pseudo-lowering -I %p/../../include %s | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-pseudo-lowering -I %p/../../include %s | FileCheck %s
 
 include "llvm/Target/Target.td"
 

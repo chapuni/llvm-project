@@ -1,4 +1,4 @@
-// RUN: not llvm-tblgen -gen-asm-writer -I %p -I %p/../../include %s 2>&1 | FileCheck %s -DFILE=%s
+// RUN: not %llvm-cg-tblgen -gen-asm-writer -I %p -I %p/../../include %s 2>&1 | FileCheck %s -DFILE=%s
 
 include "ConstraintChecking.inc"
 

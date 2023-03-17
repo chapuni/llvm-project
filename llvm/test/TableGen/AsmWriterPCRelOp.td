@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-asm-writer -I %p/../../include %s | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-asm-writer -I %p/../../include %s | FileCheck %s
 
 include "llvm/Target/Target.td"
 

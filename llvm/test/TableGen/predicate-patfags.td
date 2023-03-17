@@ -1,5 +1,5 @@
-// RUN: llvm-tblgen -gen-dag-isel -I %p/../../include -I %p/Common %s 2>&1 | FileCheck -check-prefix=SDAG %s
-// RUN: llvm-tblgen -gen-global-isel -I %p/../../include -I %p/Common %s 2>&1 | FileCheck -check-prefix=GISEL %s
+// RUN: %llvm-cg-tblgen -gen-dag-isel -I %p/../../include -I %p/Common %s 2>&1 | FileCheck -check-prefix=SDAG %s
+// RUN: %llvm-cg-tblgen -gen-global-isel -I %p/../../include -I %p/Common %s 2>&1 | FileCheck -check-prefix=GISEL %s
 
 include "llvm/Target/Target.td"
 include "GlobalISelEmitterCommon.td"

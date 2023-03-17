@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-subtarget -I %p/../../include %s 2>&1 | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-subtarget -I %p/../../include %s 2>&1 | FileCheck %s
 // Check if it is valid MCSchedClassDesc if didn't have the resources. 
 
 include "llvm/Target/Target.td"

@@ -1,8 +1,8 @@
-// RUN: llvm-tblgen -I %p/../../../include -gen-global-isel-combiner \
+// RUN: %llvm-cg-tblgen -I %p/../../../include -gen-global-isel-combiner \
 // RUN:     -combiners=MyCombinerHelper -gicombiner-stop-after-build %s \
 // RUN:     -o %t.inc | FileCheck %s
 //
-// RUN: llvm-tblgen -I %p/../../../include -gen-global-isel-combiner \
+// RUN: %llvm-cg-tblgen -I %p/../../../include -gen-global-isel-combiner \
 // RUN:     -combiners=MyCombinerHelper %s | \
 // RUN: FileCheck --check-prefix=CODE %s
 

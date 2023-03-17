@@ -1,6 +1,6 @@
-// RUN: llvm-tblgen -gen-asm-matcher -I %p/../../include %s | FileCheck %s --check-prefix=MATCHER
-// RUN: llvm-tblgen -gen-asm-writer -I %p/../../include %s | FileCheck %s --check-prefix=WRITER
-// RUN: llvm-tblgen -gen-asm-matcher -I %p/../../include %s | FileCheck %s --check-prefix=ALIAS
+// RUN: %llvm-cg-tblgen -gen-asm-matcher -I %p/../../include %s | FileCheck %s --check-prefix=MATCHER
+// RUN: %llvm-cg-tblgen -gen-asm-writer -I %p/../../include %s | FileCheck %s --check-prefix=WRITER
+// RUN: %llvm-cg-tblgen -gen-asm-matcher -I %p/../../include %s | FileCheck %s --check-prefix=ALIAS
 
 // Check that an instruction that uses mixed upper/lower case in its mnemonic
 // is printed as-is, and is parsed in its "canonicalized" lowercase form.

@@ -1,8 +1,8 @@
-// RUN: llvm-tblgen -gen-disassembler -I %p/../../include %s | \
+// RUN: %llvm-cg-tblgen -gen-disassembler -I %p/../../include %s | \
 // RUN:     FileCheck --check-prefix=DISASS %s
-// RUN: llvm-tblgen -gen-asm-matcher -I %p/../../include %s | \
+// RUN: %llvm-cg-tblgen -gen-asm-matcher -I %p/../../include %s | \
 // RUN:     FileCheck --check-prefix=MATCHER %s
-// RUN: llvm-tblgen -gen-asm-writer -I %p/../../include %s | \
+// RUN: %llvm-cg-tblgen -gen-asm-writer -I %p/../../include %s | \
 // RUN:     FileCheck --check-prefix=WRITER %s
 
 // Check that combining conditions in AssemblerPredicate generates the correct

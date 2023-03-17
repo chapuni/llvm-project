@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -I %p/../../../include -gen-global-isel-combiner \
+// RUN: %llvm-cg-tblgen -I %p/../../../include -gen-global-isel-combiner \
 // RUN:     -combiners=MyCombiner -gicombiner-stop-after-parse %s \
 // RUN:     -o /dev/null -debug 2>&1 | FileCheck %s
 // REQUIRES: asserts

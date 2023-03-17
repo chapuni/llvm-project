@@ -1,4 +1,4 @@
-// RUN: not llvm-tblgen -gen-emitter -I %p/../../include %s 2>&1 | FileCheck %s --implicit-check-not=error:
+// RUN: not %llvm-cg-tblgen -gen-emitter -I %p/../../include %s 2>&1 | FileCheck %s --implicit-check-not=error:
 
 // Check that we emit reasonable diagnostics when fields do not have
 // corresponding operands.

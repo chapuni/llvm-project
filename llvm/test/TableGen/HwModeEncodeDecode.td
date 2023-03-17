@@ -1,5 +1,5 @@
-// RUN: llvm-tblgen -gen-emitter -I %p/../../include %s | FileCheck %s --check-prefix=ENCODER
-// RUN: llvm-tblgen -gen-disassembler -I %p/../../include %s | FileCheck %s --check-prefix=DECODER
+// RUN: %llvm-cg-tblgen -gen-emitter -I %p/../../include %s | FileCheck %s --check-prefix=ENCODER
+// RUN: %llvm-cg-tblgen -gen-disassembler -I %p/../../include %s | FileCheck %s --check-prefix=DECODER
 
 include "llvm/Target/Target.td"
 

@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-subtarget -I %p/../../include %s 2>&1 | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-subtarget -I %p/../../include %s 2>&1 | FileCheck %s
 
 // Make sure that ReadAdvance entries are correctly processed.
 // Not all ProcReadAdvance definitions implicitly inherit from SchedRead.

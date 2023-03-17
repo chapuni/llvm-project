@@ -1,4 +1,4 @@
-// RUN: llvm-tblgen -gen-asm-matcher -I %p/../../include %s | FileCheck %s
+// RUN: %llvm-cg-tblgen -gen-asm-matcher -I %p/../../include %s | FileCheck %s
 
 // Check that MatchRegisterName and MatchRegisterAltName are generated
 // correctly when multiple registers are defined with the same name and
