@@ -1174,8 +1174,8 @@ CodeGenRegBank::CodeGenRegBank(RecordKeeper &Records,
     getReg(Regs[i]);
 
   // Expand tuples and number the new registers.
-  std::vector<Record *> Tups =
-      Records.getAllDerivedDefinitions("RegisterTuples", false);
+  std::vector<Record*> Tups =
+    Records.getAllDerivedDefinitions("RegisterTuples");
 
   for (Record *R : Tups) {
     std::vector<Record *> TupRegs = *Sets.expand(R);
