@@ -3272,7 +3272,8 @@ void CodeGenDAGPatterns::ParseComplexPatterns() {
 /// inside a pattern fragment to a pattern fragment.
 ///
 void CodeGenDAGPatterns::ParsePatternFragments(bool OutFrags) {
-  std::vector<Record*> Fragments = Records.getAllDerivedDefinitions("PatFrags");
+  std::vector<Record *> Fragments =
+      Records.getAllDerivedDefinitions("PatFrags", RecordKeeper::Numeric);
 
   // First step, parse all of the fragments.
   for (Record *Frag : Fragments) {

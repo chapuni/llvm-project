@@ -1836,7 +1836,8 @@ void CodeGenSchedModels::verifyProcResourceGroups(CodeGenProcModel &PM) {
 
 // Collect all the RegisterFile definitions available in this target.
 void CodeGenSchedModels::collectRegisterFiles() {
-  RecVec RegisterFileDefs = Records.getAllDerivedDefinitions("RegisterFile");
+  RecVec RegisterFileDefs =
+      Records.getAllDerivedDefinitions("RegisterFile", RecordKeeper::Numeric);
 
   // RegisterFiles is the vector of CodeGenRegisterFile.
   for (Record *RF : RegisterFileDefs) {

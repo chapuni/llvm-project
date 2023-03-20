@@ -64,7 +64,8 @@ void Attributes::emitTargetIndependentNames(raw_ostream &OS) {
   unsigned Value = 1; // Leave zero for AttrKind::None.
   for (StringRef KindName : {"EnumAttr", "TypeAttr", "IntAttr"}) {
     OS << "First" << KindName << " = " << Value << ",\n";
-    for (auto *A : Records.getAllDerivedDefinitions(KindName)) {
+    for (auto *A :
+         Records.getAllDerivedDefinitions(KindName, RecordKeeper::Numeric)) {
       OS << A->getName() << " = " << Value << ",\n";
       Value++;
     }
@@ -113,7 +114,8 @@ void Attributes::emitAttributeProperties(raw_ostream &OS) {
   OS << "#undef GET_ATTR_PROP_TABLE\n";
   OS << "static const uint8_t AttrPropTable[] = {\n";
   for (StringRef KindName : {"EnumAttr", "TypeAttr", "IntAttr"}) {
-    for (auto *A : Records.getAllDerivedDefinitions(KindName)) {
+    for (auto *A :
+         Records.getAllDerivedDefinitions(KindName, RecordKeeper::Numeric)) {
       OS << "0";
       for (Init *P : *A->getValueAsListInit("Properties"))
         OS << " | AttributeProperty::" << cast<DefInit>(P)->getDef()->getName();

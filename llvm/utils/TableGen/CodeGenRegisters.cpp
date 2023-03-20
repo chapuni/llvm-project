@@ -1174,8 +1174,8 @@ CodeGenRegBank::CodeGenRegBank(RecordKeeper &Records,
     getReg(Regs[i]);
 
   // Expand tuples and number the new registers.
-  std::vector<Record*> Tups =
-    Records.getAllDerivedDefinitions("RegisterTuples");
+  std::vector<Record *> Tups =
+      Records.getAllDerivedDefinitions("RegisterTuples", RecordKeeper::Char);
 
   for (Record *R : Tups) {
     std::vector<Record *> TupRegs = *Sets.expand(R);
@@ -1240,7 +1240,8 @@ CodeGenRegBank::CodeGenRegBank(RecordKeeper &Records,
   NumNativeRegUnits = RegUnits.size();
 
   // Read in register class definitions.
-  std::vector<Record*> RCs = Records.getAllDerivedDefinitions("RegisterClass");
+  std::vector<Record *> RCs =
+      Records.getAllDerivedDefinitions("RegisterClass", RecordKeeper::Numeric);
   if (RCs.empty())
     PrintFatalError("No 'RegisterClass' subclasses defined!");
 

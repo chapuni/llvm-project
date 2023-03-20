@@ -279,7 +279,8 @@ void RegisterBankEmitter::run(raw_ostream &OS) {
 
   Records.startTimer("Analyze records");
   std::vector<RegisterBank> Banks;
-  for (const auto &V : Records.getAllDerivedDefinitions("RegisterBank")) {
+  for (const auto &V : Records.getAllDerivedDefinitions(
+           "RegisterBank", RecordKeeper::Numeric)) {
     SmallPtrSet<const CodeGenRegisterClass *, 8> VisitedRCs;
     RegisterBank Bank(*V);
 

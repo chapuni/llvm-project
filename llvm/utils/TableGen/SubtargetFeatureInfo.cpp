@@ -24,7 +24,7 @@ std::vector<std::pair<Record *, SubtargetFeatureInfo>>
 SubtargetFeatureInfo::getAll(const RecordKeeper &Records) {
   std::vector<std::pair<Record *, SubtargetFeatureInfo>> SubtargetFeatures;
   std::vector<Record *> AllPredicates =
-      Records.getAllDerivedDefinitions("Predicate");
+      Records.getAllDerivedDefinitions("Predicate", RecordKeeper::Numeric);
   for (Record *Pred : AllPredicates) {
     // Ignore predicates that are not intended for the assembler.
     //
