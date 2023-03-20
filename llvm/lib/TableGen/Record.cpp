@@ -2976,18 +2976,20 @@ void RecordKeeper::stopBackendTimer() {
 }
 
 std::vector<Record *>
-RecordKeeper::getAllDerivedDefinitions(StringRef ClassName) const {
+RecordKeeper::getAllDerivedDefinitions(StringRef ClassName,
+                                       SortOrder Order) const {
   // We cache the record vectors for single classes. Many backends request
   // the same vectors multiple times.
-  auto Pair = ClassRecordsMap.try_emplace(ClassName);
+  auto Pair = ClassRecordsMap[int(Order)].try_emplace(ClassName);
   if (Pair.second)
-    Pair.first->second = getAllDerivedDefinitions(ArrayRef(ClassName));
+    Pair.first->second = getAllDerivedDefinitions(ArrayRef(ClassName), Order);
 
   return Pair.first->second;
 }
 
-std::vector<Record *> RecordKeeper::getAllDerivedDefinitions(
-    ArrayRef<StringRef> ClassNames) const {
+std::vector<Record *>
+RecordKeeper::getAllDerivedDefinitions(ArrayRef<StringRef> ClassNames,
+                                       SortOrder Order) const {
   SmallVector<Record *, 2> ClassRecs;
   std::vector<Record *> Defs;
 
@@ -2999,19 +3001,35 @@ std::vector<Record *> RecordKeeper::getAllDerivedDefinitions(
     ClassRecs.push_back(Class);
   }
 
-  for (const auto &OneDef : getDefs()) {
+  for (auto *OneDef : Defs2) {
     if (all_of(ClassRecs, [&OneDef](const Record *Class) {
-                            return OneDef.second->isSubClassOf(Class);
-                          }))
-      Defs.push_back(OneDef.second.get());
+          return OneDef->isSubClassOf(Class);
+        }))
+      Defs.push_back(OneDef);
+  }
+
+  switch (Order) {
+  case None:
+    break;
+  case Numeric:
+    llvm::sort(Defs, [](Record *LHS, Record *RHS) {
+      return LHS->getName().compare_numeric(RHS->getName()) < 0;
+    });
+    break;
+  case Char:
+    llvm::sort(Defs, [](Record *LHS, Record *RHS) {
+      return LHS->getName() < RHS->getName();
+    });
+    break;
   }
 
   return Defs;
 }
 
 std::vector<Record *>
-RecordKeeper::getAllDerivedDefinitionsIfDefined(StringRef ClassName) const {
-  return getClass(ClassName) ? getAllDerivedDefinitions(ClassName)
+RecordKeeper::getAllDerivedDefinitionsIfDefined(StringRef ClassName,
+                                                SortOrder Order) const {
+  return getClass(ClassName) ? getAllDerivedDefinitions(ClassName, Order)
                              : std::vector<Record *>();
 }
 

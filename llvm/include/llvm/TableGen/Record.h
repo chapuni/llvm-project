@@ -1955,8 +1955,11 @@ public:
   }
 
   void addDef(std::unique_ptr<Record> R) {
-    bool Ins = Defs.insert(std::make_pair(std::string(R->getName()),
-                                          std::move(R))).second;
+    Defs2.push_back(R.get());
+
+    bool Ins =
+        Defs.insert(std::make_pair(std::string(R->getName()), std::move(R)))
+            .second;
     (void)Ins;
     assert(Ins && "Record already exists");
   }
@@ -1997,19 +2000,27 @@ public:
   //===--------------------------------------------------------------------===//
   // High-level helper methods, useful for tablegen backends.
 
+  enum SortOrder {
+    None = 0, // Registration order
+    Numeric,
+    Char,
+  };
+
   /// Get all the concrete records that inherit from the one specified
   /// class. The class must be defined.
-  std::vector<Record *> getAllDerivedDefinitions(StringRef ClassName) const;
+  std::vector<Record *> getAllDerivedDefinitions(StringRef ClassName,
+                                                 SortOrder Order = None) const;
 
   /// Get all the concrete records that inherit from all the specified
   /// classes. The classes must be defined.
-  std::vector<Record *> getAllDerivedDefinitions(
-      ArrayRef<StringRef> ClassNames) const;
+  std::vector<Record *> getAllDerivedDefinitions(ArrayRef<StringRef> ClassNames,
+                                                 SortOrder Order = None) const;
 
   /// Get all the concrete records that inherit from specified class, if the
   /// class is defined. Returns an empty vector if the class is not defined.
   std::vector<Record *>
-  getAllDerivedDefinitionsIfDefined(StringRef ClassName) const;
+  getAllDerivedDefinitionsIfDefined(StringRef ClassName,
+                                    SortOrder Order = None) const;
 
   void dump() const;
 
@@ -2021,7 +2032,8 @@ private:
 
   std::string InputFilename;
   RecordMap Classes, Defs;
-  mutable StringMap<std::vector<Record *>> ClassRecordsMap;
+  std::vector<Record *> Defs2;
+  mutable std::array<StringMap<std::vector<Record *>>, 3> ClassRecordsMap;
   GlobalMap ExtraGlobals;
 
   // These members are for the phase timing feature. We need a timer group,
