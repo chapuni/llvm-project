@@ -42,12 +42,12 @@ const char *ExplicitUnalign[] = {"MOVDQU", "MOVUPS", "MOVUPD",
 
 const ManualMapEntry ManualMapSet[] = {
 #define ENTRY(REG, MEM, FLAGS) {#REG, #MEM, FLAGS},
-#include "X86ManualFoldTables.def"
+#include "X86ManualFoldTables.inc"
 };
 
 const std::set<StringRef> NoFoldSet= {
 #define NOFOLD(INSN) #INSN,
-#include "X86ManualFoldTables.def"
+#include "X86ManualFoldTables.inc"
 };
 
 static bool isExplicitAlign(const CodeGenInstruction *Inst) {
