@@ -171,6 +171,25 @@ def IntrHasSideEffects : IntrinsicProperty;
 // IIT constants and utils
 //===----------------------------------------------------------------------===//
 
+class ListIntAt<list<int> theList, int idx> {
+  int ret = !head(!listconcat(
+    !foldl(
+      []<int>,
+      !foldl(
+        []<list<int>>,
+        theList,
+        ll, li,
+        !listconcat(
+          ll,
+          !if(
+            !eq(!size(ll), idx),
+            !listsplat(!listsplat(li, 1), 1),
+            [[]]))),
+      m, a,
+      !listconcat(m, a)),
+    [?]));
+}
+
 // llvm::Intrinsic::IITDescriptor::ArgKind::AK_%
 def ArgKind {
   int Any        = 0;
@@ -222,11 +241,11 @@ class ResolveArgCode<
     int ax> {
   int ah = !and(ax, 0xFF00);
   int al = !and(ax, 0x00FF);
-  int num = Mapping[al];
+  int num = ListIntAt<Mapping, al>.ret;
   int ret = !cond(
     !eq(ah, EncAnyType<>.ID)   : !or(!shl(ACIdx, 3), al),
     !eq(ah, EncMatchType<>.ID) : !or(!shl(num, 3), ArgKind.MatchType),
-    !eq(ah, EncSameWidth<>.ID) : !or(!shl(num, 3), ArgCodes[num]),
+    !eq(ah, EncSameWidth<>.ID) : !or(!shl(num, 3), ListIntAt<ArgCodes, num>.ret),
     !eq(ah, EncNextArgA<>.ID)  : ACIdx,
     !eq(ah, EncNextArgN<>.ID)  : num,
     true : al);
@@ -594,15 +613,53 @@ def llvm_funcref_ty    : LLVMType<funcref>;
 
 //===----------------------------------------------------------------------===//
 
+class ListLLVMTypeAt<list<LLVMType> theList, int idx> {
+  LLVMType ret = !head(!listconcat(
+    !foldl(
+      []<LLVMType>,
+      !foldl(
+        []<list<LLVMType>>,
+        theList,
+        ll, li,
+        !listconcat(
+          ll,
+          !if(
+            !eq(!size(ll), idx),
+            !listsplat(!listsplat(li, 1), 1),
+            [[]]))),
+      m, a,
+      !listconcat(m, a)),
+    [?]));
+}
+
+class ListListIntAt<list<list<int>> theList, int idx> {
+  list<int> ret = !head(!listconcat(
+    !foldl(
+      []<list<int>>,
+      !foldl(
+        []<list<list<int>>>,
+        theList,
+        ll, li,
+        !listconcat(
+          ll,
+          !if(
+            !eq(!size(ll), idx),
+            !listsplat(!listsplat(li, 1), 1),
+            [[]]))),
+      m, a,
+      !listconcat(m, a)),
+    [?]));
+}
+
 class MakeIdx<list<int> Set> {
   list<int> IdxsR = !foreach(i, !range(Set),
-    !if(Set[i],
-      !foldl(0, !range(0, i), m, j, !add(m, Set[j])),
+    !if(ListIntAt<Set, i>.ret,
+      !foldl(0, !range(0, i), m, j, !add(m, ListIntAt<Set, j>.ret)),
       -1));
 
   list<int> RIdxsR = !foreach(i, !range(Set),
     !foldl(-1, !range(Set), m, j,
-      !if(!and(Set[j], !eq(IdxsR[j], i)), j, m)));
+      !if(!and(ListIntAt<Set, j>.ret, !eq(ListIntAt<IdxsR, j>.ret, i)), j, m)));
 
   list<int> Idxs  = !foreach(a, IdxsR,  !if(!ge(a, 0), a, ?));
   list<int> RIdxs = !foreach(a, RIdxsR, !if(!ge(a, 0), a, ?));
@@ -633,16 +690,16 @@ class TypeInfoGen<
     !isa<LLVMAnyType>(ty))));
 
   list<LLVMType> Types = !foreach(ty, AllTypes,
-    !if(!isa<LLVMMatchType>(ty), ACTys[MappingRIdxs[ty.Number]], ty));
+    !if(!isa<LLVMMatchType>(ty), ListLLVMTypeAt<ACTys, ListIntAt<MappingRIdxs, ty.Number>.ret>.ret, ty));
 
   list<list<int>> TypeSig = !listconcat(
-    [IIT_RetNumbers[!size(RetTypes)]],
+    !listsplat(ListListIntAt<IIT_RetNumbers, !size(RetTypes)>.ret, 1),
     !foreach(i, !range(AllTypes),
-      !foreach(a, AllTypes[i].Sig,
+      !foreach(a, ListLLVMTypeAt<AllTypes, i>.ret.Sig,
         ResolveArgCode<
           MappingRIdxs,
           ArgCodes,
-          ACIdxs[i],
+          ListIntAt<ACIdxs, i>.ret,
           a>.ret)));
 }
 
