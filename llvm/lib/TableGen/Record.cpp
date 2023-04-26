@@ -1184,32 +1184,30 @@ std::optional<bool> BinOpInit::CompareInit(unsigned Opc, Init *LHS, Init *RHS) c
   case LISTELEM: {
     auto *TheList = dyn_cast<ListInit>(LHS);
     auto *Idx = dyn_cast<IntInit>(RHS);
-    if (TheList && Idx) {
-      auto i = Idx->getValue();
-      if (0 <= i && i < (ssize_t)TheList->size())
-        return TheList->getElement(i);
-    }
-    break;
+    if (!TheList || !Idx)
+      break;
+    auto i = Idx->getValue();
+    if (i < 0 || i >= (ssize_t)TheList->size())
+      break;
+    return TheList->getElement(i);
   }
   case LISTSLICE: {
     auto *TheList = dyn_cast<ListInit>(LHS);
     auto *SliceIdxs = dyn_cast<ListInit>(RHS);
-    if (TheList && SliceIdxs) {
-      SmallVector<Init *, 8> Args;
-      Args.reserve(SliceIdxs->size());
-      for (auto *I : *SliceIdxs) {
-        auto *II = dyn_cast<IntInit>(I);
-        if (!II)
-          goto listslice_fail;
-        auto i = II->getValue();
-        if (!(0 <= i && i < (ssize_t)TheList->size()))
-          goto listslice_fail;
-        Args.push_back(TheList->getElement(i));
-      }
-      return ListInit::get(Args, TheList->getElementType());
+    if (!TheList || !SliceIdxs)
+      break;
+    SmallVector<Init *, 8> Args;
+    Args.reserve(SliceIdxs->size());
+    for (auto *I : *SliceIdxs) {
+      auto *II = dyn_cast<IntInit>(I);
+      if (!II)
+        goto unresolved;
+      auto i = II->getValue();
+      if (i < 0 || i >= (ssize_t)TheList->size())
+        goto unresolved;
+      Args.push_back(TheList->getElement(i));
     }
-  listslice_fail:
-    break;
+    return ListInit::get(Args, TheList->getElementType());
   }
   case RANGE:
   case RANGEC: {
@@ -1333,6 +1331,7 @@ std::optional<bool> BinOpInit::CompareInit(unsigned Opc, Init *LHS, Init *RHS) c
     break;
   }
   }
+unresolved:
   return const_cast<BinOpInit *>(this);
 }
 
