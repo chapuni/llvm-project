@@ -646,6 +646,7 @@ cc_binary(
         ":TableGen",
         ":TableGenGlobalISel",
         ":config",
+        ":intrinsic_enums_gen",
         ":llvm-tblgen-headers",
     ],
 )
