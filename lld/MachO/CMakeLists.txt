@@ -59,7 +59,6 @@ add_lld_library(lldMachO
 
   DEPENDS
   MachOOptionsTableGen
-  ${tablegen_deps}
   )
 
 if(LLVM_HAVE_LIBXAR)

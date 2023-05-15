@@ -23,5 +23,4 @@ add_llvm_tool(llvm-dwarfutil
 
   DEPENDS
   intrinsics_gen
-  ${tablegen_deps}
   )
