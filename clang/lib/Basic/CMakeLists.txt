@@ -123,12 +123,10 @@ add_clang_library(clangBasic
   XRayLists.cpp
   ${version_inc}
 
+  LINK_LIBS
+  ${LLVM_ATOMIC_LIB}
+
   DEPENDS
   omp_gen
   RISCVTargetParserTableGen
   )
-
-target_link_libraries(clangBasic
-  PRIVATE
-  ${LLVM_ATOMIC_LIB}
-)

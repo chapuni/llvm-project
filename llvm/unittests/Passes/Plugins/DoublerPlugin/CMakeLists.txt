@@ -1,6 +1,6 @@
 add_llvm_library(DoublerPlugin MODULE BUILDTREE_ONLY
-    DoublerPlugin.cpp
-    )
+  DoublerPlugin.cpp
+  )
 
 # Put PLUGIN next to the unit test executable.
 set_output_directory(DoublerPlugin

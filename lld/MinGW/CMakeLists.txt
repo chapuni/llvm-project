@@ -17,4 +17,4 @@ add_lld_library(lldMinGW
   DEPENDS
   MinGWOptionsTableGen
   intrinsics_gen
-)
+  )

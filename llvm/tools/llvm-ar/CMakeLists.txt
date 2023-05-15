@@ -16,6 +16,7 @@ add_llvm_tool(llvm-ar
 
   DEPENDS
   intrinsics_gen
+
   GENERATE_DRIVER
   )
 

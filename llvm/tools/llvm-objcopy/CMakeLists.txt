@@ -27,10 +27,12 @@ add_public_tablegen_target(StripOptsTableGen)
 add_llvm_tool(llvm-objcopy
   ObjcopyOptions.cpp
   llvm-objcopy.cpp
+
   DEPENDS
   ObjcopyOptsTableGen
   InstallNameToolOptsTableGen
   StripOptsTableGen
+
   GENERATE_DRIVER
   )
 

@@ -18,7 +18,7 @@ add_clang_library(clangDoc
 
   DEPENDS
   omp_gen
-)
+  )
 
 clang_target_link_libraries(clangDoc
   PRIVATE

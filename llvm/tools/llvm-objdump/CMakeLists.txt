@@ -31,6 +31,7 @@ add_llvm_tool(llvm-objdump
   OffloadDump.cpp
   WasmDump.cpp
   XCOFFDump.cpp
+
   DEPENDS
   ObjdumpOptsTableGen
   OtoolOptsTableGen

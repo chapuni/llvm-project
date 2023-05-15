@@ -14,6 +14,7 @@ add_clang_tool(clang-scan-deps
 
   DEPENDS
   ScanDepsOptsTableGen
+
   GENERATE_DRIVER
   )
 

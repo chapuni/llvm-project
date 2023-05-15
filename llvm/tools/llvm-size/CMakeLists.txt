@@ -11,8 +11,10 @@ add_public_tablegen_target(SizeOptsTableGen)
 
 add_llvm_tool(llvm-size
   llvm-size.cpp
+
   DEPENDS
   SizeOptsTableGen
+
   GENERATE_DRIVER
   )
 

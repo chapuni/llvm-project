@@ -1,6 +1,6 @@
 add_llvm_library(TestPlugin MODULE BUILDTREE_ONLY
-    TestPlugin.cpp
-    )
+  TestPlugin.cpp
+  )
 
 # Put PLUGIN next to the unit test executable.
 set_output_directory(TestPlugin

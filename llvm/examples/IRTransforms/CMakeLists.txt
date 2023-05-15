@@ -9,8 +9,10 @@ endif()
 if (NOT WIN32)
   add_llvm_pass_plugin(ExampleIRTransforms
     SimplifyCFG.cpp
+
     DEPENDS
     intrinsics_gen
+
     BUILDTREE_ONLY
     )
 

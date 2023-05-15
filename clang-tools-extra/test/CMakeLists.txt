@@ -70,10 +70,10 @@ endforeach()
 if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
   if (NOT WIN32 OR NOT LLVM_LINK_LLVM_DYLIB)
     llvm_add_library(
-        CTTestTidyModule
-        MODULE clang-tidy/CTTestTidyModule.cpp
-        PLUGIN_TOOL clang-tidy
-        DEPENDS clang-tidy-headers)
+      CTTestTidyModule
+      MODULE clang-tidy/CTTestTidyModule.cpp
+      PLUGIN_TOOL clang-tidy
+      DEPENDS clang-tidy-headers)
   endif()
 
   if(CLANG_BUILT_STANDALONE)

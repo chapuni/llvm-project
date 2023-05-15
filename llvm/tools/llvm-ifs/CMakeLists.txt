@@ -16,7 +16,7 @@ add_llvm_tool(llvm-ifs
   ErrorCollector.cpp
   llvm-ifs.cpp
 
-DEPENDS
+  DEPENDS
   IFSOptsTableGen
 
   GENERATE_DRIVER

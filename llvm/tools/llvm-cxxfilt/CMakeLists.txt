@@ -14,6 +14,7 @@ add_llvm_tool(llvm-cxxfilt
 
   DEPENDS
   CxxfiltOptsTableGen
+
   GENERATE_DRIVER
   )
 

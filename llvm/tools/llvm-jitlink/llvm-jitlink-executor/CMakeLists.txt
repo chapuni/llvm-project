@@ -9,7 +9,7 @@ add_llvm_utility(llvm-jitlink-executor
 
   DEPENDS
   intrinsics_gen
-)
+  )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Haiku")
   target_link_libraries(llvm-jitlink-executor PRIVATE network)

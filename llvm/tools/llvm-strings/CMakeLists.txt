@@ -11,6 +11,7 @@ add_public_tablegen_target(StringsOptsTableGen)
 
 add_llvm_tool(llvm-strings
   llvm-strings.cpp
+
   DEPENDS
   StringsOptsTableGen
   )

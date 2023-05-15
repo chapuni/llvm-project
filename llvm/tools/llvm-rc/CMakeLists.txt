@@ -20,8 +20,10 @@ add_llvm_tool(llvm-rc
   ResourceScriptParser.cpp
   ResourceScriptStmt.cpp
   ResourceScriptToken.cpp
+
   DEPENDS
   WindresOptsTableGen
+
   GENERATE_DRIVER
   )
 

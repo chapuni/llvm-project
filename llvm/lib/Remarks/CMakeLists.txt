@@ -20,4 +20,4 @@ add_llvm_component_library(LLVMRemarks
 
   DEPENDS
   intrinsics_gen
-)
+  )

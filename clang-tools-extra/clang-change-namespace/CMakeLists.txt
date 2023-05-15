@@ -8,7 +8,7 @@ add_clang_library(clangChangeNamespace
 
   DEPENDS
   omp_gen
-)
+  )
 
 clang_target_link_libraries(clangChangeNamespace
   PRIVATE
