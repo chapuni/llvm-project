@@ -676,12 +676,7 @@ function(llvm_add_library name)
     endif()
   endif()
 
-  if(ARG_STATIC)
-    set(libtype PUBLIC)
-  else()
-    # We can use PRIVATE since SO knows its dependent libs.
-    set(libtype PRIVATE)
-  endif()
+  set(libtype PRIVATE)
 
   if(ARG_MODULE AND LLVM_EXPORT_SYMBOLS_FOR_PLUGINS AND ARG_PLUGIN_TOOL AND (WIN32 OR CYGWIN))
     # On DLL platforms symbols are imported from the tool by linking against it.

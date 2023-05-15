@@ -11,6 +11,7 @@ add_lldb_library(lldbSymbolHelpers
     lldbPluginTypeSystemClang
     lldbUtilityHelpers
     LLVMTestingSupport
+    llvm_gtest
 
   LINK_COMPONENTS
     ObjectYAML
