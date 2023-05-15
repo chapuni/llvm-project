@@ -48,6 +48,9 @@ add_lldb_library(lldbPluginPlatformMacOSX PLUGIN
     lldbPluginObjectContainerMachOFileset
     lldbPluginPlatformPOSIX
     ${OBJC_LIBS}
+
+    ClangDriverOptions
+
   CLANG_LIBS
     clangBasic
   LINK_COMPONENTS

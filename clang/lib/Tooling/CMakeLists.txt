@@ -119,7 +119,6 @@ add_clang_library(clangTooling
   Tooling.cpp
 
   DEPENDS
-  ClangDriverOptions
   omp_gen
 
   LINK_LIBS
