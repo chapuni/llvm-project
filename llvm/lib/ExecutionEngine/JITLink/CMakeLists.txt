@@ -52,16 +52,8 @@ add_llvm_component_library(LLVMJITLink
   BinaryFormat
   Object
   Option
+  OrcShared
   OrcTargetProcess
   Support
   TargetParser
   )
-
-target_link_libraries(LLVMJITLink
-  PRIVATE
-  LLVMObject
-  LLVMOrcShared
-  LLVMOrcTargetProcess
-  LLVMSupport
-  LLVMTargetParser
-)
