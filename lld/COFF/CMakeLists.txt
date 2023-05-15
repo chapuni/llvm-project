@@ -1,6 +1,5 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(COFFOptionsTableGen)
 
 add_lld_library(lldCOFF
   CallGraphSort.cpp
@@ -21,6 +20,8 @@ add_lld_library(lldCOFF
   SymbolTable.cpp
   Symbols.cpp
   Writer.cpp
+
+  Options.inc
 
   LINK_COMPONENTS
   ${LLVM_TARGETS_TO_BUILD}
@@ -48,6 +49,5 @@ add_lld_library(lldCOFF
   ${LLVM_ATOMIC_LIB}
 
   DEPENDS
-  COFFOptionsTableGen
   intrinsics_gen
   )

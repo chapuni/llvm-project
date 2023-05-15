@@ -10,28 +10,21 @@ set(LLVM_LINK_COMPONENTS
 
 set(LLVM_TARGET_DEFINITIONS ObjcopyOpts.td)
 tablegen(LLVM ObjcopyOpts.inc -gen-opt-parser-defs)
-add_public_tablegen_target(ObjcopyOptsTableGen)
 
 set(LLVM_TARGET_DEFINITIONS InstallNameToolOpts.td)
 tablegen(LLVM InstallNameToolOpts.inc -gen-opt-parser-defs)
-add_public_tablegen_target(InstallNameToolOptsTableGen)
 
 set(LLVM_TARGET_DEFINITIONS BitcodeStripOpts.td)
 tablegen(LLVM BitcodeStripOpts.inc -gen-opt-parser-defs)
-add_public_tablegen_target(BitcodeStripOptsTableGen)
 
 set(LLVM_TARGET_DEFINITIONS StripOpts.td)
 tablegen(LLVM StripOpts.inc -gen-opt-parser-defs)
-add_public_tablegen_target(StripOptsTableGen)
 
 add_llvm_tool(llvm-objcopy
   ObjcopyOptions.cpp
   llvm-objcopy.cpp
 
-  DEPENDS
-  ObjcopyOptsTableGen
-  InstallNameToolOptsTableGen
-  StripOptsTableGen
+  ${TABLEGEN_OUTPUT}
 
   GENERATE_DRIVER
   )

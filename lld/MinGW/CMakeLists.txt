@@ -1,9 +1,10 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(MinGWOptionsTableGen)
 
 add_lld_library(lldMinGW
   Driver.cpp
+
+  Options.inc
 
   LINK_COMPONENTS
   Option
@@ -15,6 +16,5 @@ add_lld_library(lldMinGW
   lldCommon
 
   DEPENDS
-  MinGWOptionsTableGen
   intrinsics_gen
   )

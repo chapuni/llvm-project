@@ -1,6 +1,5 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(DsymutilTableGen)
 
 set(LLVM_LINK_COMPONENTS
   AllTargetsCodeGens
@@ -30,9 +29,10 @@ add_llvm_tool(dsymutil
   Reproducer.cpp
   SymbolMap.cpp
 
+  Options.inc
+
   DEPENDS
   intrinsics_gen
-  DsymutilTableGen
   )
 
 if(APPLE)

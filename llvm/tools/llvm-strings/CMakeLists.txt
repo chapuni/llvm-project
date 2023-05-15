@@ -7,13 +7,11 @@ set(LLVM_LINK_COMPONENTS
 
 set(LLVM_TARGET_DEFINITIONS Opts.td)
 tablegen(LLVM Opts.inc -gen-opt-parser-defs)
-add_public_tablegen_target(StringsOptsTableGen)
 
 add_llvm_tool(llvm-strings
   llvm-strings.cpp
 
-  DEPENDS
-  StringsOptsTableGen
+  Opts.inc
   )
 
 if(LLVM_INSTALL_BINUTILS_SYMLINKS)

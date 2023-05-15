@@ -1,6 +1,5 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(ELFOptionsTableGen)
 
 if(LLVM_ENABLE_ZLIB)
   set(imported_libs ZLIB::ZLIB)
@@ -58,6 +57,8 @@ add_lld_library(lldELF
   Thunks.cpp
   Writer.cpp
 
+  Options.inc
+
   LINK_COMPONENTS
   ${LLVM_TARGETS_TO_BUILD}
   BinaryFormat
@@ -79,6 +80,5 @@ add_lld_library(lldELF
   ${LLVM_PTHREAD_LIB}
 
   DEPENDS
-  ELFOptionsTableGen
   intrinsics_gen
   )

@@ -1,6 +1,5 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(DwarfutilTableGen)
 
 set(LLVM_LINK_COMPONENTS
   AllTargetsCodeGens
@@ -20,6 +19,8 @@ set(LLVM_LINK_COMPONENTS
 add_llvm_tool(llvm-dwarfutil
   llvm-dwarfutil.cpp
   DebugInfoLinker.cpp
+
+  Options.inc
 
   DEPENDS
   intrinsics_gen

@@ -22,12 +22,14 @@ tablegen(LLVM LinkerWrapperOpts.inc -gen-opt-parser-defs)
 add_public_tablegen_target(LinkerWrapperOpts)
 
 if(NOT CLANG_BUILT_STANDALONE)
-  set(tablegen_deps intrinsics_gen LinkerWrapperOpts)
+  set(tablegen_deps intrinsics_gen)
 endif()
 
 add_clang_tool(clang-linker-wrapper
   ClangLinkerWrapper.cpp
   OffloadWrapper.cpp
+
+  LinkerWrapperOpts.inc
 
   DEPENDS
   ${tablegen_deps}

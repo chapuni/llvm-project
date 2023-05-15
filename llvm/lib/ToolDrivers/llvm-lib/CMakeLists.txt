@@ -1,9 +1,10 @@
 set(LLVM_TARGET_DEFINITIONS Options.td)
 tablegen(LLVM Options.inc -gen-opt-parser-defs)
-add_public_tablegen_target(LibOptionsTableGen)
 
 add_llvm_component_library(LLVMLibDriver
   LibDriver.cpp
+
+  Options.inc
 
   DEPENDS
   intrinsics_gen
@@ -16,4 +17,3 @@ add_llvm_component_library(LLVMLibDriver
   Support
   TargetParser
   )
-add_dependencies(LLVMLibDriver LibOptionsTableGen)
