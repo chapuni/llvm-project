@@ -5,6 +5,25 @@
 include(LLVMDistributionSupport)
 
 function(tablegen project ofn)
+  if(LLVM_GENERATED_INCLUDES_BASE)
+    if(NOT LLVM_TABLEGEN_PUBLIC_TARGET)
+      # Defer to add_public_tablegen
+      list(JOIN ARGV "," argv_comma)
+      set_property(DIRECTORY APPEND PROPERTY TABLEGENS "${LLVM_TARGET_DEFINITIONS},${argv_comma}")
+      return()
+    endif()
+    # Make odir unique per target
+    file(RELATIVE_PATH prefix ${LLVM_GENERATED_INCLUDES_BASE} ${CMAKE_CURRENT_BINARY_DIR})
+    set(odir ${LLVM_GENERATED_INCLUDES_BASE}/${LLVM_TABLEGEN_PUBLIC_TARGET}/${prefix})
+    file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/${ofn})
+
+    install(FILES ${odir}/${ofn}
+      DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${prefix}"
+      )
+  else()
+    set(odir ${CMAKE_CURRENT_BINARY_DIR})
+  endif()
+
   cmake_parse_arguments(ARG "" "" "DEPENDS;EXTRA_INCLUDES" ${ARGN})
 
   # Override ${project} with ${project}_TABLEGEN_PROJECT
@@ -25,12 +44,12 @@ function(tablegen project ofn)
     # absolute path (in *.d) as relative path (in build.ninja)
     # Note that tblgen is executed on ${CMAKE_BINARY_DIR} as working directory.
     file(RELATIVE_PATH ofn_rel
-      ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${ofn})
+      ${CMAKE_BINARY_DIR} ${odir}/${ofn})
     set(additional_cmdline
       -o ${ofn_rel}
       -d ${ofn_rel}.d
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-      DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/${ofn}.d
+      DEPFILE ${odir}/${ofn}.d
       )
     set(local_tds)
     set(global_tds)
@@ -38,7 +57,7 @@ function(tablegen project ofn)
     file(GLOB local_tds "*.td")
     file(GLOB_RECURSE global_tds "${LLVM_MAIN_INCLUDE_DIR}/llvm/*.td")
     set(additional_cmdline
-      -o ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
+      -o ${odir}/${ofn}
       )
   endif()
 
@@ -98,7 +117,7 @@ function(tablegen project ofn)
   set(tablegen_exe ${${project}_TABLEGEN_EXE})
   set(tablegen_depends ${${project}_TABLEGEN_TARGET} ${tablegen_exe})
 
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
+  add_custom_command(OUTPUT ${odir}/${ofn}
     COMMAND ${tablegen_exe} ${ARG_UNPARSED_ARGUMENTS} -I ${CMAKE_CURRENT_SOURCE_DIR}
     ${tblgen_includes}
     ${LLVM_TABLEGEN_FLAGS}
@@ -118,23 +137,68 @@ function(tablegen project ofn)
   # `make clean' must remove all those generated files:
   set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${ofn})
 
-  set(TABLEGEN_OUTPUT ${TABLEGEN_OUTPUT} ${CMAKE_CURRENT_BINARY_DIR}/${ofn} PARENT_SCOPE)
-  set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${ofn} PROPERTIES
+  set(TABLEGEN_OUTPUT ${TABLEGEN_OUTPUT} ${odir}/${ofn} PARENT_SCOPE)
+  set_source_files_properties(${odir}/${ofn} PROPERTIES
     GENERATED 1)
 endfunction()
 
 # Creates a target for publicly exporting tablegen dependencies.
 function(add_public_tablegen_target target)
+  cmake_parse_arguments(ARG "" "EXPORT" "" ${ARGN})
+
+  if(LLVM_GENERATED_INCLUDES_BASE)
+    # Recall preceding tablegen(s)
+    set(LLVM_TABLEGEN_PUBLIC_TARGET ${target})
+    get_directory_property(tablegens TABLEGENS)
+    foreach(argv_comma ${tablegens})
+      string(REPLACE "," ";" tblgen_argv ${argv_comma})
+      list(POP_FRONT tblgen_argv LLVM_TARGET_DEFINITIONS)
+      list(GET tblgen_argv 0 tblgen_project)
+      tablegen(${tblgen_argv})
+    endforeach()
+    if(ARG_EXPORT)
+      set(tblgen_project ${ARG_EXPORT})
+    endif()
+  endif()
+
   if(NOT TABLEGEN_OUTPUT)
     message(FATAL_ERROR "Requires tablegen() definitions as TABLEGEN_OUTPUT.")
   endif()
-  add_custom_target(${target}
-    DEPENDS ${TABLEGEN_OUTPUT})
+
+  if(LLVM_GENERATED_INCLUDES_BASE)
+    set(Tblgen_project ${tblgen_project})
+    if("${Tblgen_project}" STREQUAL "CLANG")
+      set(Tblgen_project "Clang")
+    endif()
+    add_library(${target} INTERFACE ${TABLEGEN_OUTPUT})
+    if(LLVM_GENERATED_INCLUDES_BASE)
+      target_include_directories(${target} INTERFACE
+	$<BUILD_INTERFACE:${LLVM_GENERATED_INCLUDES_BASE}/${target}>
+	)
+    endif()
+
+    get_target_export_arg(${target} ${Tblgen_project} export_to_llvmexports)
+    install(TARGETS ${target}
+      ${export_to_llvmexports}
+      LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX} COMPONENT ${target}
+      ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX} COMPONENT ${target}
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT ${target}
+      )
+    set_property(GLOBAL APPEND PROPERTY ${tblgen_project}_EXPORTS ${target})
+
+    # Flush
+    set_property(DIRECTORY PROPERTY TABLEGENS)
+  else()
+    add_custom_target(${target}
+      DEPENDS ${TABLEGEN_OUTPUT})
+  endif()
+
   if(LLVM_COMMON_DEPENDS)
     add_dependencies(${target} ${LLVM_COMMON_DEPENDS})
   endif()
   set_target_properties(${target} PROPERTIES FOLDER "Tablegenning")
   set(LLVM_COMMON_DEPENDS ${LLVM_COMMON_DEPENDS} ${target} PARENT_SCOPE)
+  set_property(DIRECTORY APPEND PROPERTY TABLEGEN_TARGETS ${target})
 endfunction()
 
 macro(add_tablegen target project)
