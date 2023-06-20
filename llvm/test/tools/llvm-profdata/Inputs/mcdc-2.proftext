@@ -1,0 +1,35 @@
+main
+# Func Hash:
+702755447896
+# Num Counters:
+4
+# Counter Values:
+1
+1
+1
+1
+# Num Bitmask Bytes:
+$1
+# Bitmask Byte Values:
+8
+
+
+test3
+# Func Hash:
+15288018065
+# Num Counters:
+6
+# Counter Values:
+4
+2
+1
+0
+0
+2
+# Num Bitmask Bytes:
+$0x2
+# Bitmask Byte Values:
+0x29
+0x0
+
+

@@ -193,11 +193,9 @@ Error InstrProfCorrelatorImpl<IntPtrT>::dumpYaml(raw_ostream &OS) {
 }
 
 template <class IntPtrT>
-void InstrProfCorrelatorImpl<IntPtrT>::addProbe(StringRef FunctionName,
-                                                uint64_t CFGHash,
-                                                IntPtrT CounterOffset,
-                                                IntPtrT FunctionPtr,
-                                                uint32_t NumCounters) {
+void InstrProfCorrelatorImpl<IntPtrT>::addProbe(
+    StringRef FunctionName, uint64_t CFGHash, IntPtrT CounterOffset,
+    IntPtrT FunctionPtr, uint32_t NumCounters) {
   // Check if a probe was already added for this counter offset.
   if (!CounterOffsets.insert(CounterOffset).second)
     return;
@@ -207,11 +205,15 @@ void InstrProfCorrelatorImpl<IntPtrT>::addProbe(StringRef FunctionName,
       // In this mode, CounterPtr actually stores the section relative address
       // of the counter.
       maybeSwap<IntPtrT>(CounterOffset),
+      // TODO: MC/DC is not yet supported.
+      /*BitmapOffset=*/maybeSwap<IntPtrT>(0),
       maybeSwap<IntPtrT>(FunctionPtr),
       // TODO: Value profiling is not yet supported.
       /*ValuesPtr=*/maybeSwap<IntPtrT>(0),
       maybeSwap<uint32_t>(NumCounters),
       /*NumValueSites=*/{maybeSwap<uint16_t>(0), maybeSwap<uint16_t>(0)},
+      // TODO: MC/DC is not yet supported.
+      /*NumBitmapBytes=*/maybeSwap<uint32_t>(0),
   });
   NamesVec.push_back(FunctionName.str());
 }

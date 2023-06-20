@@ -1399,6 +1399,11 @@ public:
   ConstantInt *getHash() const {
     return cast<ConstantInt>(const_cast<Value *>(getArgOperand(1)));
   }
+};
+
+/// A base class for all instrprof counter intrinsics.
+class InstrProfCntrInstBase : public InstrProfInstBase {
+public:
   // The number of counters for the instrumented function.
   ConstantInt *getNumCounters() const;
   // The index of the counter that this instruction acts on.
@@ -1406,7 +1411,7 @@ public:
 };
 
 /// This represents the llvm.instrprof.cover intrinsic.
-class InstrProfCoverInst : public InstrProfInstBase {
+class InstrProfCoverInst : public InstrProfCntrInstBase {
 public:
   static bool classof(const IntrinsicInst *I) {
     return I->getIntrinsicID() == Intrinsic::instrprof_cover;
@@ -1417,7 +1422,7 @@ public:
 };
 
 /// This represents the llvm.instrprof.increment intrinsic.
-class InstrProfIncrementInst : public InstrProfInstBase {
+class InstrProfIncrementInst : public InstrProfCntrInstBase {
 public:
   static bool classof(const IntrinsicInst *I) {
     return I->getIntrinsicID() == Intrinsic::instrprof_increment ||
@@ -1441,7 +1446,7 @@ public:
 };
 
 /// This represents the llvm.instrprof.timestamp intrinsic.
-class InstrProfTimestampInst : public InstrProfInstBase {
+class InstrProfTimestampInst : public InstrProfCntrInstBase {
 public:
   static bool classof(const IntrinsicInst *I) {
     return I->getIntrinsicID() == Intrinsic::instrprof_timestamp;
@@ -1452,7 +1457,7 @@ public:
 };
 
 /// This represents the llvm.instrprof.value.profile intrinsic.
-class InstrProfValueProfileInst : public InstrProfInstBase {
+class InstrProfValueProfileInst : public InstrProfCntrInstBase {
 public:
   static bool classof(const IntrinsicInst *I) {
     return I->getIntrinsicID() == Intrinsic::instrprof_value_profile;
@@ -1472,6 +1477,79 @@ public:
   // Returns the value site index.
   ConstantInt *getIndex() const {
     return cast<ConstantInt>(const_cast<Value *>(getArgOperand(4)));
+  }
+};
+
+/// A base class for instrprof mcdc intrinsics that require global bitmap bytes.
+class InstrProfMCDCBitmapInstBase : public InstrProfInstBase {
+public:
+  static bool classof(const IntrinsicInst *I) {
+    return I->getIntrinsicID() == Intrinsic::instrprof_mcdc_parameters ||
+           I->getIntrinsicID() == Intrinsic::instrprof_mcdc_tvbitmap_update;
+  }
+  static bool classof(const Value *V) {
+    return isa<IntrinsicInst>(V) && classof(cast<IntrinsicInst>(V));
+  }
+
+  // The number of bytes used for MCDC bitmaps for the instrumented function.
+  ConstantInt *getNumBitmapBytes() const {
+    return cast<ConstantInt>(const_cast<Value *>(getArgOperand(2)));
+  }
+};
+
+/// This represents the llvm.instrprof.mcdc.parameters intrinsic.
+class InstrProfMCDCBitmapParameters : public InstrProfMCDCBitmapInstBase {
+public:
+  static bool classof(const IntrinsicInst *I) {
+    return I->getIntrinsicID() == Intrinsic::instrprof_mcdc_parameters;
+  }
+  static bool classof(const Value *V) {
+    return isa<IntrinsicInst>(V) && classof(cast<IntrinsicInst>(V));
+  }
+};
+
+/// This represents the llvm.instrprof.mcdc.tvbitmap.update intrinsic.
+class InstrProfMCDCTVBitmapUpdate : public InstrProfMCDCBitmapInstBase {
+public:
+  static bool classof(const IntrinsicInst *I) {
+    return I->getIntrinsicID() == Intrinsic::instrprof_mcdc_tvbitmap_update;
+  }
+  static bool classof(const Value *V) {
+    return isa<IntrinsicInst>(V) && classof(cast<IntrinsicInst>(V));
+  }
+
+  // The index of the bitmap that this instruction acts on.
+  ConstantInt *getBitmapIndex() const {
+    return cast<ConstantInt>(const_cast<Value *>(getArgOperand(3)));
+  }
+
+  Value *getMCDCCondBitmapAddr() const {
+    return cast<Value>(const_cast<Value *>(getArgOperand(4)));
+  }
+};
+
+/// This represents the llvm.instrprof.mcdc.condbitmap.update intrinsic.
+/// It does not pertain to global bitmap updates or parameters and so doesn't
+/// inherit from InstrProfMCDCBitmapInstBase.
+class InstrProfMCDCCondBitmapUpdate : public InstrProfInstBase {
+public:
+  static bool classof(const IntrinsicInst *I) {
+    return I->getIntrinsicID() == Intrinsic::instrprof_mcdc_condbitmap_update;
+  }
+  static bool classof(const Value *V) {
+    return isa<IntrinsicInst>(V) && classof(cast<IntrinsicInst>(V));
+  }
+
+  ConstantInt *getCondID() const {
+    return cast<ConstantInt>(const_cast<Value *>(getArgOperand(2)));
+  }
+
+  Value *getMCDCCondBitmapAddr() const {
+    return cast<Value>(const_cast<Value *>(getArgOperand(3)));
+  }
+
+  Value *getCondBool() const {
+    return cast<Value>(const_cast<Value *>(getArgOperand(4)));
   }
 };
 
