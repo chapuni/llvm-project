@@ -315,6 +315,8 @@ static void emitColumnLabelsForIndex(raw_ostream &OS,
     Columns.emplace_back(tag("td", "Region Coverage", "column-entry-bold"));
   if (Opts.ShowBranchSummary)
     Columns.emplace_back(tag("td", "Branch Coverage", "column-entry-bold"));
+  if (Opts.ShowMCDCSummary)
+    Columns.emplace_back(tag("td", "MC/DC", "column-entry-bold"));
   OS << tag("tr", join(Columns.begin(), Columns.end(), ""));
 }
 
@@ -384,6 +386,10 @@ void CoveragePrinterHTML::emitFileSummary(raw_ostream &OS, StringRef SF,
     AddCoverageTripleToColumn(FCS.BranchCoverage.getCovered(),
                               FCS.BranchCoverage.getNumBranches(),
                               FCS.BranchCoverage.getPercentCovered());
+  if (Opts.ShowMCDCSummary)
+    AddCoverageTripleToColumn(FCS.MCDCCoverage.getCoveredPairs(),
+                              FCS.MCDCCoverage.getNumPairs(),
+                              FCS.MCDCCoverage.getPercentCovered());
 
   if (IsTotals)
     OS << tag("tr", join(Columns.begin(), Columns.end(), ""), "light-row-bold");
@@ -720,6 +726,52 @@ void SourceCoverageViewHTML::renderBranchView(raw_ostream &OS, BranchView &BRV,
   }
   OS << EndPre;
   OS << EndExpansionDiv;
+}
+
+void SourceCoverageViewHTML::renderMCDCView(raw_ostream &OS, MCDCView &MRV,
+                                            unsigned ViewDepth) {
+  for (auto &Record : MRV.Records) {
+    OS << BeginExpansionDiv;
+    OS << BeginPre;
+    OS << "  MC/DC Decision Region (";
+
+    // Display Line + Column information.
+    const CounterMappingRegion &DecisionRegion = Record.getDecisionRegion();
+    std::string LineNoStr = utostr(uint64_t(DecisionRegion.LineStart));
+    std::string ColNoStr = utostr(uint64_t(DecisionRegion.ColumnStart));
+    std::string TargetName = "L" + LineNoStr;
+    OS << tag("span",
+              a("#" + TargetName, tag("span", LineNoStr + ":" + ColNoStr),
+                TargetName),
+              "line-number") +
+              ") to (";
+    LineNoStr = utostr(uint64_t(DecisionRegion.LineEnd));
+    ColNoStr = utostr(uint64_t(DecisionRegion.ColumnEnd));
+    OS << tag("span",
+              a("#" + TargetName, tag("span", LineNoStr + ":" + ColNoStr),
+                TargetName),
+              "line-number") +
+              ")\n\n";
+
+    // Display MC/DC Information.
+    OS << "  Number of Conditions: " << Record.getNumConditions() << "\n";
+    for (unsigned i = 0; i < Record.getNumConditions(); i++) {
+      OS << "     " << Record.getConditionHdrStr(i);
+    }
+    OS << "\n";
+    OS << "  Executed MC/DC Test Vectors:\n\n     ";
+    OS << Record.getTestVectorHdrStr();
+    for (unsigned i = 0; i < Record.getNumTestVectors(); i++)
+      OS << Record.getTestVectorStr(i);
+    OS << "\n";
+    for (unsigned i = 0; i < Record.getNumConditions(); i++)
+      OS << Record.getCondCoverageStr(i);
+    OS << "  MC/DC Coverage for Expression: ";
+    OS << format("%0.2f", Record.getPercentCovered()) << "%\n";
+    OS << EndPre;
+    OS << EndExpansionDiv;
+  }
+  return;
 }
 
 void SourceCoverageViewHTML::renderInstantiationView(raw_ostream &OS,
