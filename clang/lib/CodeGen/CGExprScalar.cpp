@@ -4560,6 +4560,12 @@ Value *ScalarExprEmitter::VisitBinLAnd(const BinaryOperator *E) {
     if (LHSCondVal) { // If we have 1 && X, just emit X.
       CGF.incrementProfileCounter(E);
 
+      // If the top of the logical operator nest, reset the MCDC temp to 0.
+      if (CGF.MCDCLogOpStack.empty())
+        CGF.maybeResetMCDCCondBitmap(E);
+
+      CGF.MCDCLogOpStack.push_back(E);
+
       Value *RHSCond = CGF.EvaluateExprAsBool(E->getRHS());
 
       // If we're generating for profiling or coverage, generate a branch to a
@@ -4568,6 +4574,7 @@ Value *ScalarExprEmitter::VisitBinLAnd(const BinaryOperator *E) {
       // "FalseBlock" after the increment is done.
       if (InstrumentRegions &&
           CodeGenFunction::isInstrumentedCondition(E->getRHS())) {
+        CGF.maybeUpdateMCDCCondBitmap(E->getRHS(), RHSCond);
         llvm::BasicBlock *FBlock = CGF.createBasicBlock("land.end");
         llvm::BasicBlock *RHSBlockCnt = CGF.createBasicBlock("land.rhscnt");
         Builder.CreateCondBr(RHSCond, RHSBlockCnt, FBlock);
@@ -4577,6 +4584,11 @@ Value *ScalarExprEmitter::VisitBinLAnd(const BinaryOperator *E) {
         CGF.EmitBlock(FBlock);
       }
 
+      CGF.MCDCLogOpStack.pop_back();
+      // If the top of the logical operator nest, update the MCDC bitmap.
+      if (CGF.MCDCLogOpStack.empty())
+        CGF.maybeUpdateMCDCTestVectorBitmap(E);
+
       // ZExt result to int or bool.
       return Builder.CreateZExtOrBitCast(RHSCond, ResTy, "land.ext");
     }
@@ -4585,6 +4597,12 @@ Value *ScalarExprEmitter::VisitBinLAnd(const BinaryOperator *E) {
     if (!CGF.ContainsLabel(E->getRHS()))
       return llvm::Constant::getNullValue(ResTy);
   }
+
+  // If the top of the logical operator nest, reset the MCDC temp to 0.
+  if (CGF.MCDCLogOpStack.empty())
+    CGF.maybeResetMCDCCondBitmap(E);
+
+  CGF.MCDCLogOpStack.push_back(E);
 
   llvm::BasicBlock *ContBlock = CGF.createBasicBlock("land.end");
   llvm::BasicBlock *RHSBlock  = CGF.createBasicBlock("land.rhs");
@@ -4618,6 +4636,7 @@ Value *ScalarExprEmitter::VisitBinLAnd(const BinaryOperator *E) {
   // condition coverage.
   if (InstrumentRegions &&
       CodeGenFunction::isInstrumentedCondition(E->getRHS())) {
+    CGF.maybeUpdateMCDCCondBitmap(E->getRHS(), RHSCond);
     llvm::BasicBlock *RHSBlockCnt = CGF.createBasicBlock("land.rhscnt");
     Builder.CreateCondBr(RHSCond, RHSBlockCnt, ContBlock);
     CGF.EmitBlock(RHSBlockCnt);
@@ -4634,6 +4653,11 @@ Value *ScalarExprEmitter::VisitBinLAnd(const BinaryOperator *E) {
   }
   // Insert an entry into the phi node for the edge with the value of RHSCond.
   PN->addIncoming(RHSCond, RHSBlock);
+
+  CGF.MCDCLogOpStack.pop_back();
+  // If the top of the logical operator nest, update the MCDC bitmap.
+  if (CGF.MCDCLogOpStack.empty())
+    CGF.maybeUpdateMCDCTestVectorBitmap(E);
 
   // Artificial location to preserve the scope information
   {
@@ -4676,6 +4700,12 @@ Value *ScalarExprEmitter::VisitBinLOr(const BinaryOperator *E) {
     if (!LHSCondVal) { // If we have 0 || X, just emit X.
       CGF.incrementProfileCounter(E);
 
+      // If the top of the logical operator nest, reset the MCDC temp to 0.
+      if (CGF.MCDCLogOpStack.empty())
+        CGF.maybeResetMCDCCondBitmap(E);
+
+      CGF.MCDCLogOpStack.push_back(E);
+
       Value *RHSCond = CGF.EvaluateExprAsBool(E->getRHS());
 
       // If we're generating for profiling or coverage, generate a branch to a
@@ -4684,6 +4714,7 @@ Value *ScalarExprEmitter::VisitBinLOr(const BinaryOperator *E) {
       // "FalseBlock" after the increment is done.
       if (InstrumentRegions &&
           CodeGenFunction::isInstrumentedCondition(E->getRHS())) {
+        CGF.maybeUpdateMCDCCondBitmap(E->getRHS(), RHSCond);
         llvm::BasicBlock *FBlock = CGF.createBasicBlock("lor.end");
         llvm::BasicBlock *RHSBlockCnt = CGF.createBasicBlock("lor.rhscnt");
         Builder.CreateCondBr(RHSCond, FBlock, RHSBlockCnt);
@@ -4693,6 +4724,11 @@ Value *ScalarExprEmitter::VisitBinLOr(const BinaryOperator *E) {
         CGF.EmitBlock(FBlock);
       }
 
+      CGF.MCDCLogOpStack.pop_back();
+      // If the top of the logical operator nest, update the MCDC bitmap.
+      if (CGF.MCDCLogOpStack.empty())
+        CGF.maybeUpdateMCDCTestVectorBitmap(E);
+
       // ZExt result to int or bool.
       return Builder.CreateZExtOrBitCast(RHSCond, ResTy, "lor.ext");
     }
@@ -4701,6 +4737,12 @@ Value *ScalarExprEmitter::VisitBinLOr(const BinaryOperator *E) {
     if (!CGF.ContainsLabel(E->getRHS()))
       return llvm::ConstantInt::get(ResTy, 1);
   }
+
+  // If the top of the logical operator nest, reset the MCDC temp to 0.
+  if (CGF.MCDCLogOpStack.empty())
+    CGF.maybeResetMCDCCondBitmap(E);
+
+  CGF.MCDCLogOpStack.push_back(E);
 
   llvm::BasicBlock *ContBlock = CGF.createBasicBlock("lor.end");
   llvm::BasicBlock *RHSBlock = CGF.createBasicBlock("lor.rhs");
@@ -4738,6 +4780,7 @@ Value *ScalarExprEmitter::VisitBinLOr(const BinaryOperator *E) {
   // condition coverage.
   if (InstrumentRegions &&
       CodeGenFunction::isInstrumentedCondition(E->getRHS())) {
+    CGF.maybeUpdateMCDCCondBitmap(E->getRHS(), RHSCond);
     llvm::BasicBlock *RHSBlockCnt = CGF.createBasicBlock("lor.rhscnt");
     Builder.CreateCondBr(RHSCond, ContBlock, RHSBlockCnt);
     CGF.EmitBlock(RHSBlockCnt);
@@ -4750,6 +4793,11 @@ Value *ScalarExprEmitter::VisitBinLOr(const BinaryOperator *E) {
   // into the phi node for the edge with the value of RHSCond.
   CGF.EmitBlock(ContBlock);
   PN->addIncoming(RHSCond, RHSBlock);
+
+  CGF.MCDCLogOpStack.pop_back();
+  // If the top of the logical operator nest, update the MCDC bitmap.
+  if (CGF.MCDCLogOpStack.empty())
+    CGF.maybeUpdateMCDCTestVectorBitmap(E);
 
   // ZExt result to int.
   return Builder.CreateZExtOrBitCast(PN, ResTy, "lor.ext");
@@ -4895,6 +4943,10 @@ VisitAbstractConditionalOperator(const AbstractConditionalOperator *E) {
     return Builder.CreateSelect(CondV, LHS, RHS, "cond");
   }
 
+  // If the top of the logical operator nest, reset the MCDC temp to 0.
+  if (CGF.MCDCLogOpStack.empty())
+    CGF.maybeResetMCDCCondBitmap(condExpr);
+
   llvm::BasicBlock *LHSBlock = CGF.createBasicBlock("cond.true");
   llvm::BasicBlock *RHSBlock = CGF.createBasicBlock("cond.false");
   llvm::BasicBlock *ContBlock = CGF.createBasicBlock("cond.end");
@@ -4930,6 +4982,11 @@ VisitAbstractConditionalOperator(const AbstractConditionalOperator *E) {
   llvm::PHINode *PN = Builder.CreatePHI(LHS->getType(), 2, "cond");
   PN->addIncoming(LHS, LHSBlock);
   PN->addIncoming(RHS, RHSBlock);
+
+  // If the top of the logical operator nest, update the MCDC bitmap.
+  if (CGF.MCDCLogOpStack.empty())
+    CGF.maybeUpdateMCDCTestVectorBitmap(condExpr);
+
   return PN;
 }
 
