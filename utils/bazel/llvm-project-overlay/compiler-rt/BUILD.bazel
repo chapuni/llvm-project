@@ -33,10 +33,6 @@ cc_library(
     includes = [
         "include",
     ],
-    copts = [
-        "-Wno-pedantic",
-        "-Wno-strict-prototypes",
-    ],
     deps = [
         ":config",
     ],
