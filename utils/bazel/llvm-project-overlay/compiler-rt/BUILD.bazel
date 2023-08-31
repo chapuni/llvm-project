@@ -11,12 +11,19 @@ licenses(["notice"])
 
 cc_library(
     name = "config",
-    defines = [
-        "COMPILER_RT_HAS_ATOMICS=1",
-        "COMPILER_RT_HAS_FCNTL_LCK=1",
-        "COMPILER_RT_HAS_UNAME=1",
-    ],
+    defines = select({
+        "@platforms//os:linux": [
+            "COMPILER_RT_HAS_ATOMICS=1",
+            "COMPILER_RT_HAS_FCNTL_LCK=1",
+            "COMPILER_RT_HAS_UNAME=1",
+        ],
+        # Will invoke error unless supported platforms.
+    ]),
 )
+
+WIN32_ONLY_FILES = [
+    "lib/profile/WindowsMMap.c",
+]
 
 cc_library(
     name = "profile",
@@ -24,9 +31,11 @@ cc_library(
         "lib/profile/*.c",
         "lib/profile/*.cpp",
         "lib/profile/*.h",
-    ], exclude = [
-        "lib/profile/WindowsMMap.c",
-    ]),
+    ], exclude = WIN32_ONLY_FILES
+    ) + select({
+        "@platforms//os:windows": WIN32_ONLY_FILES,
+        "//conditions:default": []
+    }),
     hdrs = glob([
         "include/profile/*.inc",
     ]),
