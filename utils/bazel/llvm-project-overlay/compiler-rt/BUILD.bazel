@@ -17,8 +17,8 @@ cc_library(
             "COMPILER_RT_HAS_FCNTL_LCK=1",
             "COMPILER_RT_HAS_UNAME=1",
         ],
-        # Will invoke error unless supported platforms.
-    ]),
+        # Will raises error unless supported platforms.
+    }),
 )
 
 WIN32_ONLY_FILES = [
@@ -27,11 +27,13 @@ WIN32_ONLY_FILES = [
 
 cc_library(
     name = "profile",
-    srcs = glob([
-        "lib/profile/*.c",
-        "lib/profile/*.cpp",
-        "lib/profile/*.h",
-    ], exclude = WIN32_ONLY_FILES
+    srcs = glob(
+        [
+            "lib/profile/*.c",
+            "lib/profile/*.cpp",
+            "lib/profile/*.h",
+        ],
+        exclude = WIN32_ONLY_FILES,
     ) + select({
         "@platforms//os:windows": WIN32_ONLY_FILES,
         "//conditions:default": []
