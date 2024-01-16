@@ -573,6 +573,11 @@ struct EmptyCoverageMappingBuilder : public CoverageMappingBuilder {
 /// creation.
 struct MCDCCoverageBuilder {
 
+  struct DecisionIDPair {
+    MCDCConditionID TrueID = 0;
+    MCDCConditionID FalseID = 0;
+  };
+
   /// The AST walk recursively visits nested logical-AND or logical-OR binary
   /// operator nodes and then visits their LHS and RHS children nodes.  As this
   /// happens, the algorithm will assign IDs to each operator's LHS and RHS side
@@ -663,9 +668,7 @@ struct MCDCCoverageBuilder {
 private:
   CodeGenModule &CGM;
 
-  llvm::SmallVector<MCDCConditionID> AndRHS;
-  llvm::SmallVector<MCDCConditionID> OrRHS;
-  llvm::SmallVector<const BinaryOperator *> NestLevel;
+  llvm::SmallVector<DecisionIDPair, 1> DecisionStack;
   llvm::DenseMap<const Stmt *, MCDCConditionID> &CondIDs;
   llvm::DenseMap<const Stmt *, unsigned> &MCDCBitmapMap;
   MCDCConditionID NextID = 1;
@@ -676,41 +679,20 @@ private:
     return E->getOpcode() == BO_LAnd;
   }
 
-  /// Push an ID onto the corresponding RHS stack.
-  void pushRHS(const BinaryOperator *E) {
-    llvm::SmallVector<MCDCConditionID> &rhs = isLAnd(E) ? AndRHS : OrRHS;
-    rhs.push_back(CondIDs[CodeGenFunction::stripCond(E->getRHS())]);
-  }
-
-  /// Pop an ID from the corresponding RHS stack.
-  void popRHS(const BinaryOperator *E) {
-    llvm::SmallVector<MCDCConditionID> &rhs = isLAnd(E) ? AndRHS : OrRHS;
-    if (!rhs.empty())
-      rhs.pop_back();
-  }
-
-  /// If the expected ID is on top, pop it off the corresponding RHS stack.
-  void popRHSifTop(const BinaryOperator *E) {
-    if (!OrRHS.empty() && CondIDs[E] == OrRHS.back())
-      OrRHS.pop_back();
-    else if (!AndRHS.empty() && CondIDs[E] == AndRHS.back())
-      AndRHS.pop_back();
-  }
-
 public:
   MCDCCoverageBuilder(CodeGenModule &CGM,
                       llvm::DenseMap<const Stmt *, MCDCConditionID> &CondIDMap,
                       llvm::DenseMap<const Stmt *, unsigned> &MCDCBitmapMap)
-      : CGM(CGM), CondIDs(CondIDMap), MCDCBitmapMap(MCDCBitmapMap) {}
+      : CGM(CGM), DecisionStack(1), CondIDs(CondIDMap),
+        MCDCBitmapMap(MCDCBitmapMap) {}
 
-  /// Return the ID of the RHS of the next, upper nest-level logical-OR.
-  MCDCConditionID getNextLOrCondID() const {
-    return OrRHS.empty() ? 0 : OrRHS.back();
-  }
+  bool isIdle() { return (NextID == 1 && !NotMapped); }
 
-  /// Return the ID of the RHS of the next, upper nest-level logical-AND.
-  MCDCConditionID getNextLAndCondID() const {
-    return AndRHS.empty() ? 0 : AndRHS.back();
+  bool isBuilding() { return (NextID > 1); }
+
+  const DecisionIDPair &back() {
+    assert(DecisionStack.size() >= 1);
+    return DecisionStack.back();
   }
 
   /// Return the ID of a given condition.
@@ -730,68 +712,80 @@ public:
       return;
 
     // If binary expression is disqualified, don't do mapping.
-    if (NestLevel.empty() &&
-        !MCDCBitmapMap.contains(CodeGenFunction::stripCond(E)))
+    if (!isBuilding() && !MCDCBitmapMap.contains(CodeGenFunction::stripCond(E)))
       NotMapped = true;
-
-    // Push Stmt on 'NestLevel' stack to keep track of nest location.
-    NestLevel.push_back(E);
 
     // Don't go any further if we don't need to map condition IDs.
     if (NotMapped)
       return;
 
+    assert(DecisionStack.size() >= 1);
+    const DecisionIDPair &ParentDecision = DecisionStack.back();
+
     // If the operator itself has an assigned ID, this means it represents a
     // larger subtree.  In this case, pop its ID out of the RHS stack and
     // assign that ID to its LHS node.  Its RHS will receive a new ID.
+    MCDCConditionID LHSid;
     if (CondIDs.contains(CodeGenFunction::stripCond(E))) {
       // If Stmt has an ID, assign its ID to LHS
-      CondIDs[CodeGenFunction::stripCond(E->getLHS())] = CondIDs[E];
-
-      // Since the operator's LHS assumes the operator's same ID, pop the
-      // operator from the RHS stack so that if LHS short-circuits, it won't be
-      // incorrectly re-used as the node executed next.
-      popRHSifTop(E);
+      LHSid = CondIDs[E];
     } else {
       // Otherwise, assign ID+1 to LHS.
-      CondIDs[CodeGenFunction::stripCond(E->getLHS())] = NextID++;
+      LHSid = NextID++;
     }
+    CondIDs[CodeGenFunction::stripCond(E->getLHS())] = LHSid;
 
     // Assign ID+1 to RHS.
-    CondIDs[CodeGenFunction::stripCond(E->getRHS())] = NextID++;
+    MCDCConditionID RHSid;
+    CondIDs[CodeGenFunction::stripCond(E->getRHS())] = RHSid = NextID++;
 
-    // Push ID of Stmt's RHS so that LHS nodes know about it
-    pushRHS(E);
+    // Push LHS Decision
+    if (isLAnd(E))
+      DecisionStack.push_back({RHSid, ParentDecision.FalseID});
+    else
+      DecisionStack.push_back({ParentDecision.TrueID, RHSid});
   }
 
-  /// Pop the binary operator from the next level. If the walk is at the top of
-  /// the next, assign the total number of conditions.
+  // Pop Decision (for LHS)
+  DecisionIDPair pop() {
+    assert(DecisionStack.size() >= 1);
+
+    if (!CGM.getCodeGenOpts().MCDCCoverage)
+      return DecisionStack.front();
+
+    if (NotMapped)
+      return DecisionStack.front();
+
+    assert(DecisionStack.size() > 1);
+    DecisionIDPair D = DecisionStack.back();
+    DecisionStack.pop_back();
+    return D;
+  }
+
+  /// This actually doesn't pop anything.
+  /// Available only from the root node.
   unsigned popAndReturnCondCount(const BinaryOperator *E) {
     if (!CGM.getCodeGenOpts().MCDCCoverage)
       return 0;
 
+    assert(!isIdle());
+    assert(DecisionStack.size() == 1);
+
     unsigned TotalConds = 0;
 
-    // Pop Stmt from 'NestLevel' stack.
-    assert(NestLevel.back() == E);
-    NestLevel.pop_back();
-
     // Reset state if not doing mapping.
-    if (NestLevel.empty() && NotMapped) {
+    if (NotMapped) {
       NotMapped = false;
+      assert(NextID == 1);
       return 0;
     }
 
-    // Pop RHS ID.
-    popRHS(E);
+    // Set conds and reset.
+    TotalConds = NextID - 1;
 
-    // If at the parent (NestLevel=0), set conds and reset.
-    if (NestLevel.empty()) {
-      TotalConds = NextID - 1;
+    // Reset ID back to beginning.
+    NextID = 1;
 
-      // Reset ID back to beginning.
-      NextID = 1;
-    }
     return TotalConds;
   }
 };
@@ -1822,20 +1816,28 @@ struct CounterCoverageMappingBuilder
   }
 
   void VisitBinLAnd(const BinaryOperator *E) {
+    bool IsRootNode = MCDCBuilder.isIdle();
+
     // Keep track of Binary Operator and assign MCDC condition IDs
+    // Push LHS
     MCDCBuilder.pushAndAssignIDs(E);
 
     extendRegion(E->getLHS());
     propagateCounts(getRegion().getCounter(), E->getLHS());
     handleFileExit(getEnd(E->getLHS()));
 
+    // RHS uses parent's Decision.
+    auto DecisionLHS = MCDCBuilder.pop();
+
     // Counter tracks the right hand side of a logical and operator.
     extendRegion(E->getRHS());
     propagateCounts(getRegionCounter(E), E->getRHS());
 
+    const auto &DecisionRHS = MCDCBuilder.back();
+
     // Process Binary Operator and create MCDC Decision Region if top-level
     unsigned NumConds = 0;
-    if ((NumConds = MCDCBuilder.popAndReturnCondCount(E)))
+    if (IsRootNode && (NumConds = MCDCBuilder.popAndReturnCondCount(E)))
       createDecisionRegion(E, getRegionBitmap(E), NumConds);
 
     // Extract the RHS's Execution Counter.
@@ -1848,8 +1850,6 @@ struct CounterCoverageMappingBuilder
     Counter ParentCnt = getRegion().getCounter();
 
     // Extract the MCDC condition IDs (returns 0 if not needed).
-    MCDCConditionID NextOrID = MCDCBuilder.getNextLOrCondID();
-    MCDCConditionID NextAndID = MCDCBuilder.getNextLAndCondID();
     MCDCConditionID LHSid = MCDCBuilder.getCondID(E->getLHS());
     MCDCConditionID RHSid = MCDCBuilder.getCondID(E->getRHS());
 
@@ -1859,8 +1859,8 @@ struct CounterCoverageMappingBuilder
     // - If LHS is FALSE, execution goes to the LHS of the next logical-OR.
     //   If that does not exist, execution exits (ID == 0).
     createBranchRegion(E->getLHS(), RHSExecCnt,
-                       subtractCounters(ParentCnt, RHSExecCnt), LHSid, RHSid,
-                       NextOrID);
+                       subtractCounters(ParentCnt, RHSExecCnt), LHSid,
+                       DecisionLHS.TrueID, DecisionLHS.FalseID);
 
     // Create Branch Region around RHS condition.
     // MC/DC: For "LHS && RHS"
@@ -1870,7 +1870,7 @@ struct CounterCoverageMappingBuilder
     //   If that does not exist, execution exits (ID == 0).
     createBranchRegion(E->getRHS(), RHSTrueCnt,
                        subtractCounters(RHSExecCnt, RHSTrueCnt), RHSid,
-                       NextAndID, NextOrID);
+                       DecisionRHS.TrueID, DecisionRHS.FalseID);
   }
 
   // Determine whether the right side of OR operation need to be visited.
@@ -1884,20 +1884,28 @@ struct CounterCoverageMappingBuilder
   }
 
   void VisitBinLOr(const BinaryOperator *E) {
+    bool IsRootNode = MCDCBuilder.isIdle();
+
     // Keep track of Binary Operator and assign MCDC condition IDs
+    // Push LHS
     MCDCBuilder.pushAndAssignIDs(E);
 
     extendRegion(E->getLHS());
     Counter OutCount = propagateCounts(getRegion().getCounter(), E->getLHS());
     handleFileExit(getEnd(E->getLHS()));
 
+    // RHS uses parent's Decision.
+    auto DecisionLHS = MCDCBuilder.pop();
+
     // Counter tracks the right hand side of a logical or operator.
     extendRegion(E->getRHS());
     propagateCounts(getRegionCounter(E), E->getRHS());
 
+    const auto &DecisionRHS = MCDCBuilder.back();
+
     // Process Binary Operator and create MCDC Decision Region if top-level
     unsigned NumConds = 0;
-    if ((NumConds = MCDCBuilder.popAndReturnCondCount(E)))
+    if (IsRootNode && (NumConds = MCDCBuilder.popAndReturnCondCount(E)))
       createDecisionRegion(E, getRegionBitmap(E), NumConds);
 
     // Extract the RHS's Execution Counter.
@@ -1914,8 +1922,6 @@ struct CounterCoverageMappingBuilder
     Counter ParentCnt = getRegion().getCounter();
 
     // Extract the MCDC condition IDs (returns 0 if not needed).
-    MCDCConditionID NextOrID = MCDCBuilder.getNextLOrCondID();
-    MCDCConditionID NextAndID = MCDCBuilder.getNextLAndCondID();
     MCDCConditionID LHSid = MCDCBuilder.getCondID(E->getLHS());
     MCDCConditionID RHSid = MCDCBuilder.getCondID(E->getRHS());
 
@@ -1925,7 +1931,8 @@ struct CounterCoverageMappingBuilder
     //   If that does not exist, execution exits (ID == 0).
     // - If LHS is FALSE, execution goes to the RHS.
     createBranchRegion(E->getLHS(), subtractCounters(ParentCnt, RHSExecCnt),
-                       RHSExecCnt, LHSid, NextAndID, RHSid);
+                       RHSExecCnt, LHSid, DecisionLHS.TrueID,
+                       DecisionLHS.FalseID);
 
     // Create Branch Region around RHS condition.
     // MC/DC: For "LHS || RHS"
@@ -1934,7 +1941,8 @@ struct CounterCoverageMappingBuilder
     // - If RHS is FALSE, execution goes to the LHS of the next logical-OR.
     //   If that does not exist, execution exits (ID == 0).
     createBranchRegion(E->getRHS(), subtractCounters(RHSExecCnt, RHSFalseCnt),
-                       RHSFalseCnt, RHSid, NextAndID, NextOrID);
+                       RHSFalseCnt, RHSid, DecisionRHS.TrueID,
+                       DecisionRHS.FalseID);
   }
 
   void VisitLambdaExpr(const LambdaExpr *LE) {
