@@ -44,7 +44,8 @@ void CodeGenPGO::setFuncName(StringRef Name,
 
   // If we're generating a profile, create a variable for the name.
   if (CGM.getCodeGenOpts().hasProfileClangInstr())
-    FuncNameVar = llvm::createPGOFuncNameVar(CGM.getModule(), Linkage, FuncName);
+    FuncNameVar =
+        llvm::createPGOFuncNameVar(CGM.getModule(), Linkage, FuncName);
 }
 
 void CodeGenPGO::setFuncName(llvm::Function *Fn) {
@@ -1143,9 +1144,8 @@ void CodeGenPGO::emitCounterRegionMapping(const Decl *D) {
       FuncNameVar, FuncName, FunctionHash, CoverageMapping);
 }
 
-void
-CodeGenPGO::emitEmptyCounterMapping(const Decl *D, StringRef Name,
-                                    llvm::GlobalValue::LinkageTypes Linkage) {
+void CodeGenPGO::emitEmptyCounterMapping(
+    const Decl *D, StringRef Name, llvm::GlobalValue::LinkageTypes Linkage) {
   if (skipRegionMappingForDecl(D))
     return;
 
@@ -1178,9 +1178,8 @@ void CodeGenPGO::computeRegionCounts(const Decl *D) {
     Walker.VisitCapturedDecl(const_cast<CapturedDecl *>(CD));
 }
 
-void
-CodeGenPGO::applyFunctionAttributes(llvm::IndexedInstrProfReader *PGOReader,
-                                    llvm::Function *Fn) {
+void CodeGenPGO::applyFunctionAttributes(
+    llvm::IndexedInstrProfReader *PGOReader, llvm::Function *Fn) {
   if (!haveRegionCounts())
     return;
 
@@ -1195,8 +1194,7 @@ void CodeGenPGO::emitCounterSetOrIncrement(CGBuilderTy &Builder, const Stmt *S,
 
   unsigned Counter = (*RegionCounterMap)[S];
 
-  llvm::Value *Args[] = {FuncNameVar,
-                         Builder.getInt64(FunctionHash),
+  llvm::Value *Args[] = {FuncNameVar, Builder.getInt64(FunctionHash),
                          Builder.getInt32(NumRegionCounters),
                          Builder.getInt32(Counter), StepV};
 
@@ -1357,7 +1355,8 @@ void CodeGenPGO::setProfileVersion(llvm::Module &M) {
 // This method either inserts a call to the profile run-time during
 // instrumentation or puts profile data into metadata for PGO use.
 void CodeGenPGO::valueProfile(CGBuilderTy &Builder, uint32_t ValueKind,
-    llvm::Instruction *ValueSite, llvm::Value *ValuePtr) {
+                              llvm::Instruction *ValueSite,
+                              llvm::Value *ValuePtr) {
 
   if (!EnableValueProfiling)
     return;
@@ -1373,12 +1372,10 @@ void CodeGenPGO::valueProfile(CGBuilderTy &Builder, uint32_t ValueKind,
     auto BuilderInsertPoint = Builder.saveIP();
     Builder.SetInsertPoint(ValueSite);
     llvm::Value *Args[5] = {
-        FuncNameVar,
-        Builder.getInt64(FunctionHash),
+        FuncNameVar, Builder.getInt64(FunctionHash),
         Builder.CreatePtrToInt(ValuePtr, Builder.getInt64Ty()),
         Builder.getInt32(ValueKind),
-        Builder.getInt32(NumValueSites[ValueKind]++)
-    };
+        Builder.getInt32(NumValueSites[ValueKind]++)};
     Builder.CreateCall(
         CGM.getIntrinsic(llvm::Intrinsic::instrprof_value_profile), Args);
     Builder.restoreIP(BuilderInsertPoint);
