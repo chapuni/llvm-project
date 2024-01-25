@@ -32,7 +32,7 @@ private:
   std::string FuncName;
   llvm::GlobalVariable *FuncNameVar;
 
-  std::array <unsigned, llvm::IPVK_Last + 1> NumValueSites;
+  std::array<unsigned, llvm::IPVK_Last + 1> NumValueSites;
   unsigned NumRegionCounters;
   uint64_t FunctionHash;
   std::unique_ptr<llvm::DenseMap<const Stmt *, unsigned>> RegionCounterMap;
@@ -133,7 +133,7 @@ public:
   }
 };
 
-}  // end namespace CodeGen
-}  // end namespace clang
+} // end namespace CodeGen
+} // end namespace clang
 
 #endif

@@ -306,8 +306,7 @@ public:
 ///
 /// Templated on the unsigned type whose size matches pointers on the platform
 /// that wrote the profile.
-template <class IntPtrT>
-class RawInstrProfReader : public InstrProfReader {
+template <class IntPtrT> class RawInstrProfReader : public InstrProfReader {
 private:
   /// The profile data file contents.
   std::unique_ptr<MemoryBuffer> DataBuffer;
@@ -449,8 +448,8 @@ private:
   }
 
   const char *getNextHeaderPos() const {
-      assert(atEnd());
-      return (const char *)ValueDataStart;
+    assert(atEnd());
+    return (const char *)ValueDataStart;
   }
 
   StringRef getName(uint64_t NameRef) const {
@@ -533,7 +532,7 @@ struct InstrProfReaderIndexBase {
 
   // Read all the profile records with the key equal to FuncName
   virtual Error getRecords(StringRef FuncName,
-                                     ArrayRef<NamedInstrProfRecord> &Data) = 0;
+                           ArrayRef<NamedInstrProfRecord> &Data) = 0;
   virtual void advanceToNextKey() = 0;
   virtual bool atEnd() const = 0;
   virtual void setValueProfDataEndianness(llvm::endianness Endianness) = 0;
@@ -557,8 +556,7 @@ using MemProfRecordHashTable =
 using MemProfFrameHashTable =
     OnDiskIterableChainedHashTable<memprof::FrameLookupTrait>;
 
-template <typename HashTableImpl>
-class InstrProfReaderItaniumRemapper;
+template <typename HashTableImpl> class InstrProfReaderItaniumRemapper;
 
 template <typename HashTableImpl>
 class InstrProfReaderIndex : public InstrProfReaderIndexBase {

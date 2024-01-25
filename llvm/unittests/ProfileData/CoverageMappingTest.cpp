@@ -55,8 +55,8 @@ void PrintTo(const CoverageSegment &S, ::std::ostream *os) {
     *os << S.Count << ", ";
   *os << (S.IsRegionEntry ? "true" : "false") << ")";
 }
-}
-}
+} // namespace coverage
+} // namespace llvm
 
 namespace {
 
@@ -294,7 +294,7 @@ TEST_P(CoverageMappingTest, basic_write_read) {
   startFunction("func", 0x1234);
   addCMR(Counter::getCounter(0), "foo", 1, 1, 1, 1);
   addCMR(Counter::getCounter(1), "foo", 2, 1, 2, 2);
-  addCMR(Counter::getZero(),     "foo", 3, 1, 3, 4);
+  addCMR(Counter::getZero(), "foo", 3, 1, 3, 4);
   addCMR(Counter::getCounter(2), "foo", 4, 1, 4, 8);
   addCMR(Counter::getCounter(3), "bar", 1, 2, 3, 4);
 
@@ -689,13 +689,13 @@ TEST_P(CoverageMappingTest, basic_coverage_iteration) {
   CoverageData Data = LoadedCoverage->getCoverageForFile("file1");
   std::vector<CoverageSegment> Segments(Data.begin(), Data.end());
   ASSERT_EQ(7U, Segments.size());
-  ASSERT_EQ(CoverageSegment(1, 1, 20, true),  Segments[0]);
+  ASSERT_EQ(CoverageSegment(1, 1, 20, true), Segments[0]);
   ASSERT_EQ(CoverageSegment(4, 7, 30, false), Segments[1]);
-  ASSERT_EQ(CoverageSegment(5, 8, 10, true),  Segments[2]);
+  ASSERT_EQ(CoverageSegment(5, 8, 10, true), Segments[2]);
   ASSERT_EQ(CoverageSegment(9, 1, 30, false), Segments[3]);
-  ASSERT_EQ(CoverageSegment(9, 9, false),     Segments[4]);
+  ASSERT_EQ(CoverageSegment(9, 9, false), Segments[4]);
   ASSERT_EQ(CoverageSegment(10, 10, 0, true), Segments[5]);
-  ASSERT_EQ(CoverageSegment(11, 11, false),   Segments[6]);
+  ASSERT_EQ(CoverageSegment(11, 11, false), Segments[6]);
 }
 
 TEST_P(CoverageMappingTest, test_line_coverage_iterator) {
@@ -744,7 +744,7 @@ TEST_P(CoverageMappingTest, uncovered_function) {
   std::vector<CoverageSegment> Segments(Data.begin(), Data.end());
   ASSERT_EQ(2U, Segments.size());
   ASSERT_EQ(CoverageSegment(1, 2, 0, true), Segments[0]);
-  ASSERT_EQ(CoverageSegment(3, 4, false),   Segments[1]);
+  ASSERT_EQ(CoverageSegment(3, 4, false), Segments[1]);
 }
 
 TEST_P(CoverageMappingTest, uncovered_function_with_mapping) {
@@ -756,9 +756,9 @@ TEST_P(CoverageMappingTest, uncovered_function_with_mapping) {
   CoverageData Data = LoadedCoverage->getCoverageForFile("file1");
   std::vector<CoverageSegment> Segments(Data.begin(), Data.end());
   ASSERT_EQ(3U, Segments.size());
-  ASSERT_EQ(CoverageSegment(1, 1, 0, true),  Segments[0]);
+  ASSERT_EQ(CoverageSegment(1, 1, 0, true), Segments[0]);
   ASSERT_EQ(CoverageSegment(4, 7, 0, false), Segments[1]);
-  ASSERT_EQ(CoverageSegment(9, 9, false),    Segments[2]);
+  ASSERT_EQ(CoverageSegment(9, 9, false), Segments[2]);
 }
 
 TEST_P(CoverageMappingTest, combine_regions) {

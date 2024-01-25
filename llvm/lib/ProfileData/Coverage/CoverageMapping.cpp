@@ -765,8 +765,8 @@ Error CoverageMapping::loadFunctionRecord(
   }
 
   // Don't create records for (filenames, function) pairs we've already seen.
-  auto FilenamesHash = hash_combine_range(Record.Filenames.begin(),
-                                          Record.Filenames.end());
+  auto FilenamesHash =
+      hash_combine_range(Record.Filenames.begin(), Record.Filenames.end());
   if (!RecordProvenance[FilenamesHash].insert(hash_value(OrigFuncName)).second)
     return Error::success();
 
@@ -816,12 +816,11 @@ Expected<std::unique_ptr<CoverageMapping>> CoverageMapping::load(
 
 // If E is a no_data_found error, returns success. Otherwise returns E.
 static Error handleMaybeNoDataFoundError(Error E) {
-  return handleErrors(
-      std::move(E), [](const CoverageMapError &CME) {
-        if (CME.get() == coveragemap_error::no_data_found)
-          return static_cast<Error>(Error::success());
-        return make_error<CoverageMapError>(CME.get(), CME.getMessage());
-      });
+  return handleErrors(std::move(E), [](const CoverageMapError &CME) {
+    if (CME.get() == coveragemap_error::no_data_found)
+      return static_cast<Error>(Error::success());
+    return make_error<CoverageMapError>(CME.get(), CME.getMessage());
+  });
 }
 
 Error CoverageMapping::loadFromFile(
@@ -913,7 +912,7 @@ Expected<std::unique_ptr<CoverageMapping>> CoverageMapping::load(
         std::string Path = std::move(*PathOpt);
         StringRef Arch = Arches.size() == 1 ? Arches.front() : StringRef();
         if (Error E = loadFromFile(Path, Arch, CompilationDir, *ProfileReader,
-                                  *Coverage, DataFound))
+                                   *Coverage, DataFound))
           return std::move(E);
       } else if (CheckBinaryIDs) {
         return createFileError(
@@ -1007,9 +1006,9 @@ class SegmentBuilder {
     // emit closing segments in sorted order.
     auto CompletedRegionsIt = ActiveRegions.begin() + FirstCompletedRegion;
     std::stable_sort(CompletedRegionsIt, ActiveRegions.end(),
-                      [](const CountedRegion *L, const CountedRegion *R) {
-                        return L->endLoc() < R->endLoc();
-                      });
+                     [](const CountedRegion *L, const CountedRegion *R) {
+                       return L->endLoc() < R->endLoc();
+                     });
 
     // Emit segments for all completed regions.
     for (unsigned I = FirstCompletedRegion + 1, E = ActiveRegions.size(); I < E;
