@@ -663,9 +663,10 @@ Error collectGlobalObjectNameStrings(ArrayRef<std::string> NameStrs,
   std::string UncompressedNameStrings =
       join(NameStrs.begin(), NameStrs.end(), getInstrProfNameSeparator());
 
-  assert(StringRef(UncompressedNameStrings)
-                 .count(getInstrProfNameSeparator()) == (NameStrs.size() - 1) &&
-         "PGO name is invalid (contains separator token)");
+  assert(
+      StringRef(UncompressedNameStrings).count(getInstrProfNameSeparator()) ==
+          (NameStrs.size() - 1) &&
+      "PGO name is invalid (contains separator token)");
 
   unsigned EncLen = encodeULEB128(UncompressedNameStrings.length(), P);
   P += EncLen;
@@ -1077,13 +1078,13 @@ uint32_t getNumValueKindsInstrProf(const void *Record) {
 }
 
 uint32_t getNumValueSitesInstrProf(const void *Record, uint32_t VKind) {
-  return reinterpret_cast<const InstrProfRecord *>(Record)
-      ->getNumValueSites(VKind);
+  return reinterpret_cast<const InstrProfRecord *>(Record)->getNumValueSites(
+      VKind);
 }
 
 uint32_t getNumValueDataInstrProf(const void *Record, uint32_t VKind) {
-  return reinterpret_cast<const InstrProfRecord *>(Record)
-      ->getNumValueData(VKind);
+  return reinterpret_cast<const InstrProfRecord *>(Record)->getNumValueData(
+      VKind);
 }
 
 uint32_t getNumValueDataForSiteInstrProf(const void *R, uint32_t VK,
@@ -1284,9 +1285,8 @@ void annotateValueSite(Module &M, Instruction &Inst,
 }
 
 void annotateValueSite(Module &M, Instruction &Inst,
-                       ArrayRef<InstrProfValueData> VDs,
-                       uint64_t Sum, InstrProfValueKind ValueKind,
-                       uint32_t MaxMDCount) {
+                       ArrayRef<InstrProfValueData> VDs, uint64_t Sum,
+                       InstrProfValueKind ValueKind, uint32_t MaxMDCount) {
   if (VDs.empty())
     return;
   LLVMContext &Ctx = M.getContext();
@@ -1428,7 +1428,7 @@ MDNode *getPGOFuncNameMetadata(const Function &F) {
 void createPGOFuncNameMetadata(Function &F, StringRef PGOFuncName) {
   // Only for internal linkage functions.
   if (PGOFuncName == F.getName())
-      return;
+    return;
   // Don't create duplicated meta-data.
   if (getPGOFuncNameMetadata(F))
     return;

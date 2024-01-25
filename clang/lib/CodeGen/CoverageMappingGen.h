@@ -124,9 +124,7 @@ public:
 
   CoverageMappingModuleGen(CodeGenModule &CGM, CoverageSourceInfo &SourceInfo);
 
-  CoverageSourceInfo &getSourceInfo() const {
-    return SourceInfo;
-  }
+  CoverageSourceInfo &getSourceInfo() const { return SourceInfo; }
 
   /// Add a function's coverage mapping record to the collection of the
   /// function mapping records.
