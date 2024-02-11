@@ -252,25 +252,19 @@ void CoverageMappingWriter::write(raw_ostream &OS) {
                     OS);
       writeCounter(MinExpressions, Count, OS);
       writeCounter(MinExpressions, FalseCount, OS);
-      {
-        const auto &BranchParams = I->getBranchParams();
-        ParamsShouldBeNull = false;
-        assert(BranchParams.ID > 0);
-        encodeULEB128(unsigned(BranchParams.ID), OS);
-        encodeULEB128(unsigned(BranchParams.TrueID), OS);
-        encodeULEB128(unsigned(BranchParams.FalseID), OS);
-      }
+      ParamsShouldBeNull = false;
+      assert((*I)->ID > 0);
+      encodeULEB128(unsigned((*I)->ID), OS);
+      encodeULEB128(unsigned((*I)->TrueID), OS);
+      encodeULEB128(unsigned((*I)->FalseID), OS);
       break;
     case CounterMappingRegion::MCDCDecisionRegion:
       encodeULEB128(unsigned(I->Kind)
                         << Counter::EncodingCounterTagAndExpansionRegionTagBits,
                     OS);
-      {
-        const auto &DecisionParams = I->getDecisionParams();
-        ParamsShouldBeNull = false;
-        encodeULEB128(unsigned(DecisionParams.BitmapIdx), OS);
-        encodeULEB128(unsigned(DecisionParams.NumConditions), OS);
-      }
+      ParamsShouldBeNull = false;
+      encodeULEB128(unsigned((*I)->BitmapIdx), OS);
+      encodeULEB128(unsigned((*I)->NumConditions), OS);
       break;
     }
     assert(I->LineStart >= PrevLineStart);

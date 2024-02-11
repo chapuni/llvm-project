@@ -272,6 +272,30 @@ struct CounterMappingRegion {
   using MCDCParameters = std::variant<std::monostate, MCDCDecisionParameters,
                                       MCDCBranchParameters>;
 
+  struct View : MCDCDecisionParameters, MCDCBranchParameters {};
+
+  template <class InnerTy> View *getReverseView() {
+    auto *Param = std::get_if<InnerTy>(&MCDCParams);
+    if (!Param)
+      return nullptr;
+    auto *Tmp = reinterpret_cast<View *>(Param);
+    auto *p = reinterpret_cast<View *>(
+        reinterpret_cast<uint64_t>(Param) -
+        (reinterpret_cast<uint64_t>(static_cast<InnerTy *>(Tmp)) -
+         reinterpret_cast<uint64_t>(Tmp)));
+    assert(p == Param);
+    return p;
+  }
+
+  View *operator->() {
+    if (auto *DecisionParams = getReverseView<MCDCDecisionParameters>()) {
+      return DecisionParams;
+    } else if (auto *BranchParams = getReverseView<MCDCBranchParameters>()) {
+      return BranchParams;
+    }
+    llvm_unreachable("XXX");
+  }
+
   /// Primary Counter that is also used for Branch Regions (TrueCount).
   Counter Count;
 
