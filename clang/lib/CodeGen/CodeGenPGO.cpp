@@ -164,8 +164,6 @@ struct MapRegionCounters : public RecursiveASTVisitor<MapRegionCounters> {
   PGOHash Hash;
   /// The map of statements to counters.
   llvm::DenseMap<const Stmt *, unsigned> &CounterMap;
-  /// The next bitmap byte index to assign.
-  unsigned NextMCDCBitmapIdx;
   /// The state of MC/DC Coverage in this function.
   MCDC::State &MCDCState;
   /// Maximum number of supported MC/DC conditions in a boolean expression.
@@ -180,7 +178,7 @@ struct MapRegionCounters : public RecursiveASTVisitor<MapRegionCounters> {
                     MCDC::State &MCDCState, unsigned MCDCMaxCond,
                     DiagnosticsEngine &Diag)
       : NextCounter(0), Hash(HashVersion), CounterMap(CounterMap),
-        NextMCDCBitmapIdx(0), MCDCState(MCDCState), MCDCMaxCond(MCDCMaxCond),
+        MCDCState(MCDCState), MCDCMaxCond(MCDCMaxCond),
         ProfileVersion(ProfileVersion), Diag(Diag) {}
 
   // Blocks and lambdas are handled as separate functions, so we need not
@@ -311,11 +309,8 @@ struct MapRegionCounters : public RecursiveASTVisitor<MapRegionCounters> {
             return true;
           }
 
-          // Otherwise, allocate the number of bytes required for the bitmap
-          // based on the number of conditions. Must be at least 1-byte long.
-          MCDCState.DecisionByStmt[BinOp].BitmapIdx = NextMCDCBitmapIdx;
-          unsigned SizeInBits = std::max<unsigned>(1L << NumCond, CHAR_BIT);
-          NextMCDCBitmapIdx += SizeInBits / CHAR_BIT;
+          // Otherwise, allocate the Decision.
+          MCDCState.DecisionByStmt[BinOp].BitmapIdx = 0;
         }
         return true;
       }
@@ -1004,7 +999,6 @@ void CodeGenPGO::mapRegionCounters(const Decl *D) {
     Walker.TraverseDecl(const_cast<CapturedDecl *>(CD));
   assert(Walker.NextCounter > 0 && "no entry counter mapped for decl");
   NumRegionCounters = Walker.NextCounter;
-  RegionMCDCState->BitmapBytes = Walker.NextMCDCBitmapIdx;
   FunctionHash = Walker.Hash.finalize();
 }
 
