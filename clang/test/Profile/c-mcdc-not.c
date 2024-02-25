@@ -75,7 +75,8 @@ int test(int a, int b, int c, int d, int e, int f) {
 // MCDC-DAG:  store i32 %[[LAB4]], ptr %mcdc.addr, align 4
 
 // UPDATE FINAL BITMASK WITH RESULT.
-// MCDC-DAG:  %[[TEMP:mcdc.temp[0-9]*]] = load i32, ptr %mcdc.addr, align 4
+// MCDC-DAG:  %[[TEMP0:mcdc.temp[0-9]*]] = load i32, ptr %mcdc.addr, align 4
+// MCDC:  %[[TEMP:[0-9]+]] = add i32 %[[TEMP0]], 0
 // MCDC:  %[[LAB1:[0-9]+]] = lshr i32 %[[TEMP]], 3
 // MCDC:  %[[LAB4:[0-9]+]] = getelementptr inbounds i8, ptr @__profbm_test, i32 %[[LAB1]]
 // MCDC:  %[[LAB5:[0-9]+]] = and i32 %[[TEMP]], 7

@@ -310,7 +310,7 @@ struct MapRegionCounters : public RecursiveASTVisitor<MapRegionCounters> {
           }
 
           // Otherwise, allocate the Decision.
-          MCDCState.DecisionByStmt[BinOp].BitmapIdx = 0;
+          MCDCState.DecisionByStmt[BinOp].BitmapTailPos = 0;
         }
         return true;
       }
@@ -1120,9 +1120,11 @@ void CodeGenPGO::emitMCDCParameters(CGBuilderTy &Builder) {
   // Emit intrinsic representing MCDC bitmap parameters at function entry.
   // This is used by the instrumentation pass, but it isn't actually lowered to
   // anything.
-  llvm::Value *Args[3] = {llvm::ConstantExpr::getBitCast(FuncNameVar, I8PtrTy),
-                          Builder.getInt64(FunctionHash),
-                          Builder.getInt32(RegionMCDCState->BitmapBytes)};
+  llvm::Value *Args[3] = {
+      llvm::ConstantExpr::getBitCast(FuncNameVar, I8PtrTy),
+      Builder.getInt64(FunctionHash),
+      Builder.getInt32(llvm::alignTo(RegionMCDCState->BitmapBits, CHAR_BIT) /
+                       CHAR_BIT)};
   Builder.CreateCall(
       CGM.getIntrinsic(llvm::Intrinsic::instrprof_mcdc_parameters), Args);
 }
@@ -1150,7 +1152,7 @@ void CodeGenPGO::emitMCDCTestVectorBitmapUpdate(CGBuilderTy &Builder,
   // index represents an executed test vector.
   llvm::Value *Args[5] = {llvm::ConstantExpr::getBitCast(FuncNameVar, I8PtrTy),
                           Builder.getInt64(FunctionHash),
-                          Builder.getInt32(RegionMCDCState->BitmapBytes),
+                          Builder.getInt32(RegionMCDCState->BitmapBits),
                           Builder.getInt32(MCDCTestVectorBitmapOffset),
                           MCDCCondBitmapAddr.getPointer()};
   Builder.CreateCall(

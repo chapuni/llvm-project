@@ -230,7 +230,7 @@ class MCDCRecordProcessor {
   /// Each index of the bitmap corresponds to a possible test vector. An index
   /// with a bit value of '1' indicates that the corresponding Test Vector
   /// identified by that index was executed.
-  const BitVector &Bitmap;
+  const std::pair<BitVector, uint64_t> &Bitmap;
 
   /// Decision Region to which the ExecutedTestVectorBitmap applies.
   const CounterMappingRegion &Region;
@@ -257,7 +257,7 @@ class MCDCRecordProcessor {
   MCDCRecord::TestVectors ExecVectors;
 
 public:
-  MCDCRecordProcessor(const BitVector &Bitmap,
+  MCDCRecordProcessor(const std::pair<BitVector, uint64_t> &Bitmap,
                       const CounterMappingRegion &Region,
                       ArrayRef<const CounterMappingRegion *> Branches)
       : Bitmap(Bitmap), Region(Region),
@@ -284,7 +284,11 @@ private:
         continue;
       }
 
-      if (!Bitmap[DecisionParams.BitmapIdx * CHAR_BIT + Index])
+      if (!Bitmap
+               .first[Bitmap.second >= IndexedInstrProf::ProfVersion::Version12
+                          ? DecisionParams.BitmapIdx - (1 << NumConditions) +
+                                Index
+                          : DecisionParams.BitmapIdx * CHAR_BIT + Index])
         continue;
 
       // Copy the completed test vector to the vector of testvectors.
@@ -479,9 +483,20 @@ static unsigned getMaxCounterID(const CounterMappingContext &Ctx,
   return MaxCounterID;
 }
 
+/// Version12: BitmapIdx is the tail bit pos.
+static unsigned getMaxBitmapSize(const CoverageMappingRecord &Record) {
+  unsigned MaxBitmapIdx = 0;
+  for (const auto &Region : reverse(Record.MappingRegions)) {
+    if (Region.Kind == CounterMappingRegion::MCDCDecisionRegion)
+      MaxBitmapIdx =
+          std::max(MaxBitmapIdx, Region.getDecisionParams().BitmapIdx);
+  }
+  return MaxBitmapIdx;
+}
+
 /// Returns the bit count
-static unsigned getMaxBitmapSize(const CounterMappingContext &Ctx,
-                                 const CoverageMappingRecord &Record) {
+/// Version11: BitmapIdx is the start byte pos.
+static unsigned getMaxBitmapSize11(const CoverageMappingRecord &Record) {
   unsigned MaxBitmapIdx = 0;
   unsigned NumConditions = 0;
   // Scan max(BitmapIdx).
@@ -697,9 +712,12 @@ Error CoverageMapping::loadFunctionRecord(
     }
     if (IPE != instrprof_error::unknown_function)
       return make_error<InstrProfError>(IPE);
-    Bitmap = BitVector(getMaxBitmapSize(Ctx, Record));
+    Bitmap = BitVector(ProfileReader.getVersion() >=
+                               IndexedInstrProf::ProfVersion::Version12
+                           ? getMaxBitmapSize(Record)
+                           : getMaxBitmapSize11(Record));
   }
-  Ctx.setBitmap(std::move(Bitmap));
+  Ctx.setBitmap(std::move(Bitmap), ProfileReader.getVersion());
 
   assert(!Record.MappingRegions.empty() && "Function has no regions");
 

@@ -52,7 +52,8 @@ Value::~Value(void) {
 // MCDCCTOR-DAG:  store i32 %[[LAB4]], ptr %mcdc.addr, align 4
 
 // UPDATE FINAL BITMASK WITH RESULT.
-// MCDCCTOR-DAG:  %[[TEMP:mcdc.temp[0-9]*]] = load i32, ptr %mcdc.addr, align 4
+// MCDCCTOR-DAG:  %[[TEMP0:mcdc.temp[0-9]*]] = load i32, ptr %mcdc.addr, align 4
+// MCDCCTOR:  %[[TEMP:[0-9]+]] = add i32 %[[TEMP0]], 0
 // MCDCCTOR:  %[[LAB1:[0-9]+]] = lshr i32 %[[TEMP]], 3
 // MCDCCTOR:  %[[LAB4:[0-9]+]] = getelementptr inbounds i8, ptr @__profbm__ZN5ValueC2Ev, i32 %[[LAB1]]
 // MCDCCTOR:  %[[LAB5:[0-9]+]] = and i32 %[[TEMP]], 7
@@ -89,7 +90,8 @@ Value::~Value(void) {
 // MCDCDTOR-DAG:  store i32 %[[LAB4]], ptr %mcdc.addr, align 4
 
 // UPDATE FINAL BITMASK WITH RESULT.
-// MCDCDTOR-DAG:  %[[TEMP:mcdc.temp[0-9]*]] = load i32, ptr %mcdc.addr, align 4
+// MCDCDTOR-DAG:  %[[TEMP0:mcdc.temp[0-9]*]] = load i32, ptr %mcdc.addr, align 4
+// MCDCDTOR:  %[[TEMP:[0-9]+]] = add i32 %[[TEMP0]], 0
 // MCDCDTOR:  %[[LAB1:[0-9]+]] = lshr i32 %[[TEMP]], 3
 // MCDCDTOR:  %[[LAB4:[0-9]+]] = getelementptr inbounds i8, ptr @__profbm__ZN5ValueD2Ev, i32 %[[LAB1]]
 // MCDCDTOR:  %[[LAB5:[0-9]+]] = and i32 %[[TEMP]], 7

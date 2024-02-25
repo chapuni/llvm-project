@@ -557,7 +557,7 @@ public:
 class CounterMappingContext {
   ArrayRef<CounterExpression> Expressions;
   ArrayRef<uint64_t> CounterValues;
-  BitVector Bitmap;
+  std::pair<BitVector, uint64_t> Bitmap;
 
 public:
   CounterMappingContext(ArrayRef<CounterExpression> Expressions,
@@ -565,7 +565,9 @@ public:
       : Expressions(Expressions), CounterValues(CounterValues) {}
 
   void setCounts(ArrayRef<uint64_t> Counts) { CounterValues = Counts; }
-  void setBitmap(BitVector &&Bitmap_) { Bitmap = std::move(Bitmap_); }
+  void setBitmap(BitVector &&Bitmap_, uint64_t Version) {
+    Bitmap = {std::move(Bitmap_), Version};
+  }
 
   void dump(const Counter &C, raw_ostream &OS) const;
   void dump(const Counter &C) const { dump(C, dbgs()); }

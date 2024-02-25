@@ -793,13 +793,11 @@ public:
     // Set number of conditions and reset.
     unsigned TotalConds = NextID;
 
-    // Allocate the number of bytes required for the bitmap
-    // based on the number of conditions. Must be at least 1-byte long.
+    // Last pos
     MCDCState.DecisionByStmt[E] = {
-        MCDCState.BitmapBytes,
+        MCDCState.BitmapBits,
+        MCDCState.BitmapBits += (1u << TotalConds),
     };
-    unsigned SizeInBits = std::max<unsigned>(1u << TotalConds, CHAR_BIT);
-    MCDCState.BitmapBytes += SizeInBits / CHAR_BIT;
 
     // Reset ID back to beginning.
     NextID = 0;
@@ -861,7 +859,7 @@ struct CounterCoverageMappingBuilder
   }
 
   auto getBitmapIdx(const Stmt *S) {
-    return MCDCState.DecisionByStmt[S].BitmapIdx;
+    return MCDCState.DecisionByStmt[S].BitmapTailPos;
   }
 
   /// Push a region onto the stack.

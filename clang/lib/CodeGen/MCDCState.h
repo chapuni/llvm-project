@@ -26,10 +26,11 @@ using namespace llvm::coverage::mcdc;
 
 /// Per-Function MC/DC state
 struct State {
-  unsigned BitmapBytes = 0;
+  unsigned BitmapBits = 0;
 
   struct Decision {
     unsigned BitmapIdx;
+    unsigned BitmapTailPos;
   };
 
   llvm::DenseMap<const Stmt *, Decision> DecisionByStmt;

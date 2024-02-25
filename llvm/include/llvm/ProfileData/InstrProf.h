@@ -1031,6 +1031,8 @@ enum ProfVersion {
   Version10 = 10,
   // An additional field is used for bitmap bytes.
   Version11 = 11,
+  // TVIdx
+  Version12 = 12,
   // The current version is 11.
   CurrentVersion = INSTR_PROF_INDEX_VERSION
 };
@@ -1167,6 +1169,7 @@ namespace RawInstrProf {
 // Version 7: Reorder binary id and include version in signature.
 // Version 8: Use relative counter pointer.
 // Version 9: Added relative bitmap bytes pointer and count used by MC/DC.
+// Version 10: TVIdx
 const uint64_t Version = INSTR_PROF_RAW_VERSION;
 
 template <class IntPtrT> inline uint64_t getMagic();
