@@ -1963,8 +1963,18 @@ struct CounterCoverageMappingBuilder
     if (NumConds == 0)
       return;
 
+    // Allocate the number of bytes required for the bitmap
+    // based on the number of conditions. Must be at least 1-byte long.
+    auto BitmapIdx = MCDCState.BitmapBytes;
+    unsigned SizeInBits = std::max<unsigned>(1u << NumConds, CHAR_BIT);
+    MCDCState.BitmapBytes += SizeInBits / CHAR_BIT;
+
+    MCDCState.DecisionByStmt[E] = {
+        BitmapIdx,
+    };
+
     auto DecisionParams = mcdc::DecisionParameters{
-        MCDCState.DecisionByStmt[E].BitmapIdx,
+        BitmapIdx,
         NumConds,
     };
 
