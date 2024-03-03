@@ -2555,25 +2555,41 @@ bool SelectionDAGBuilder::shouldKeepJumpConditionsTogether(
     return true;
   };
 
+  DenseMap<const Instructions *, bool> ToBePruned;
+  for (const auto *Ins : RhsDeps) {
+    if (!ShouldCountInsn(Ins)) {
+      ToBePruned[Ins] = true;
+    }
+
+    for (const auto *U : Ins->uses())
+      if (auto *UIns = dyn_cast<Instruction>(U))
+	if (RhsDeps.contains(UIns))
+	  ToBePruned[UIns] |= false;
+  }
+
   // Prune instructions from RHS Deps that are dependencies of unrelated
   // instructions. The value (SelectionDAG::MaxRecursionDepth) is fairly
   // arbitrary and just meant to cap the how much time we spend in the pruning
   // loop. Its highly unlikely to come into affect.
   const unsigned MaxPruneIters = SelectionDAG::MaxRecursionDepth;
-  // Stop after a certain point. No incorrectness from including too many
-  // instructions.
   for (unsigned PruneIters = 0; PruneIters < MaxPruneIters; ++PruneIters) {
-    const Instruction *ToDrop = nullptr;
-    for (const auto *Ins : RhsDeps) {
-      if (!ShouldCountInsn(Ins)) {
-        ToDrop = Ins;
-        break;
-      }
+    bool Pruned = false;
+    for (auto &T : ToBePruned) {
+      if (T.second) continue;
+      for (const auto *U : Ins->uses())
+	if (auto *UIns = dyn_cast<Instruction>(U))
+	  if (ToBePruned[UIns].second) {
+	    ToBePruned[UIns] = true;
+	    Pruned = true;
+	    break;
+	  }
     }
-    if (ToDrop == nullptr)
-      break;
-    RhsDeps.erase(ToDrop);
+    if (!Pruned) break;
   }
+
+  for (const auto &T : ToBePruned)
+    if (T.second)
+      RhsDeps.erase(T.first);
 
   for (const auto *Ins : RhsDeps) {
     // Finally accumulate latency that we can only attribute to computing the
