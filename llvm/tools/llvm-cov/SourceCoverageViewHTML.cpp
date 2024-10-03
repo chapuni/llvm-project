@@ -1030,8 +1030,9 @@ void SourceCoverageViewHTML::renderLine(raw_ostream &OS, LineRef L,
         continue;
 
       Snippets[I + 1] =
-          tag("div", Snippets[I + 1] + tag("span", formatCount(CurSeg->Count),
-                                           "tooltip-content"),
+          tag("div",
+              Snippets[I + 1] +
+                  tag("span", formatCount(CurSeg->Count), "tooltip-content"),
               "tooltip");
 
       if (getOptions().Debug)
