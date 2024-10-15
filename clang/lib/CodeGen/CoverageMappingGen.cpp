@@ -2097,7 +2097,7 @@ struct CounterCoverageMappingBuilder
       GapRegionCounter = OutCount;
     }
 
-    if (!S->isConsteval() && !llvm::EnableSingleByteCoverage)
+    if (!llvm::EnableSingleByteCoverage)
       // Create Branch Region around condition.
       createBranchRegion(S->getCond(), ThenCount, ElseCount);
   }
