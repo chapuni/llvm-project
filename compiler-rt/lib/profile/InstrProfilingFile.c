@@ -356,8 +356,8 @@ static uint32_t fileWriter(ProfDataWriter *This, ProfDataIOVec *IOVecs,
   return 0;
 }
 
-/* TODO: make buffer size controllable by an internal option, and compiler can pass the size
-   to runtime via a variable. */
+/* TODO: make buffer size controllable by an internal option, and compiler can
+   pass the size to runtime via a variable. */
 static uint32_t orderFileWriter(FILE *File, const uint32_t *DataStart) {
   if (fwrite(DataStart, sizeof(uint32_t), INSTR_ORDER_FILE_BUFFER_SIZE, File) !=
       INSTR_ORDER_FILE_BUFFER_SIZE)
@@ -502,7 +502,7 @@ static void createProfileDir(const char *Filename) {
  * the original profile data is truncated and gets ready for the profile
  * dumper. With profile merging enabled, each executable as well as any of
  * its instrumented shared libraries dump profile data into their own data file.
-*/
+ */
 static FILE *openFileForMerging(const char *ProfileFileName, int *MergeDone) {
   FILE *ProfileFile = getProfileFile();
   int rc;
