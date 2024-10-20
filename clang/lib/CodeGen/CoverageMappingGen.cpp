@@ -1348,8 +1348,7 @@ struct CounterCoverageMappingBuilder
         EndDepth--;
       }
       if (UnnestStart) {
-        assert(SM.isWrittenInSameFile(AfterLoc,
-                                      getEndOfFileOrMacro(AfterLoc)));
+        assert(SM.isWrittenInSameFile(AfterLoc, getEndOfFileOrMacro(AfterLoc)));
 
         AfterLoc = getIncludeOrExpansionLoc(AfterLoc);
         assert(AfterLoc.isValid());
@@ -2287,7 +2286,7 @@ struct CounterCoverageMappingBuilder
     VisitStmt(POE->getSyntacticForm());
   }
 
-  void VisitOpaqueValueExpr(const OpaqueValueExpr* OVE) {
+  void VisitOpaqueValueExpr(const OpaqueValueExpr *OVE) {
     if (OVE->isUnique())
       Visit(OVE->getSourceExpr());
   }
@@ -2416,7 +2415,7 @@ void CoverageMappingModuleGen::emitFunctionMappingRecord(
   // Create the function record constant.
 #define COVMAP_FUNC_RECORD(Type, LLVMType, Name, Init) Init,
   llvm::Constant *FunctionRecordVals[] = {
-      #include "llvm/ProfileData/InstrProfData.inc"
+#include "llvm/ProfileData/InstrProfData.inc"
   };
   auto *FuncRecordConstant =
       llvm::ConstantStruct::get(FunctionRecordTy, ArrayRef(FunctionRecordVals));
