@@ -297,9 +297,10 @@ struct CounterMappingRegion {
         ColumnStart(ColumnStart), LineEnd(LineEnd), ColumnEnd(ColumnEnd),
         Kind(Kind) {}
 
-  static CounterMappingRegion
-  makeRegion(Counter Count, unsigned FileID, unsigned LineStart,
-             unsigned ColumnStart, unsigned LineEnd, unsigned ColumnEnd) {
+  static CounterMappingRegion makeRegion(Counter Count, unsigned FileID,
+                                         unsigned LineStart,
+                                         unsigned ColumnStart, unsigned LineEnd,
+                                         unsigned ColumnEnd) {
     return CounterMappingRegion(Count, FileID, 0, LineStart, ColumnStart,
                                 LineEnd, ColumnEnd, CodeRegion);
   }
@@ -312,9 +313,10 @@ struct CounterMappingRegion {
                                 ExpansionRegion);
   }
 
-  static CounterMappingRegion
-  makeSkipped(unsigned FileID, unsigned LineStart, unsigned ColumnStart,
-              unsigned LineEnd, unsigned ColumnEnd) {
+  static CounterMappingRegion makeSkipped(unsigned FileID, unsigned LineStart,
+                                          unsigned ColumnStart,
+                                          unsigned LineEnd,
+                                          unsigned ColumnEnd) {
     return CounterMappingRegion(Counter(), FileID, 0, LineStart, ColumnStart,
                                 LineEnd, ColumnEnd, SkippedRegion);
   }
@@ -459,7 +461,7 @@ public:
       : Region(Region), TV(std::move(TV)),
         IndependencePairs(std::move(IndependencePairs)),
         Folded(std::move(Folded)), PosToID(std::move(PosToID)),
-        CondLoc(std::move(CondLoc)){};
+        CondLoc(std::move(CondLoc)) {};
 
   CounterMappingRegion getDecisionRegion() const { return Region; }
   unsigned getNumConditions() const {
@@ -780,8 +782,7 @@ struct ExpansionRecord {
   /// Coverage for the expansion.
   const FunctionRecord &Function;
 
-  ExpansionRecord(const CountedRegion &Region,
-                  const FunctionRecord &Function)
+  ExpansionRecord(const CountedRegion &Region, const FunctionRecord &Function)
       : FileID(Region.ExpandedFileID), Region(Region), Function(Function) {}
 };
 
@@ -1185,8 +1186,7 @@ advanceByOneOutOfLine(const FuncRecordTy *Record, const char *MappingBuf) {
 } // end namespace accessors
 
 LLVM_PACKED_START
-template <class IntPtrT>
-struct CovMapFunctionRecordV1 {
+template <class IntPtrT> struct CovMapFunctionRecordV1 {
   using ThisT = CovMapFunctionRecordV1<IntPtrT>;
 
 #define COVMAP_V1
@@ -1418,7 +1418,7 @@ template <class IntPtrT> struct CovMapTraits<CovMapVersion::Version1, IntPtrT> {
 } // end namespace coverage
 
 /// Provide DenseMapInfo for CounterExpression
-template<> struct DenseMapInfo<coverage::CounterExpression> {
+template <> struct DenseMapInfo<coverage::CounterExpression> {
   static inline coverage::CounterExpression getEmptyKey() {
     using namespace coverage;
 

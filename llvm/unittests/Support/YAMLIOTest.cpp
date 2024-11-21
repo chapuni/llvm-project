@@ -30,13 +30,7 @@ using llvm::yaml::Output;
 using llvm::yaml::ScalarTraits;
 using ::testing::StartsWith;
 
-
-
-
-static void suppressErrorMessages(const llvm::SMDiagnostic &, void *) {
-}
-
-
+static void suppressErrorMessages(const llvm::SMDiagnostic &, void *) {}
 
 //===----------------------------------------------------------------------===//
 //  Test MappingTraits
@@ -56,22 +50,20 @@ struct FooBarContainer {
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<FooBar> {
-    static void mapping(IO &io, FooBar& fb) {
-      io.mapRequired("foo",    fb.foo);
-      io.mapRequired("bar",    fb.bar);
-    }
-  };
+template <> struct MappingTraits<FooBar> {
+  static void mapping(IO &io, FooBar &fb) {
+    io.mapRequired("foo", fb.foo);
+    io.mapRequired("bar", fb.bar);
+  }
+};
 
-  template <> struct MappingTraits<FooBarContainer> {
-    static void mapping(IO &io, FooBarContainer &fb) {
-      io.mapRequired("fbs", fb.fbs);
-    }
-  };
-}
-}
-
+template <> struct MappingTraits<FooBarContainer> {
+  static void mapping(IO &io, FooBarContainer &fb) {
+    io.mapRequired("fbs", fb.fbs);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test the reading of a yaml mapping
@@ -133,8 +125,8 @@ TEST(YAMLIO, TestSequenceMapRead) {
 
   EXPECT_FALSE(yin.error());
   EXPECT_EQ(seq.size(), 2UL);
-  FooBar& map1 = seq[0];
-  FooBar& map2 = seq[1];
+  FooBar &map1 = seq[0];
+  FooBar &map2 = seq[1];
   EXPECT_EQ(map1.foo, 3);
   EXPECT_EQ(map1.bar, 5);
   EXPECT_EQ(map2.foo, 7);
@@ -247,8 +239,8 @@ TEST(YAMLIO, TestSequenceMapWriteAndRead) {
 
     EXPECT_FALSE(yin.error());
     EXPECT_EQ(seq2.size(), 2UL);
-    FooBar& map1 = seq2[0];
-    FooBar& map2 = seq2[1];
+    FooBar &map1 = seq2[0];
+    FooBar &map2 = seq2[1];
     EXPECT_EQ(map1.foo, 10);
     EXPECT_EQ(map1.bar, -3);
     EXPECT_EQ(map2.foo, 257);
@@ -396,50 +388,48 @@ TEST(YAMLIO, NoQuotesForTab) {
 struct BuiltInTypes {
   llvm::StringRef str;
   std::string stdstr;
-  uint64_t        u64;
-  uint32_t        u32;
-  uint16_t        u16;
-  uint8_t         u8;
-  bool            b;
-  int64_t         s64;
-  int32_t         s32;
-  int16_t         s16;
-  int8_t          s8;
-  float           f;
-  double          d;
-  Hex8            h8;
-  Hex16           h16;
-  Hex32           h32;
-  Hex64           h64;
+  uint64_t u64;
+  uint32_t u32;
+  uint16_t u16;
+  uint8_t u8;
+  bool b;
+  int64_t s64;
+  int32_t s32;
+  int16_t s16;
+  int8_t s8;
+  float f;
+  double d;
+  Hex8 h8;
+  Hex16 h16;
+  Hex32 h32;
+  Hex64 h64;
 };
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<BuiltInTypes> {
-    static void mapping(IO &io, BuiltInTypes& bt) {
-      io.mapRequired("str",      bt.str);
-      io.mapRequired("stdstr",   bt.stdstr);
-      io.mapRequired("u64",      bt.u64);
-      io.mapRequired("u32",      bt.u32);
-      io.mapRequired("u16",      bt.u16);
-      io.mapRequired("u8",       bt.u8);
-      io.mapRequired("b",        bt.b);
-      io.mapRequired("s64",      bt.s64);
-      io.mapRequired("s32",      bt.s32);
-      io.mapRequired("s16",      bt.s16);
-      io.mapRequired("s8",       bt.s8);
-      io.mapRequired("f",        bt.f);
-      io.mapRequired("d",        bt.d);
-      io.mapRequired("h8",       bt.h8);
-      io.mapRequired("h16",      bt.h16);
-      io.mapRequired("h32",      bt.h32);
-      io.mapRequired("h64",      bt.h64);
-    }
-  };
-}
-}
-
+template <> struct MappingTraits<BuiltInTypes> {
+  static void mapping(IO &io, BuiltInTypes &bt) {
+    io.mapRequired("str", bt.str);
+    io.mapRequired("stdstr", bt.stdstr);
+    io.mapRequired("u64", bt.u64);
+    io.mapRequired("u32", bt.u32);
+    io.mapRequired("u16", bt.u16);
+    io.mapRequired("u8", bt.u8);
+    io.mapRequired("b", bt.b);
+    io.mapRequired("s64", bt.s64);
+    io.mapRequired("s32", bt.s32);
+    io.mapRequired("s16", bt.s16);
+    io.mapRequired("s8", bt.s8);
+    io.mapRequired("f", bt.f);
+    io.mapRequired("d", bt.d);
+    io.mapRequired("h8", bt.h8);
+    io.mapRequired("h16", bt.h16);
+    io.mapRequired("h32", bt.h32);
+    io.mapRequired("h64", bt.h64);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test the reading of all built-in scalar conversions
@@ -464,7 +454,7 @@ TEST(YAMLIO, TestReadBuiltInTypes) {
             "h16:      0x8765\n"
             "h32:      0xFEDCBA98\n"
             "h64:      0xFEDCBA9876543210\n"
-           "...\n");
+            "...\n");
   yin >> map;
 
   EXPECT_FALSE(yin.error());
@@ -473,20 +463,19 @@ TEST(YAMLIO, TestReadBuiltInTypes) {
   EXPECT_EQ(map.u64, 5000000000ULL);
   EXPECT_EQ(map.u32, 4000000000U);
   EXPECT_EQ(map.u16, 65000);
-  EXPECT_EQ(map.u8,  255);
-  EXPECT_EQ(map.b,   false);
+  EXPECT_EQ(map.u8, 255);
+  EXPECT_EQ(map.b, false);
   EXPECT_EQ(map.s64, -5000000000LL);
   EXPECT_EQ(map.s32, -2000000000L);
   EXPECT_EQ(map.s16, -32000);
-  EXPECT_EQ(map.s8,  -127);
-  EXPECT_EQ(map.f,   137.125);
-  EXPECT_EQ(map.d,   -2.8625);
-  EXPECT_EQ(map.h8,  Hex8(255));
+  EXPECT_EQ(map.s8, -127);
+  EXPECT_EQ(map.f, 137.125);
+  EXPECT_EQ(map.d, -2.8625);
+  EXPECT_EQ(map.h8, Hex8(255));
   EXPECT_EQ(map.h16, Hex16(0x8765));
   EXPECT_EQ(map.h32, Hex32(0xFEDCBA98));
   EXPECT_EQ(map.h64, Hex64(0xFEDCBA9876543210LL));
 }
-
 
 //
 // Test writing then reading back all built-in scalar types
@@ -500,15 +489,15 @@ TEST(YAMLIO, TestReadWriteBuiltInTypes) {
     map.u64 = 6000000000ULL;
     map.u32 = 3000000000U;
     map.u16 = 50000;
-    map.u8  = 254;
-    map.b   = true;
+    map.u8 = 254;
+    map.b = true;
     map.s64 = -6000000000LL;
     map.s32 = -2000000000;
     map.s16 = -32000;
-    map.s8  = -128;
-    map.f   = 3.25;
-    map.d   = -2.8625;
-    map.h8  = 254;
+    map.s8 = -128;
+    map.f = 3.25;
+    map.d = -2.8625;
+    map.h8 = 254;
     map.h16 = 50000;
     map.h32 = 3000000000U;
     map.h64 = 6000000000LL;
@@ -580,8 +569,8 @@ template <> struct MappingTraits<EndianTypes> {
     io.mapRequired("d", et.d);
   }
 };
-}
-}
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test the reading of all endian scalar conversions
@@ -762,37 +751,36 @@ struct StringTypes {
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<StringTypes> {
-    static void mapping(IO &io, StringTypes& st) {
-      io.mapRequired("str1",      st.str1);
-      io.mapRequired("str2",      st.str2);
-      io.mapRequired("str3",      st.str3);
-      io.mapRequired("str4",      st.str4);
-      io.mapRequired("str5",      st.str5);
-      io.mapRequired("str6",      st.str6);
-      io.mapRequired("str7",      st.str7);
-      io.mapRequired("str8",      st.str8);
-      io.mapRequired("str9",      st.str9);
-      io.mapRequired("str10",     st.str10);
-      io.mapRequired("str11",     st.str11);
-      io.mapRequired("stdstr1",   st.stdstr1);
-      io.mapRequired("stdstr2",   st.stdstr2);
-      io.mapRequired("stdstr3",   st.stdstr3);
-      io.mapRequired("stdstr4",   st.stdstr4);
-      io.mapRequired("stdstr5",   st.stdstr5);
-      io.mapRequired("stdstr6",   st.stdstr6);
-      io.mapRequired("stdstr7",   st.stdstr7);
-      io.mapRequired("stdstr8",   st.stdstr8);
-      io.mapRequired("stdstr9",   st.stdstr9);
-      io.mapRequired("stdstr10",  st.stdstr10);
-      io.mapRequired("stdstr11",  st.stdstr11);
-      io.mapRequired("stdstr12",  st.stdstr12);
-      io.mapRequired("stdstr13",  st.stdstr13);
-    }
-  };
-}
-}
+template <> struct MappingTraits<StringTypes> {
+  static void mapping(IO &io, StringTypes &st) {
+    io.mapRequired("str1", st.str1);
+    io.mapRequired("str2", st.str2);
+    io.mapRequired("str3", st.str3);
+    io.mapRequired("str4", st.str4);
+    io.mapRequired("str5", st.str5);
+    io.mapRequired("str6", st.str6);
+    io.mapRequired("str7", st.str7);
+    io.mapRequired("str8", st.str8);
+    io.mapRequired("str9", st.str9);
+    io.mapRequired("str10", st.str10);
+    io.mapRequired("str11", st.str11);
+    io.mapRequired("stdstr1", st.stdstr1);
+    io.mapRequired("stdstr2", st.stdstr2);
+    io.mapRequired("stdstr3", st.stdstr3);
+    io.mapRequired("stdstr4", st.stdstr4);
+    io.mapRequired("stdstr5", st.stdstr5);
+    io.mapRequired("stdstr6", st.stdstr6);
+    io.mapRequired("stdstr7", st.stdstr7);
+    io.mapRequired("stdstr8", st.stdstr8);
+    io.mapRequired("stdstr9", st.stdstr9);
+    io.mapRequired("stdstr10", st.stdstr10);
+    io.mapRequired("stdstr11", st.stdstr11);
+    io.mapRequired("stdstr12", st.stdstr12);
+    io.mapRequired("stdstr13", st.stdstr13);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 TEST(YAMLIO, TestReadWriteStringTypes) {
   std::string intermediate;
@@ -875,47 +863,39 @@ TEST(YAMLIO, TestReadWriteStringTypes) {
 //  Test ScalarEnumerationTraits
 //===----------------------------------------------------------------------===//
 
-enum Colors {
-    cRed,
-    cBlue,
-    cGreen,
-    cYellow
-};
+enum Colors { cRed, cBlue, cGreen, cYellow };
 
 struct ColorMap {
-  Colors      c1;
-  Colors      c2;
-  Colors      c3;
-  Colors      c4;
-  Colors      c5;
-  Colors      c6;
+  Colors c1;
+  Colors c2;
+  Colors c3;
+  Colors c4;
+  Colors c5;
+  Colors c6;
 };
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct ScalarEnumerationTraits<Colors> {
-    static void enumeration(IO &io, Colors &value) {
-      io.enumCase(value, "red",   cRed);
-      io.enumCase(value, "blue",  cBlue);
-      io.enumCase(value, "green", cGreen);
-      io.enumCase(value, "yellow",cYellow);
-    }
-  };
-  template <>
-  struct MappingTraits<ColorMap> {
-    static void mapping(IO &io, ColorMap& c) {
-      io.mapRequired("c1", c.c1);
-      io.mapRequired("c2", c.c2);
-      io.mapRequired("c3", c.c3);
-      io.mapOptional("c4", c.c4, cBlue);   // supplies default
-      io.mapOptional("c5", c.c5, cYellow); // supplies default
-      io.mapOptional("c6", c.c6, cRed);    // supplies default
-    }
-  };
-}
-}
-
+template <> struct ScalarEnumerationTraits<Colors> {
+  static void enumeration(IO &io, Colors &value) {
+    io.enumCase(value, "red", cRed);
+    io.enumCase(value, "blue", cBlue);
+    io.enumCase(value, "green", cGreen);
+    io.enumCase(value, "yellow", cYellow);
+  }
+};
+template <> struct MappingTraits<ColorMap> {
+  static void mapping(IO &io, ColorMap &c) {
+    io.mapRequired("c1", c.c1);
+    io.mapRequired("c2", c.c2);
+    io.mapRequired("c3", c.c3);
+    io.mapOptional("c4", c.c4, cBlue);   // supplies default
+    io.mapOptional("c5", c.c5, cYellow); // supplies default
+    io.mapOptional("c6", c.c6, cRed);    // supplies default
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test reading enumerated scalars
@@ -931,63 +911,57 @@ TEST(YAMLIO, TestEnumRead) {
   yin >> map;
 
   EXPECT_FALSE(yin.error());
-  EXPECT_EQ(cBlue,  map.c1);
-  EXPECT_EQ(cRed,   map.c2);
+  EXPECT_EQ(cBlue, map.c1);
+  EXPECT_EQ(cRed, map.c2);
   EXPECT_EQ(cGreen, map.c3);
-  EXPECT_EQ(cBlue,  map.c4);  // tests default
-  EXPECT_EQ(cYellow,map.c5);  // tests overridden
-  EXPECT_EQ(cRed,   map.c6);  // tests default
+  EXPECT_EQ(cBlue, map.c4);   // tests default
+  EXPECT_EQ(cYellow, map.c5); // tests overridden
+  EXPECT_EQ(cRed, map.c6);    // tests default
 }
-
-
 
 //===----------------------------------------------------------------------===//
 //  Test ScalarBitSetTraits
 //===----------------------------------------------------------------------===//
 
 enum MyFlags {
-  flagNone    = 0,
-  flagBig     = 1 << 0,
-  flagFlat    = 1 << 1,
-  flagRound   = 1 << 2,
-  flagPointy  = 1 << 3
+  flagNone = 0,
+  flagBig = 1 << 0,
+  flagFlat = 1 << 1,
+  flagRound = 1 << 2,
+  flagPointy = 1 << 3
 };
 inline MyFlags operator|(MyFlags a, MyFlags b) {
-  return static_cast<MyFlags>(
-                      static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+  return static_cast<MyFlags>(static_cast<uint32_t>(a) |
+                              static_cast<uint32_t>(b));
 }
 
 struct FlagsMap {
-  MyFlags     f1;
-  MyFlags     f2;
-  MyFlags     f3;
-  MyFlags     f4;
+  MyFlags f1;
+  MyFlags f2;
+  MyFlags f3;
+  MyFlags f4;
 };
-
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct ScalarBitSetTraits<MyFlags> {
-    static void bitset(IO &io, MyFlags &value) {
-      io.bitSetCase(value, "big",   flagBig);
-      io.bitSetCase(value, "flat",  flagFlat);
-      io.bitSetCase(value, "round", flagRound);
-      io.bitSetCase(value, "pointy",flagPointy);
-    }
-  };
-  template <>
-  struct MappingTraits<FlagsMap> {
-    static void mapping(IO &io, FlagsMap& c) {
-      io.mapRequired("f1", c.f1);
-      io.mapRequired("f2", c.f2);
-      io.mapRequired("f3", c.f3);
-      io.mapOptional("f4", c.f4, flagRound);
-     }
-  };
-}
-}
-
+template <> struct ScalarBitSetTraits<MyFlags> {
+  static void bitset(IO &io, MyFlags &value) {
+    io.bitSetCase(value, "big", flagBig);
+    io.bitSetCase(value, "flat", flagFlat);
+    io.bitSetCase(value, "round", flagRound);
+    io.bitSetCase(value, "pointy", flagPointy);
+  }
+};
+template <> struct MappingTraits<FlagsMap> {
+  static void mapping(IO &io, FlagsMap &c) {
+    io.mapRequired("f1", c.f1);
+    io.mapRequired("f2", c.f2);
+    io.mapRequired("f3", c.f3);
+    io.mapOptional("f4", c.f4, flagRound);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test reading flow sequence representing bit-mask values
@@ -1002,12 +976,11 @@ TEST(YAMLIO, TestFlagsRead) {
   yin >> map;
 
   EXPECT_FALSE(yin.error());
-  EXPECT_EQ(flagBig,              map.f1);
-  EXPECT_EQ(flagRound|flagFlat,   map.f2);
-  EXPECT_EQ(flagNone,             map.f3);  // check empty set
-  EXPECT_EQ(flagRound,            map.f4);  // check optional key
+  EXPECT_EQ(flagBig, map.f1);
+  EXPECT_EQ(flagRound | flagFlat, map.f2);
+  EXPECT_EQ(flagNone, map.f3);  // check empty set
+  EXPECT_EQ(flagRound, map.f4); // check optional key
 }
-
 
 //
 // Test writing then reading back bit-mask values
@@ -1032,14 +1005,12 @@ TEST(YAMLIO, TestReadWriteFlags) {
     yin >> map2;
 
     EXPECT_FALSE(yin.error());
-    EXPECT_EQ(flagBig,              map2.f1);
-    EXPECT_EQ(flagRound|flagFlat,   map2.f2);
-    EXPECT_EQ(flagNone,             map2.f3);
-    //EXPECT_EQ(flagRound,            map2.f4);  // check optional key
+    EXPECT_EQ(flagBig, map2.f1);
+    EXPECT_EQ(flagRound | flagFlat, map2.f2);
+    EXPECT_EQ(flagNone, map2.f3);
+    // EXPECT_EQ(flagRound,            map2.f4);  // check optional key
   }
 }
-
-
 
 //===----------------------------------------------------------------------===//
 //  Test ScalarTraits
@@ -1051,53 +1022,49 @@ struct MyCustomType {
 };
 
 struct MyCustomTypeMap {
-  MyCustomType     f1;
-  MyCustomType     f2;
-  int              f3;
+  MyCustomType f1;
+  MyCustomType f2;
+  int f3;
 };
-
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<MyCustomTypeMap> {
-    static void mapping(IO &io, MyCustomTypeMap& s) {
-      io.mapRequired("f1", s.f1);
-      io.mapRequired("f2", s.f2);
-      io.mapRequired("f3", s.f3);
-     }
-  };
-  // MyCustomType is formatted as a yaml scalar.  A value of
-  // {length=3, width=4} would be represented in yaml as "3 by 4".
-  template<>
-  struct ScalarTraits<MyCustomType> {
-    static void output(const MyCustomType &value, void* ctxt, llvm::raw_ostream &out) {
-      out << llvm::format("%d by %d", value.length, value.width);
-    }
-    static StringRef input(StringRef scalar, void* ctxt, MyCustomType &value) {
-      size_t byStart = scalar.find("by");
-      if ( byStart != StringRef::npos ) {
-        StringRef lenStr = scalar.slice(0, byStart);
-        lenStr = lenStr.rtrim();
-        if ( lenStr.getAsInteger(0, value.length) ) {
-          return "malformed length";
-        }
-        StringRef widthStr = scalar.drop_front(byStart+2);
-        widthStr = widthStr.ltrim();
-        if ( widthStr.getAsInteger(0, value.width) ) {
-          return "malformed width";
-        }
-        return StringRef();
+template <> struct MappingTraits<MyCustomTypeMap> {
+  static void mapping(IO &io, MyCustomTypeMap &s) {
+    io.mapRequired("f1", s.f1);
+    io.mapRequired("f2", s.f2);
+    io.mapRequired("f3", s.f3);
+  }
+};
+// MyCustomType is formatted as a yaml scalar.  A value of
+// {length=3, width=4} would be represented in yaml as "3 by 4".
+template <> struct ScalarTraits<MyCustomType> {
+  static void output(const MyCustomType &value, void *ctxt,
+                     llvm::raw_ostream &out) {
+    out << llvm::format("%d by %d", value.length, value.width);
+  }
+  static StringRef input(StringRef scalar, void *ctxt, MyCustomType &value) {
+    size_t byStart = scalar.find("by");
+    if (byStart != StringRef::npos) {
+      StringRef lenStr = scalar.slice(0, byStart);
+      lenStr = lenStr.rtrim();
+      if (lenStr.getAsInteger(0, value.length)) {
+        return "malformed length";
       }
-      else {
-          return "malformed by";
+      StringRef widthStr = scalar.drop_front(byStart + 2);
+      widthStr = widthStr.ltrim();
+      if (widthStr.getAsInteger(0, value.width)) {
+        return "malformed width";
       }
+      return StringRef();
+    } else {
+      return "malformed by";
     }
-    static QuotingType mustQuote(StringRef) { return QuotingType::Single; }
-  };
-}
-}
-
+  }
+  static QuotingType mustQuote(StringRef) { return QuotingType::Single; }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test writing then reading back custom values
@@ -1107,9 +1074,9 @@ TEST(YAMLIO, TestReadWriteMyCustomType) {
   {
     MyCustomTypeMap map;
     map.f1.length = 1;
-    map.f1.width  = 4;
+    map.f1.width = 4;
     map.f2.length = 100;
-    map.f2.width  = 400;
+    map.f2.width = 400;
     map.f3 = 10;
 
     llvm::raw_string_ostream ostr(intermediate);
@@ -1123,14 +1090,13 @@ TEST(YAMLIO, TestReadWriteMyCustomType) {
     yin >> map2;
 
     EXPECT_FALSE(yin.error());
-    EXPECT_EQ(1,      map2.f1.length);
-    EXPECT_EQ(4,      map2.f1.width);
-    EXPECT_EQ(100,    map2.f2.length);
-    EXPECT_EQ(400,    map2.f2.width);
-    EXPECT_EQ(10,     map2.f3);
+    EXPECT_EQ(1, map2.f1.length);
+    EXPECT_EQ(4, map2.f1.width);
+    EXPECT_EQ(100, map2.f2.length);
+    EXPECT_EQ(400, map2.f2.width);
+    EXPECT_EQ(10, map2.f3);
   }
 }
-
 
 //===----------------------------------------------------------------------===//
 //  Test BlockScalarTraits
@@ -1152,38 +1118,36 @@ struct MultilineStringTypeMap {
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<MultilineStringTypeMap> {
-    static void mapping(IO &io, MultilineStringTypeMap& s) {
-      io.mapRequired("name", s.name);
-      io.mapRequired("description", s.description);
-      io.mapRequired("ingredients", s.ingredients);
-      io.mapRequired("recipes", s.recipes);
-      io.mapRequired("warningLabels", s.warningLabels);
-      io.mapRequired("documentation", s.documentation);
-      io.mapRequired("price", s.price);
-     }
-  };
+template <> struct MappingTraits<MultilineStringTypeMap> {
+  static void mapping(IO &io, MultilineStringTypeMap &s) {
+    io.mapRequired("name", s.name);
+    io.mapRequired("description", s.description);
+    io.mapRequired("ingredients", s.ingredients);
+    io.mapRequired("recipes", s.recipes);
+    io.mapRequired("warningLabels", s.warningLabels);
+    io.mapRequired("documentation", s.documentation);
+    io.mapRequired("price", s.price);
+  }
+};
 
-  // MultilineStringType is formatted as a yaml block literal scalar. A value of
-  // "Hello\nWorld" would be represented in yaml as
-  //  |
-  //    Hello
-  //    World
-  template <>
-  struct BlockScalarTraits<MultilineStringType> {
-    static void output(const MultilineStringType &value, void *ctxt,
-                       llvm::raw_ostream &out) {
-      out << value.str;
-    }
-    static StringRef input(StringRef scalar, void *ctxt,
-                           MultilineStringType &value) {
-      value.str = scalar.str();
-      return StringRef();
-    }
-  };
-}
-}
+// MultilineStringType is formatted as a yaml block literal scalar. A value of
+// "Hello\nWorld" would be represented in yaml as
+//  |
+//    Hello
+//    World
+template <> struct BlockScalarTraits<MultilineStringType> {
+  static void output(const MultilineStringType &value, void *ctxt,
+                     llvm::raw_ostream &out) {
+    out << value.str;
+  }
+  static StringRef input(StringRef scalar, void *ctxt,
+                         MultilineStringType &value) {
+    value.str = scalar.str();
+    return StringRef();
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 LLVM_YAML_IS_DOCUMENT_LIST_VECTOR(MultilineStringType)
 
@@ -1284,79 +1248,74 @@ LLVM_YAML_IS_FLOW_SEQUENCE_VECTOR(MyString)
 
 namespace llvm {
 namespace yaml {
-  template<>
-  struct ScalarTraits<MyNumber> {
-    static void output(const MyNumber &value, void *, llvm::raw_ostream &out) {
-      out << value;
-    }
+template <> struct ScalarTraits<MyNumber> {
+  static void output(const MyNumber &value, void *, llvm::raw_ostream &out) {
+    out << value;
+  }
 
-    static StringRef input(StringRef scalar, void *, MyNumber &value) {
-      long long n;
-      if ( getAsSignedInteger(scalar, 0, n) )
-        return "invalid number";
-      value = n;
-      return StringRef();
-    }
+  static StringRef input(StringRef scalar, void *, MyNumber &value) {
+    long long n;
+    if (getAsSignedInteger(scalar, 0, n))
+      return "invalid number";
+    value = n;
+    return StringRef();
+  }
 
-    static QuotingType mustQuote(StringRef) { return QuotingType::None; }
-  };
+  static QuotingType mustQuote(StringRef) { return QuotingType::None; }
+};
 
-  template <> struct ScalarTraits<MyString> {
-    using Impl = ScalarTraits<StringRef>;
-    static void output(const MyString &V, void *Ctx, raw_ostream &OS) {
-      Impl::output(V, Ctx, OS);
-    }
-    static StringRef input(StringRef S, void *Ctx, MyString &V) {
-      return Impl::input(S, Ctx, V.value);
-    }
-    static QuotingType mustQuote(StringRef S) {
-      return Impl::mustQuote(S);
-    }
-  };
-}
-}
+template <> struct ScalarTraits<MyString> {
+  using Impl = ScalarTraits<StringRef>;
+  static void output(const MyString &V, void *Ctx, raw_ostream &OS) {
+    Impl::output(V, Ctx, OS);
+  }
+  static StringRef input(StringRef S, void *Ctx, MyString &V) {
+    return Impl::input(S, Ctx, V.value);
+  }
+  static QuotingType mustQuote(StringRef S) { return Impl::mustQuote(S); }
+};
+} // namespace yaml
+} // namespace llvm
 
 struct NameAndNumbers {
-  llvm::StringRef               name;
-  std::vector<MyString>         strings;
-  std::vector<MyNumber>         single;
-  std::vector<MyNumber>         numbers;
+  llvm::StringRef name;
+  std::vector<MyString> strings;
+  std::vector<MyNumber> single;
+  std::vector<MyNumber> numbers;
 };
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<NameAndNumbers> {
-    static void mapping(IO &io, NameAndNumbers& nn) {
-      io.mapRequired("name",     nn.name);
-      io.mapRequired("strings",  nn.strings);
-      io.mapRequired("single",   nn.single);
-      io.mapRequired("numbers",  nn.numbers);
-    }
-  };
-}
-}
+template <> struct MappingTraits<NameAndNumbers> {
+  static void mapping(IO &io, NameAndNumbers &nn) {
+    io.mapRequired("name", nn.name);
+    io.mapRequired("strings", nn.strings);
+    io.mapRequired("single", nn.single);
+    io.mapRequired("numbers", nn.numbers);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 typedef std::vector<MyNumber> MyNumberFlowSequence;
 
 LLVM_YAML_IS_SEQUENCE_VECTOR(MyNumberFlowSequence)
 
 struct NameAndNumbersFlow {
-  llvm::StringRef                    name;
-  std::vector<MyNumberFlowSequence>  sequenceOfNumbers;
+  llvm::StringRef name;
+  std::vector<MyNumberFlowSequence> sequenceOfNumbers;
 };
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<NameAndNumbersFlow> {
-    static void mapping(IO &io, NameAndNumbersFlow& nn) {
-      io.mapRequired("name",     nn.name);
-      io.mapRequired("sequenceOfNumbers",  nn.sequenceOfNumbers);
-    }
-  };
-}
-}
+template <> struct MappingTraits<NameAndNumbersFlow> {
+  static void mapping(IO &io, NameAndNumbersFlow &nn) {
+    io.mapRequired("name", nn.name);
+    io.mapRequired("sequenceOfNumbers", nn.sequenceOfNumbers);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test writing then reading back custom values
@@ -1365,7 +1324,7 @@ TEST(YAMLIO, TestReadWriteMyFlowSequence) {
   std::string intermediate;
   {
     NameAndNumbers map;
-    map.name  = "hello";
+    map.name = "hello";
     map.strings.push_back(llvm::StringRef("one"));
     map.strings.push_back(llvm::StringRef("two"));
     map.single.push_back(1);
@@ -1394,14 +1353,13 @@ TEST(YAMLIO, TestReadWriteMyFlowSequence) {
     EXPECT_TRUE(map2.strings[0].value == "one");
     EXPECT_TRUE(map2.strings[1].value == "two");
     EXPECT_EQ(map2.single.size(), 1UL);
-    EXPECT_EQ(1,       map2.single[0]);
+    EXPECT_EQ(1, map2.single[0]);
     EXPECT_EQ(map2.numbers.size(), 3UL);
-    EXPECT_EQ(10,      map2.numbers[0]);
-    EXPECT_EQ(-30,     map2.numbers[1]);
-    EXPECT_EQ(1024,    map2.numbers[2]);
+    EXPECT_EQ(10, map2.numbers[0]);
+    EXPECT_EQ(-30, map2.numbers[1]);
+    EXPECT_EQ(1024, map2.numbers[2]);
   }
 }
-
 
 //
 // Test writing then reading back a sequence of flow sequences.
@@ -1410,9 +1368,9 @@ TEST(YAMLIO, TestReadWriteSequenceOfMyFlowSequence) {
   std::string intermediate;
   {
     NameAndNumbersFlow map;
-    map.name  = "hello";
-    MyNumberFlowSequence single = { 0 };
-    MyNumberFlowSequence numbers = { 12, 1, -512 };
+    map.name = "hello";
+    MyNumberFlowSequence single = {0};
+    MyNumberFlowSequence numbers = {12, 1, -512};
     map.sequenceOfNumbers.push_back(single);
     map.sequenceOfNumbers.push_back(numbers);
     map.sequenceOfNumbers.push_back(MyNumberFlowSequence());
@@ -1438,10 +1396,10 @@ TEST(YAMLIO, TestReadWriteSequenceOfMyFlowSequence) {
     EXPECT_TRUE(map2.name == "hello");
     EXPECT_EQ(map2.sequenceOfNumbers.size(), 3UL);
     EXPECT_EQ(map2.sequenceOfNumbers[0].size(), 1UL);
-    EXPECT_EQ(0,    map2.sequenceOfNumbers[0][0]);
+    EXPECT_EQ(0, map2.sequenceOfNumbers[0][0]);
     EXPECT_EQ(map2.sequenceOfNumbers[1].size(), 3UL);
-    EXPECT_EQ(12,   map2.sequenceOfNumbers[1][0]);
-    EXPECT_EQ(1,    map2.sequenceOfNumbers[1][1]);
+    EXPECT_EQ(12, map2.sequenceOfNumbers[1][0]);
+    EXPECT_EQ(1, map2.sequenceOfNumbers[1][1]);
     EXPECT_EQ(-512, map2.sequenceOfNumbers[1][2]);
     EXPECT_TRUE(map2.sequenceOfNumbers[2].empty());
   }
@@ -1457,42 +1415,35 @@ typedef std::vector<TotalSeconds> SecondsSequence;
 
 LLVM_YAML_IS_SEQUENCE_VECTOR(TotalSeconds)
 
-
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<TotalSeconds> {
+template <> struct MappingTraits<TotalSeconds> {
 
-    class NormalizedSeconds {
-    public:
-      NormalizedSeconds(IO &io)
-        : hours(0), minutes(0), seconds(0) {
-      }
-      NormalizedSeconds(IO &, TotalSeconds &secs)
-        : hours(secs/3600),
-          minutes((secs - (hours*3600))/60),
-          seconds(secs % 60) {
-      }
-      TotalSeconds denormalize(IO &) {
-        return TotalSeconds(hours*3600 + minutes*60 + seconds);
-      }
-
-      uint32_t     hours;
-      uint8_t      minutes;
-      uint8_t      seconds;
-    };
-
-    static void mapping(IO &io, TotalSeconds &secs) {
-      MappingNormalization<NormalizedSeconds, TotalSeconds> keys(io, secs);
-
-      io.mapOptional("hours", keys->hours, 0);
-      io.mapOptional("minutes", keys->minutes, 0);
-      io.mapRequired("seconds",  keys->seconds);
+  class NormalizedSeconds {
+  public:
+    NormalizedSeconds(IO &io) : hours(0), minutes(0), seconds(0) {}
+    NormalizedSeconds(IO &, TotalSeconds &secs)
+        : hours(secs / 3600), minutes((secs - (hours * 3600)) / 60),
+          seconds(secs % 60) {}
+    TotalSeconds denormalize(IO &) {
+      return TotalSeconds(hours * 3600 + minutes * 60 + seconds);
     }
-  };
-}
-}
 
+    uint32_t hours;
+    uint8_t minutes;
+    uint8_t seconds;
+  };
+
+  static void mapping(IO &io, TotalSeconds &secs) {
+    MappingNormalization<NormalizedSeconds, TotalSeconds> keys(io, secs);
+
+    io.mapOptional("hours", keys->hours, 0);
+    io.mapOptional("minutes", keys->minutes, 0);
+    io.mapRequired("seconds", keys->seconds);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test the reading of a yaml sequence of mappings
@@ -1507,7 +1458,6 @@ TEST(YAMLIO, TestReadMySecondsSequence) {
   EXPECT_EQ(seq[0], 3605U);
   EXPECT_EQ(seq[1], 59U);
 }
-
 
 //
 // Test writing then reading back custom values
@@ -1542,28 +1492,17 @@ TEST(YAMLIO, TestReadWriteMySecondsSequence) {
 //  Test dynamic typing
 //===----------------------------------------------------------------------===//
 
-enum AFlags {
-    a1,
-    a2,
-    a3
-};
+enum AFlags { a1, a2, a3 };
 
-enum BFlags {
-    b1,
-    b2,
-    b3
-};
+enum BFlags { b1, b2, b3 };
 
-enum Kind {
-    kindA,
-    kindB
-};
+enum Kind { kindA, kindB };
 
 struct KindAndFlags {
-  KindAndFlags() : kind(kindA), flags(0) { }
-  KindAndFlags(Kind k, uint32_t f) : kind(k), flags(f) { }
-  Kind        kind;
-  uint32_t    flags;
+  KindAndFlags() : kind(kindA), flags(0) {}
+  KindAndFlags(Kind k, uint32_t f) : kind(k), flags(f) {}
+  Kind kind;
+  uint32_t flags;
 };
 
 typedef std::vector<KindAndFlags> KindAndFlagsSequence;
@@ -1572,63 +1511,59 @@ LLVM_YAML_IS_SEQUENCE_VECTOR(KindAndFlags)
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct ScalarEnumerationTraits<AFlags> {
-    static void enumeration(IO &io, AFlags &value) {
-      io.enumCase(value, "a1",  a1);
-      io.enumCase(value, "a2",  a2);
-      io.enumCase(value, "a3",  a3);
+template <> struct ScalarEnumerationTraits<AFlags> {
+  static void enumeration(IO &io, AFlags &value) {
+    io.enumCase(value, "a1", a1);
+    io.enumCase(value, "a2", a2);
+    io.enumCase(value, "a3", a3);
+  }
+};
+template <> struct ScalarEnumerationTraits<BFlags> {
+  static void enumeration(IO &io, BFlags &value) {
+    io.enumCase(value, "b1", b1);
+    io.enumCase(value, "b2", b2);
+    io.enumCase(value, "b3", b3);
+  }
+};
+template <> struct ScalarEnumerationTraits<Kind> {
+  static void enumeration(IO &io, Kind &value) {
+    io.enumCase(value, "A", kindA);
+    io.enumCase(value, "B", kindB);
+  }
+};
+template <> struct MappingTraits<KindAndFlags> {
+  static void mapping(IO &io, KindAndFlags &kf) {
+    io.mapRequired("kind", kf.kind);
+    // Type of "flags" field varies depending on "kind" field.
+    // Use memcpy here to avoid breaking strict aliasing rules.
+    if (kf.kind == kindA) {
+      AFlags aflags = static_cast<AFlags>(kf.flags);
+      io.mapRequired("flags", aflags);
+      kf.flags = aflags;
+    } else {
+      BFlags bflags = static_cast<BFlags>(kf.flags);
+      io.mapRequired("flags", bflags);
+      kf.flags = bflags;
     }
-  };
-  template <>
-  struct ScalarEnumerationTraits<BFlags> {
-    static void enumeration(IO &io, BFlags &value) {
-      io.enumCase(value, "b1",  b1);
-      io.enumCase(value, "b2",  b2);
-      io.enumCase(value, "b3",  b3);
-    }
-  };
-  template <>
-  struct ScalarEnumerationTraits<Kind> {
-    static void enumeration(IO &io, Kind &value) {
-      io.enumCase(value, "A",  kindA);
-      io.enumCase(value, "B",  kindB);
-    }
-  };
-  template <>
-  struct MappingTraits<KindAndFlags> {
-    static void mapping(IO &io, KindAndFlags& kf) {
-      io.mapRequired("kind",  kf.kind);
-      // Type of "flags" field varies depending on "kind" field.
-      // Use memcpy here to avoid breaking strict aliasing rules.
-      if (kf.kind == kindA) {
-        AFlags aflags = static_cast<AFlags>(kf.flags);
-        io.mapRequired("flags", aflags);
-        kf.flags = aflags;
-      } else {
-        BFlags bflags = static_cast<BFlags>(kf.flags);
-        io.mapRequired("flags", bflags);
-        kf.flags = bflags;
-      }
-    }
-  };
-}
-}
-
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test the reading of a yaml sequence dynamic types
 //
 TEST(YAMLIO, TestReadKindAndFlagsSequence) {
   KindAndFlagsSequence seq;
-  Input yin("---\n - kind:  A\n   flags:  a2\n - kind:  B\n   flags:  b1\n...\n");
+  Input yin(
+      "---\n - kind:  A\n   flags:  a2\n - kind:  B\n   flags:  b1\n...\n");
   yin >> seq;
 
   EXPECT_FALSE(yin.error());
   EXPECT_EQ(seq.size(), 2UL);
-  EXPECT_EQ(seq[0].kind,  kindA);
+  EXPECT_EQ(seq[0].kind, kindA);
   EXPECT_EQ(seq[0].flags, (uint32_t)a2);
-  EXPECT_EQ(seq[1].kind,  kindB);
+  EXPECT_EQ(seq[1].kind, kindB);
   EXPECT_EQ(seq[1].flags, (uint32_t)b1);
 }
 
@@ -1639,11 +1574,11 @@ TEST(YAMLIO, TestReadWriteKindAndFlagsSequence) {
   std::string intermediate;
   {
     KindAndFlagsSequence seq;
-    seq.push_back(KindAndFlags(kindA,a1));
-    seq.push_back(KindAndFlags(kindB,b1));
-    seq.push_back(KindAndFlags(kindA,a2));
-    seq.push_back(KindAndFlags(kindB,b2));
-    seq.push_back(KindAndFlags(kindA,a3));
+    seq.push_back(KindAndFlags(kindA, a1));
+    seq.push_back(KindAndFlags(kindB, b1));
+    seq.push_back(KindAndFlags(kindA, a2));
+    seq.push_back(KindAndFlags(kindB, b2));
+    seq.push_back(KindAndFlags(kindA, a3));
 
     llvm::raw_string_ostream ostr(intermediate);
     Output yout(ostr);
@@ -1656,19 +1591,18 @@ TEST(YAMLIO, TestReadWriteKindAndFlagsSequence) {
 
     EXPECT_FALSE(yin.error());
     EXPECT_EQ(seq2.size(), 5UL);
-    EXPECT_EQ(seq2[0].kind,  kindA);
+    EXPECT_EQ(seq2[0].kind, kindA);
     EXPECT_EQ(seq2[0].flags, (uint32_t)a1);
-    EXPECT_EQ(seq2[1].kind,  kindB);
+    EXPECT_EQ(seq2[1].kind, kindB);
     EXPECT_EQ(seq2[1].flags, (uint32_t)b1);
-    EXPECT_EQ(seq2[2].kind,  kindA);
+    EXPECT_EQ(seq2[2].kind, kindA);
     EXPECT_EQ(seq2[2].flags, (uint32_t)a2);
-    EXPECT_EQ(seq2[3].kind,  kindB);
+    EXPECT_EQ(seq2[3].kind, kindB);
     EXPECT_EQ(seq2[3].flags, (uint32_t)b2);
-    EXPECT_EQ(seq2[4].kind,  kindA);
+    EXPECT_EQ(seq2[4].kind, kindA);
     EXPECT_EQ(seq2[4].flags, (uint32_t)a3);
   }
 }
-
 
 //===----------------------------------------------------------------------===//
 //  Test document list
@@ -1682,19 +1616,16 @@ typedef std::vector<FooBarMap> FooBarMapDocumentList;
 
 LLVM_YAML_IS_DOCUMENT_LIST_VECTOR(FooBarMap)
 
-
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<FooBarMap> {
-    static void mapping(IO &io, FooBarMap& fb) {
-      io.mapRequired("foo",    fb.foo);
-      io.mapRequired("bar",    fb.bar);
-    }
-  };
-}
-}
-
+template <> struct MappingTraits<FooBarMap> {
+  static void mapping(IO &io, FooBarMap &fb) {
+    io.mapRequired("foo", fb.foo);
+    io.mapRequired("bar", fb.bar);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test the reading of a yaml mapping
@@ -1706,10 +1637,8 @@ TEST(YAMLIO, TestDocRead) {
 
   EXPECT_FALSE(yin.error());
   EXPECT_EQ(doc.foo, 3);
-  EXPECT_EQ(doc.bar,5);
+  EXPECT_EQ(doc.bar, 5);
 }
-
-
 
 //
 // Test writing then reading back a sequence of mappings
@@ -1732,7 +1661,6 @@ TEST(YAMLIO, TestSequenceDocListWriteAndRead) {
     yout << docList;
   }
 
-
   {
     Input yin(intermediate);
     std::vector<FooBarMap> docList2;
@@ -1740,8 +1668,8 @@ TEST(YAMLIO, TestSequenceDocListWriteAndRead) {
 
     EXPECT_FALSE(yin.error());
     EXPECT_EQ(docList2.size(), 2UL);
-    FooBarMap& map1 = docList2[0];
-    FooBarMap& map2 = docList2[1];
+    FooBarMap &map1 = docList2[0];
+    FooBarMap &map2 = docList2[1];
     EXPECT_EQ(map1.foo, 10);
     EXPECT_EQ(map1.bar, -3);
     EXPECT_EQ(map2.foo, 257);
@@ -1754,39 +1682,36 @@ TEST(YAMLIO, TestSequenceDocListWriteAndRead) {
 //===----------------------------------------------------------------------===//
 
 struct MyDouble {
-  MyDouble() : value(0.0) { }
-  MyDouble(double x) : value(x) { }
+  MyDouble() : value(0.0) {}
+  MyDouble(double x) : value(x) {}
   double value;
 };
 
 LLVM_YAML_IS_DOCUMENT_LIST_VECTOR(MyDouble)
 
-
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<MyDouble> {
-    static void mapping(IO &io, MyDouble &d) {
-      if (io.mapTag("!decimal", true)) {
-        mappingDecimal(io, d);
-      } else if (io.mapTag("!fraction")) {
-        mappingFraction(io, d);
-      }
+template <> struct MappingTraits<MyDouble> {
+  static void mapping(IO &io, MyDouble &d) {
+    if (io.mapTag("!decimal", true)) {
+      mappingDecimal(io, d);
+    } else if (io.mapTag("!fraction")) {
+      mappingFraction(io, d);
     }
-    static void mappingDecimal(IO &io, MyDouble &d) {
-      io.mapRequired("value", d.value);
-    }
-    static void mappingFraction(IO &io, MyDouble &d) {
-        double num, denom;
-        io.mapRequired("numerator",      num);
-        io.mapRequired("denominator",    denom);
-        // convert fraction to double
-        d.value = num/denom;
-    }
-  };
- }
-}
-
+  }
+  static void mappingDecimal(IO &io, MyDouble &d) {
+    io.mapRequired("value", d.value);
+  }
+  static void mappingFraction(IO &io, MyDouble &d) {
+    double num, denom;
+    io.mapRequired("numerator", num);
+    io.mapRequired("denominator", denom);
+    // convert fraction to double
+    d.value = num / denom;
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test the reading of two different tagged yaml documents.
@@ -1801,8 +1726,6 @@ TEST(YAMLIO, TestTaggedDocuments) {
   EXPECT_EQ(docList[0].value, 3.0);
   EXPECT_EQ(docList[1].value, 4.5);
 }
-
-
 
 //
 // Test writing then reading back tagged documents
@@ -1833,7 +1756,6 @@ TEST(YAMLIO, TestTaggedDocumentsWriteAndRead) {
   }
 }
 
-
 //===----------------------------------------------------------------------===//
 //  Test mapping validation
 //===----------------------------------------------------------------------===//
@@ -1846,20 +1768,18 @@ LLVM_YAML_IS_DOCUMENT_LIST_VECTOR(MyValidation)
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<MyValidation> {
-    static void mapping(IO &io, MyValidation &d) {
-        io.mapRequired("value", d.value);
-    }
-    static std::string validate(IO &io, MyValidation &d) {
-        if (d.value < 0)
-          return "negative value";
-        return {};
-    }
-  };
- }
-}
-
+template <> struct MappingTraits<MyValidation> {
+  static void mapping(IO &io, MyValidation &d) {
+    io.mapRequired("value", d.value);
+  }
+  static std::string validate(IO &io, MyValidation &d) {
+    if (d.value < 0)
+      return "negative value";
+    return {};
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test that validate() is called and complains about the negative value.
@@ -1896,25 +1816,23 @@ struct FlowFooBarDoc {
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<FlowFooBar> {
-    static void mapping(IO &io, FlowFooBar &fb) {
-      io.mapRequired("foo", fb.foo);
-      io.mapRequired("bar", fb.bar);
-    }
+template <> struct MappingTraits<FlowFooBar> {
+  static void mapping(IO &io, FlowFooBar &fb) {
+    io.mapRequired("foo", fb.foo);
+    io.mapRequired("bar", fb.bar);
+  }
 
-    static const bool flow = true;
-  };
+  static const bool flow = true;
+};
 
-  template <>
-  struct MappingTraits<FlowFooBarDoc> {
-    static void mapping(IO &io, FlowFooBarDoc &fb) {
-      io.mapRequired("attribute", fb.attribute);
-      io.mapRequired("seq", fb.seq);
-    }
-  };
-}
-}
+template <> struct MappingTraits<FlowFooBarDoc> {
+  static void mapping(IO &io, FlowFooBarDoc &fb) {
+    io.mapRequired("attribute", fb.attribute);
+    io.mapRequired("seq", fb.seq);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 //
 // Test writing then reading back custom mappings
@@ -1972,12 +1890,10 @@ TEST(YAMLIO, TestColorsReadError) {
             "c2:  purple\n"
             "c3:  green\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> map;
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling of flow sequence with unknown value
@@ -1989,13 +1905,11 @@ TEST(YAMLIO, TestFlagsReadError) {
             "f2:  [ round, hollow ]\n"
             "f3:  []\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> map;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in uint8_t type
@@ -2007,13 +1921,11 @@ TEST(YAMLIO, TestReadBuiltInTypesUint8Error) {
             "- 0\n"
             "- 257\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in uint16_t type
@@ -2025,13 +1937,11 @@ TEST(YAMLIO, TestReadBuiltInTypesUint16Error) {
             "- 0\n"
             "- 66000\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in uint32_t type
@@ -2043,13 +1953,11 @@ TEST(YAMLIO, TestReadBuiltInTypesUint32Error) {
             "- 0\n"
             "- 5000000000\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in uint64_t type
@@ -2061,13 +1969,11 @@ TEST(YAMLIO, TestReadBuiltInTypesUint64Error) {
             "- 0\n"
             "- 19446744073709551615\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in int8_t type
@@ -2079,9 +1985,8 @@ TEST(YAMLIO, TestReadBuiltInTypesint8OverError) {
             "- 0\n"
             "- 127\n"
             "- 128\n"
-           "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            "...\n",
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
@@ -2098,13 +2003,11 @@ TEST(YAMLIO, TestReadBuiltInTypesint8UnderError) {
             "- 127\n"
             "- -129\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in int16_t type
@@ -2117,13 +2020,11 @@ TEST(YAMLIO, TestReadBuiltInTypesint16UnderError) {
             "- -32768\n"
             "- -32769\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in int16_t type
@@ -2136,13 +2037,11 @@ TEST(YAMLIO, TestReadBuiltInTypesint16OverError) {
             "- -32768\n"
             "- 32768\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in int32_t type
@@ -2155,8 +2054,7 @@ TEST(YAMLIO, TestReadBuiltInTypesint32UnderError) {
             "- -2147483648\n"
             "- -2147483649\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
@@ -2173,13 +2071,11 @@ TEST(YAMLIO, TestReadBuiltInTypesint32OverError) {
             "- -2147483648\n"
             "- 2147483649\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
 }
-
 
 //
 // Test error handling reading built-in int64_t type
@@ -2192,8 +2088,7 @@ TEST(YAMLIO, TestReadBuiltInTypesint64UnderError) {
             "- 9223372036854775807\n"
             "- -9223372036854775809\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
@@ -2210,8 +2105,7 @@ TEST(YAMLIO, TestReadBuiltInTypesint64OverError) {
             "- 9223372036854775807\n"
             "- 9223372036854775809\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
@@ -2228,8 +2122,7 @@ TEST(YAMLIO, TestReadBuiltInTypesFloatError) {
             "- -123.456\n"
             "- 1.2.3\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
@@ -2246,8 +2139,7 @@ TEST(YAMLIO, TestReadBuiltInTypesDoubleError) {
             "- -123.456\n"
             "- 1.2.3\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
@@ -2263,8 +2155,7 @@ TEST(YAMLIO, TestReadBuiltInTypesHex8Error) {
             "- 0xFE\n"
             "- 0x123\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
   EXPECT_TRUE(!!yin.error());
 
@@ -2282,7 +2173,6 @@ TEST(YAMLIO, TestReadBuiltInTypesHex8Error) {
     EXPECT_EQ(seq[i], seq2[i]);
 }
 
-
 //
 // Test error handling reading built-in Hex16 type
 //
@@ -2293,8 +2183,7 @@ TEST(YAMLIO, TestReadBuiltInTypesHex16Error) {
             "- 0xFEFF\n"
             "- 0x12345\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
   EXPECT_TRUE(!!yin.error());
 
@@ -2322,8 +2211,7 @@ TEST(YAMLIO, TestReadBuiltInTypesHex32Error) {
             "- 0xFEFF0000\n"
             "- 0x1234556789\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
 
   EXPECT_TRUE(!!yin.error());
@@ -2352,8 +2240,7 @@ TEST(YAMLIO, TestReadBuiltInTypesHex64Error) {
             "- 0xFFEEDDCCBBAA9988\n"
             "- 0x12345567890ABCDEF0\n"
             "...\n",
-            /*Ctxt=*/nullptr,
-            suppressErrorMessages);
+            /*Ctxt=*/nullptr, suppressErrorMessages);
   yin >> seq;
   EXPECT_TRUE(!!yin.error());
 
@@ -2382,7 +2269,8 @@ TEST(YAMLIO, TestMalformedMapFailsGracefully) {
   }
 
   {
-    Input yin("---\nfoo:3\nbar: 5\n...\n", /*Ctxt=*/nullptr, suppressErrorMessages);
+    Input yin("---\nfoo:3\nbar: 5\n...\n", /*Ctxt=*/nullptr,
+              suppressErrorMessages);
     yin >> doc;
     EXPECT_TRUE(!!yin.error());
   }
@@ -2400,22 +2288,20 @@ struct OptionalTestSeq {
 LLVM_YAML_IS_SEQUENCE_VECTOR(OptionalTest)
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<OptionalTest> {
-    static void mapping(IO& IO, OptionalTest &OT) {
-      IO.mapOptional("Numbers", OT.Numbers);
-      IO.mapOptional("MaybeNumber", OT.MaybeNumber);
-    }
-  };
+template <> struct MappingTraits<OptionalTest> {
+  static void mapping(IO &IO, OptionalTest &OT) {
+    IO.mapOptional("Numbers", OT.Numbers);
+    IO.mapOptional("MaybeNumber", OT.MaybeNumber);
+  }
+};
 
-  template <>
-  struct MappingTraits<OptionalTestSeq> {
-    static void mapping(IO &IO, OptionalTestSeq &OTS) {
-      IO.mapOptional("Tests", OTS.Tests);
-    }
-  };
-}
-}
+template <> struct MappingTraits<OptionalTestSeq> {
+  static void mapping(IO &IO, OptionalTestSeq &OTS) {
+    IO.mapOptional("Tests", OTS.Tests);
+  }
+};
+} // namespace yaml
+} // namespace llvm
 
 TEST(YAMLIO, SequenceElideTest) {
   // Test that writing out a purely optional structure with its fields set to
@@ -2481,7 +2367,7 @@ TEST(YAMLIO, TestEmptyStringSucceedsForSequence) {
 struct FlowMap {
   llvm::StringRef str1, str2, str3;
   FlowMap(llvm::StringRef str1, llvm::StringRef str2, llvm::StringRef str3)
-    : str1(str1), str2(str2), str3(str3) {}
+      : str1(str1), str2(str2), str3(str3) {}
 };
 
 struct FlowSeq {
@@ -2492,31 +2378,29 @@ struct FlowSeq {
 
 namespace llvm {
 namespace yaml {
-  template <>
-  struct MappingTraits<FlowMap> {
-    static void mapping(IO &io, FlowMap &fm) {
-      io.mapRequired("str1", fm.str1);
-      io.mapRequired("str2", fm.str2);
-      io.mapRequired("str3", fm.str3);
-    }
+template <> struct MappingTraits<FlowMap> {
+  static void mapping(IO &io, FlowMap &fm) {
+    io.mapRequired("str1", fm.str1);
+    io.mapRequired("str2", fm.str2);
+    io.mapRequired("str3", fm.str3);
+  }
 
-    static const bool flow = true;
-  };
+  static const bool flow = true;
+};
 
-template <>
-struct ScalarTraits<FlowSeq> {
-  static void output(const FlowSeq &value, void*, llvm::raw_ostream &out) {
+template <> struct ScalarTraits<FlowSeq> {
+  static void output(const FlowSeq &value, void *, llvm::raw_ostream &out) {
     out << value.str;
   }
-  static StringRef input(StringRef scalar, void*, FlowSeq &value) {
+  static StringRef input(StringRef scalar, void *, FlowSeq &value) {
     value.str = scalar;
     return "";
   }
 
   static QuotingType mustQuote(StringRef S) { return QuotingType::None; }
 };
-}
-}
+} // namespace yaml
+} // namespace llvm
 
 LLVM_YAML_IS_FLOW_SEQUENCE_VECTOR(FlowSeq)
 
@@ -2535,21 +2419,19 @@ TEST(YAMLIO, TestWrapFlow) {
     Output yout(ostr, nullptr, 15);
 
     yout << Map;
-    EXPECT_EQ(out,
-              "---\n"
-              "{ str1: This is str1, \n"
-              "  str2: This is str2, \n"
-              "  str3: This is str3 }\n"
-              "...\n");
+    EXPECT_EQ(out, "---\n"
+                   "{ str1: This is str1, \n"
+                   "  str2: This is str2, \n"
+                   "  str3: This is str3 }\n"
+                   "...\n");
     out.clear();
 
     yout << Seq;
-    EXPECT_EQ(out,
-              "---\n"
-              "[ This is str1, \n"
-              "  This is str2, \n"
-              "  This is str3 ]\n"
-              "...\n");
+    EXPECT_EQ(out, "---\n"
+                   "[ This is str1, \n"
+                   "  This is str2, \n"
+                   "  This is str3 ]\n"
+                   "...\n");
     out.clear();
   }
   {
@@ -2557,19 +2439,17 @@ TEST(YAMLIO, TestWrapFlow) {
     Output yout(ostr, nullptr, 25);
 
     yout << Map;
-    EXPECT_EQ(out,
-              "---\n"
-              "{ str1: This is str1, str2: This is str2, \n"
-              "  str3: This is str3 }\n"
-              "...\n");
+    EXPECT_EQ(out, "---\n"
+                   "{ str1: This is str1, str2: This is str2, \n"
+                   "  str3: This is str3 }\n"
+                   "...\n");
     out.clear();
 
     yout << Seq;
-    EXPECT_EQ(out,
-              "---\n"
-              "[ This is str1, This is str2, \n"
-              "  This is str3 ]\n"
-              "...\n");
+    EXPECT_EQ(out, "---\n"
+                   "[ This is str1, This is str2, \n"
+                   "  This is str3 ]\n"
+                   "...\n");
     out.clear();
   }
   {
@@ -2584,10 +2464,9 @@ TEST(YAMLIO, TestWrapFlow) {
     out.clear();
 
     yout << Seq;
-    EXPECT_EQ(out,
-              "---\n"
-              "[ This is str1, This is str2, This is str3 ]\n"
-              "...\n");
+    EXPECT_EQ(out, "---\n"
+                   "[ This is str1, This is str2, This is str3 ]\n"
+                   "...\n");
     out.clear();
   }
 }
@@ -2625,8 +2504,8 @@ template <> struct MappingTraits<NestedMap> {
     io.mapRequired("Simple", nm.Simple, nm.Context);
   }
 };
-}
-}
+} // namespace yaml
+} // namespace llvm
 
 TEST(YAMLIO, TestMapWithContext) {
   MappingContext Context;
@@ -2737,12 +2616,10 @@ struct FooBarMapMap {
 namespace llvm {
 namespace yaml {
 template <> struct MappingTraits<FooBarMapMap> {
-  static void mapping(IO &io, FooBarMapMap &x) {
-    io.mapRequired("fbm", x.fbm);
-  }
+  static void mapping(IO &io, FooBarMapMap &x) { io.mapRequired("fbm", x.fbm); }
 };
-}
-}
+} // namespace yaml
+} // namespace llvm
 
 TEST(YAMLIO, TestEmptyMapWrite) {
   FooBarMapMap cont;
@@ -2812,10 +2689,9 @@ TEST(YAMLIO, TestEscaped) {
   // unicode-scalar level escape like \uNNNN (at the YAML level), and don't
   // just pass the UTF-8 byte sequence through as with quoted printables.
   {
-    const unsigned char foobar[10] = {'f', 'o', 'o',
-                                      0xE2, 0x80, 0x8B, // UTF-8 of U+200B
-                                      'b', 'a', 'r',
-                                      0x0};
+    const unsigned char foobar[10] = {'f',  'o',  'o', 0xE2,
+                                      0x80, 0x8B, // UTF-8 of U+200B
+                                      'b',  'a',  'r', 0x0};
     TestEscaped((char const *)foobar, "\"foo\\u200Bbar\"");
   }
 }
