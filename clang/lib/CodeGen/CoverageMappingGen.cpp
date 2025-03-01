@@ -2293,6 +2293,12 @@ struct CounterCoverageMappingBuilder
             SM.isInSystemHeader(SM.getSpellingLoc(E->getEndLoc())));
   }
 
+  void VisitUnaryLNot(const UnaryOperator *E) {
+    MCDCBuilder.swapConds();
+    Visit(E->getSubExpr());
+    MCDCBuilder.swapConds();
+  }
+
   void VisitBinLAnd(const BinaryOperator *E) {
     if (isExprInSystemHeader(E)) {
       LeafExprSet.insert(E);
